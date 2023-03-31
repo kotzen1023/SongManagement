@@ -1,0 +1,20 @@
+doctype html
+head
+  meta(charset='utf-8')
+  meta(name='viewport' content='width=device-width,minimum-scale=1')
+  title Login
+  // the form awesome library is used to add icons to our form
+  link(rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.1/css/all.css')
+  // include the stylesheet file
+  link(rel='stylesheet', href='/stylesheets/style.css')
+.login
+  h1 &#x767B;&#x5165;
+  form(action='/login/auth' method='post')
+    label(for='username')
+      // font awesome icon
+      i.fas.fa-user
+    input#username(type='text' name='username' placeholder='帳號' required='')
+    label(for='password')
+      i.fas.fa-lock
+    input#password(type='password' name='password' placeholder='密碼' required='')
+    input(type='submit' value='登入')
