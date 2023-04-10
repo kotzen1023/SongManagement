@@ -2,7 +2,9 @@ const mysql = require('mysql2');
 var express = require('express');
 const session = require('express-session');
 const path = require('path');
-var createHash = require('crypto');
+const { createHash } = require('crypto');
+const cookieParser = require('cookie-parser');
+
 
 const connection = mysql.createConnection({
 	host     : 'localhost',
@@ -23,6 +25,40 @@ function get_random_string(length) {
     return result;
 }
 
+function get_date_string() {
+
+	let date_time = new Date();
+
+	// get current date
+	// adjust 0 before single digit date
+	let date = ("0" + date_time.getDate()).slice(-2);
+
+	// get current month
+	let month = ("0" + (date_time.getMonth() + 1)).slice(-2);
+
+	// get current year
+	let year = date_time.getFullYear();
+
+	// get current hours
+	let hours = date_time.getHours();
+
+	// get current minutes
+	let minutes = date_time.getMinutes();
+
+	// get current seconds
+	let seconds = date_time.getSeconds();
+
+	// prints date in YYYY-MM-DD format
+	console.log(year + "-" + month + "-" + date);
+
+	// prints date & time in YYYY-MM-DD HH:MM:SS format
+	console.log(year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds);
+
+	let date_string = year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds;
+
+	return date_string; 
+}
+
 var router = express.Router();
 
 router.use(session({
@@ -33,10 +69,16 @@ router.use(session({
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 router.use(express.static(path.join(__dirname, 'static')));
-
+router.use(cookieParser(get_random_string(64)));
 /* GET users listing. */
 
 router.get('/', function(req, res, next) {
+	/*if(req.signedCookies.firstName && req.signedCookies.lastName){
+		let name=req.signedCookies.login_name+ ' '+req.signedCookies.session;
+		console.log('name = '+name);
+		isLogin = true;
+	}*/
+
 	res.send('respond with a resource');
 });
 
@@ -49,7 +91,7 @@ router.post('/auth', function(request, response, next) {
 	console.log("password_hash = "+password_hash);
 	if (username && password) {
 		// Execute SQL query that'll select the account from the database based on the specified username and password
-		connection.query('SELECT * FROM tb_user WHERE username = ? AND password = ?', [username, password_hash], function(error, results, fields) {
+		connection.query('SELECT * FROM tb_user WHERE account = ? AND password = ?', [username, password_hash], function(error, results, fields) {
 			// If there is an issue with the query, output the error
 			if (error) throw error;
 			// If the account exists
@@ -57,8 +99,66 @@ router.post('/auth', function(request, response, next) {
 				// Authenticate the user
 				request.session.loggedin = true;
 				request.session.username = username;
+
+				let session = get_random_string(64)
+
+				//update user login time and session.
+				var query = 'UPDATE tb_user SET last_login = ?, session = ? WHERE account=?';
+
+				let date_string = get_date_string();
+
+				connection.query(query,[date_string,session,username], function (err, result, rows, fields) {
+					if(err) {
+    					console.log(err.message);
+						//console.log('1');
+    					// do some stuff here
+  					} else {
+    					console.log(rows);
+						//console.log('2');
+    					// do some stuff here
+						
+						//response.cookie('login_name', username, { path: '/', maxAge:360000});
+						//response.cookie('session', session, { path: '/', maxAge:360000});
+						//response.end('Cookie has been set');
+
+						//console.dir(request.cookies.cookieName);
+  					}
+				});
+				
+				response.cookie('login_name', username, { path: '/', maxAge:3600000});
+				response.cookie('session', session, { path: '/', maxAge:3600000});
+				
+				/*if(request.signedCookies.login_name && request.signedCookies.session){
+					let name=request.signedCookies.login_name+ ' '+request.signedCookies.session;
+					console.log(name);
+					isLogin = true;
+				} else {
+					response.cookie('login_name', username, { path: '/', signed: true, maxAge:360000});
+					response.cookie('session', session, { path: '/', signed: true, maxAge:360000});
+				}*/
+
+				/*if (cookie === undefined) {
+					console.log('3');
+					// no: set a new cookie
+					//var randomNumber=Math.random().toString();
+					//randomNumber=randomNumber.substring(2,randomNumber.length);
+					//.cookie('cookieName',randomNumber, { maxAge: 900000, httpOnly: true });
+					//console.log('cookie created successfully');
+
+					response.cookie('login_name', username, { path: '/', signed: true, maxAge:360000});
+					response.cookie('session', session, { path: '/', signed: true, maxAge:360000});
+					//console.dir(request.cookies.cookieName);
+				} else {
+					console.log('4');
+					// yes, cookie was already present 
+					console.log('cookie exists', cookie);
+				}*/
+
+				
+				
 				// Redirect to home page
-				response.redirect('/home');
+				response.redirect('/');
+				//response.render('main', { title: 'main' });
 			} else {
 				response.send('Incorrect Username and/or Password!');
 			}			
@@ -69,81 +169,5 @@ router.post('/auth', function(request, response, next) {
 		response.end();
 	}
 });
-
-
 
 module.exports = router;
-/*
-const mysql = require('mysql2');
-const express = require('express');
-const session = require('express-session');
-const path = require('path');
-
-const connection = mysql.createConnection({
-	host     : 'localhost',
-	user     : 'root',
-	password : '',
-	database : 'nodelogin'
-});
-
-const app = express();
-
-app.use(session({
-	secret: 'secret',
-	resave: true,
-	saveUninitialized: true
-}));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'static')));
-
-// http://localhost:3000/
-app.get('/', function(request, response) {
-	// Render login template
-	response.sendFile(path.join(__dirname + '/login.html'));
-});
-
-// http://localhost:3000/auth
-app.post('/auth', function(request, response) {
-	// Capture the input fields
-	let username = request.body.username;
-	let password = request.body.password;
-	// Ensure the input fields exists and are not empty
-	if (username && password) {
-		// Execute SQL query that'll select the account from the database based on the specified username and password
-		connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
-			// If there is an issue with the query, output the error
-			if (error) throw error;
-			// If the account exists
-			if (results.length > 0) {
-				// Authenticate the user
-				request.session.loggedin = true;
-				request.session.username = username;
-				// Redirect to home page
-				response.redirect('/home');
-			} else {
-				response.send('Incorrect Username and/or Password!');
-			}			
-			response.end();
-		});
-	} else {
-		response.send('Please enter Username and Password!');
-		response.end();
-	}
-});
-
-// http://localhost:3000/home
-app.get('/home', function(request, response) {
-	// If the user is loggedin
-	if (request.session.loggedin) {
-		// Output username
-		response.send('Welcome back, ' + request.session.username + '!');
-	} else {
-		// Not logged in
-		response.send('Please login to view this page!');
-	}
-	response.end();
-});
-
-app.listen(3000);
-*/

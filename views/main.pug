@@ -1,0 +1,139 @@
+doctype html
+head
+  meta(charset='utf-8')
+  meta(name='viewport' content='width=device-width,minimum-scale=1')
+  title Main
+  script(src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js')
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/jszip.js')
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js')
+  script.
+    var ExcelToJSON = function() {
+      this.parseExcel = function(file) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          var data = e.target.result;
+          var workbook = XLSX.read(data, {
+            type: 'binary'
+          });
+          workbook.SheetNames.forEach(function(sheetName) {
+            // Here is your object
+            var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+            var json_object = JSON.stringify(XL_row_object);
+            console.log(JSON.parse(json_object));
+            jQuery( '#xlx_json' ).val( json_object );
+
+            var currentLocation = window.location;
+            var url = currentLocation+"upload";
+            var xhr = new XMLHttpRequest();
+            
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    //var json = JSON.parse(xhr.responseText);
+                    //console.log(json.email + ", " + json.password);
+                    console.log("success!");
+                }
+            };
+            //var data = JSON.stringify({"email": "hey@mail.com", "password": "101010"});
+            xhr.send(json_object);
+
+
+
+
+          })
+        };
+        reader.onerror = function(ex) {
+          console.log(ex);
+        };
+        reader.readAsBinaryString(file);
+      };
+    };
+    function handleFileSelect(evt) {
+      var files = evt.target.files; // FileList object
+      var xl2json = new ExcelToJSON();
+      xl2json.parseExcel(files[0]);
+    }
+  //link(rel='stylesheet' href='https://getbootstrap.com/docs/4.4/dist/css/bootstrap.min.css')
+  //link(rel='stylesheet', href='/stylesheets/style.css')
+  
+body
+h1(align='center') Songs
+
+//input#input(type='file')
+
+form(align='center' enctype='multipart/form-data')
+  input#upload(type='file' name='files[]')
+
+
+script.
+  document.getElementById('upload').addEventListener('change', handleFileSelect, false);
+
+p#goods(align='center')
+
+script.
+  var currentLocation = window.location;
+  //console.log("currentLocation = "+currentLocation);
+  var main_url = currentLocation+"main";
+  const xmlhttp = new XMLHttpRequest();
+  xmlhttp.onload = function() {
+  goodsObj = JSON.parse(this.responseText);
+  console.log("goodsObj = "+goodsObj);
+    let text = "<table border='1'><th colspan='12'> 所有歌曲 </th>"
+    text += "<tr><td></td><td>歌曲編號</td><td>歌曲名稱</td><td>歌手名稱</td><td>SingerId</td><td>SongLanguageId</td><td>SongTypeId</td><td>Track</td><td>FirstSpell</td><td>AllSpell</td><td>NameLength</td><td>編輯</td></tr>"
+    for (let x in goodsObj) {
+      //goods_id
+      text += "<tr><input type='hidden' id='goods_idx_"+x+"' name='goods_idx_"+x+"' value="+goodsObj[x].Id+">";
+      text += "<td><input name='btn_del_"+x+"' id='btn_del_"+x+"' type='button' value='刪除' onclick='onDeleteClick("+x+")'>";
+      text += "</td>";
+      //goods_no
+      text += "<td><span id='goods_no_text_"+x+"'>"+ goodsObj[x].SongNum + "</span>";
+      text += "<input style='display:none;background-color:yellow;' type='text' maxlength='4' size='4' id='goods_no_edit_"+x+"' name='goods_no_edit_"+x+"' value='"+goodsObj[x].SongNum+"'>";
+      text += "</td>";
+      //goods_name
+      text += "<td><span id='goods_name_text_"+x+"'>"+ goodsObj[x].Name +"</span>";
+      text += "<input style='display:none;background-color:yellow;' type='text' id='goods_name_edit_"+x+"' name='goods_name_edit_"+x+"' value='"+goodsObj[x].Name+"'>";
+      text += "</td>";
+      //goods_spec
+      text += "<td><span id='goods_spec_text_"+x+"'>"+ goodsObj[x].SingerName +"</span>";
+      text += "<input style='display:none;background-color:yellow;' type='text' id='goods_spec_edit_"+x+"' name='goods_spec_edit_"+x+"' value='"+goodsObj[x].SingerName+"'>";
+      text += "</td>";
+      //goods_unit
+      text += "<td><span id='goods_unit_text_"+x+"'>"+ goodsObj[x].SingerId +"</span>";
+      text += "<input style='display:none;background-color:yellow;' type='text' id='goods_unit_edit_"+x+"' name='goods_unit_edit_"+x+"' value='"+goodsObj[x].SingerId+"'>";
+      text += "</td>";
+      //goods_supplier_name
+      text += "<td><span id='goods_supplier_name_text_"+x+"'>"+ goodsObj[x].SongLanguageId +"</span>";
+      text += "<input style='display:none;background-color:yellow;' type='text' maxlength='5' size='5' id='goods_supplier_name_edit_"+x+"' name='goods_supplier_name_edit_"+x+"' value='"+goodsObj[x].SongLanguageId+"'>";
+      text += "</td>";
+      //goods_supplier_no
+      text += "<td><span id='goods_supplier_no_text_"+x+"'>"+ goodsObj[x].SongTypeId +"</span>";
+      text += "<input style='display:none;background-color:yellow;' type='text' maxlength='5' size='5' id='goods_supplier_no_edit_"+x+"' name='goods_supplier_no_edit_"+x+"' value='"+goodsObj[x].SongTypeId+"'>";
+      text += "</td>";
+      //goods_create_date
+      text += "<td><span id='goods_create_date_text_"+x+"'>"+ goodsObj[x].Track +"</span>";
+      //text += "<input style='display:none;background-color:yellow;' type='text' id='goods_create_date_edit_"+x+"' name='goods_create_date_edit_"+x+"' value='"+goodsObj[x].goods_create_date+"'>";
+      text += "</td>";
+      //goods_last_update
+      text += "<td><span id='goods_last_update_text_"+x+"'>"+ goodsObj[x].FirstSpell +"</span>";
+      //text += "<input style='display:none;background-color:yellow;' type='text' id='goods_last_update_edit_"+x+"' name='goods_last_update_edit_"+x+"' value='"+goodsObj[x].goods_last_update+"'>";
+      text += "</td>";
+      //goods_total
+      text += "<td><span id='goods_total_text_"+x+"'>"+ goodsObj[x].AllSpell +"</span>";
+      //text += "<input style='display:none;background-color:yellow;' type='text' id='goods_total_edit_"+x+"' name='goods_total_edit_"+x+"' value='"+goodsObj[x].goods_total+"'>";
+      text += "</td>";
+      //goods_photo_url
+      text += "<td><span id='goods_photo_url_text_"+x+"'>"+ goodsObj[x].NameLength +"</span>";
+      //text += "<input style='display:none;background-color:yellow;' type='text' id='goods_photo_url_edit_"+x+"' name='goods_photo_url_edit_"+x+"' value='"+goodsObj[x].goods_photo_url+"'>";
+      text += "</td>";
+      text += "<td><input name='btn_edit_"+x+"' id='btn_edit_"+x+"' type='button' value='編輯' onclick='onEditClick("+x+")'>";
+      text += "<input style='display:none' name='btn_save_"+x+"' id='btn_save_"+x+"' type='button' value='儲存' onclick='onSaveClick("+x+")'>";
+      text += "<input style='display:none' name='btn_cancel_"+x+"' id='btn_cancel_"+x+"' type='button' value='取消' onclick='onCancelClick("+x+")'>";
+      text += "</td>";
+      text += "</tr>";
+    }
+    text += "</table>"
+    document.getElementById("goods").innerHTML = text;
+  }
+  xmlhttp.open("GET", main_url, true);
+  xmlhttp.send();
