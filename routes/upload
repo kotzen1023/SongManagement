@@ -1,0 +1,319 @@
+const mysql = require('mysql2');
+var express = require('express');
+var router = express.Router();
+
+const connection = mysql.createConnection({
+	host     : 'localhost',
+	user     : 'song',
+	password : 'password',
+	database : 'song'
+});
+
+/* GET users listing. */
+router.get('/', function(req, res, next) {
+    res.send('respond with a resource');
+});
+
+router.post('/', function(request, response, next) {
+    console.log("upload xlsx");
+	//console.log(request.body);
+    
+
+    let formatData = request.body;
+    var dataSize = Object.keys(formatData).length;
+    
+    
+    //clear before insert
+    /*
+    console.log("delete before insert...");
+    var clear_sql = "DELETE FROM tb_song WHERE 1";
+    connection.query(clear_sql, [values_array], function(error, results, fields) {
+        // If there is an issue with the query, output the error
+        if (error) throw error;
+        
+        console.log("Number of records deleted: " + results.affectedRows);
+        
+    });
+    */
+
+    //get column SongNum in DB
+    connection.query('SELECT * FROM tb_song', function(error, results_songNum, fields) {
+        // If there is an issue with the query, output the error
+            if (error) throw error;
+            var exist_array = [];
+            
+            if (results_songNum.length > 0) {
+                
+                console.log("results size = "+results_songNum.length);
+
+                for (var i=0; i<results_songNum.length; i++) {
+                    //exist_array.push(results_songNum[i].SongNum);
+                    exist_array.push(results_songNum[i]);
+                }
+                console.log("exist_array size = "+exist_array.length);
+                  
+            }
+
+
+            if (exist_array.length > 0) { //we should check if the same SongNum exist
+                var modified_formatData = [];
+                for (var i=0; i<dataSize; i++) {
+                    var found = false;
+                    for (var j=0; j<exist_array.length; j++) {
+                        if (parseInt(formatData[i]['SongNum']) == parseInt(exist_array[j]['SongNum'])) {
+                            found = true;
+
+                            if (!exist_array[j]['VersionName'].includes(formatData[i]['VersionName'])) {
+                                let concat_str = ","+formatData[i]['VersionName'];
+                                exist_array[j]['VersionName'] = exist_array[j]['VersionName'].concat(concat_str);
+                                //console.log(" exist_array[j]['VersionName'] = "+ exist_array[j]['VersionName']);
+                            }
+
+                            break;
+                        }
+                    }
+        
+                    if (!found) { //not found same SongNum, insert it
+                        modified_formatData.push(formatData[i]);
+                    }
+                }
+                console.log("modified_formatData size = "+modified_formatData.length);
+                //clear before insert
+                
+                console.log("delete before insert...");
+                var clear_sql = "DELETE FROM tb_song WHERE 1";
+                connection.query(clear_sql, [values_array], function(error, results, fields) {
+                    // If there is an issue with the query, output the error
+                    if (error) throw error;
+                    
+                    console.log("Number of records deleted: " + results.affectedRows);
+                    
+                });
+
+                var values_array = [];
+                var sql = "INSERT INTO tb_song (Id, SongNum, Name, SingerName, SingerId, SongLanguageId, SongTypeId, Track, FirstSpell, AllSpell, NameLength, Hits, Format, ServerState, Image, SavePath, DownPath, Version, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, Sort, AddTime, UpdateTime, DownCount, VersionName) VALUES ?";
+                //insert exist
+                for (var i=0; i<exist_array.length; i++) {
+                    
+                    var version = "";
+                    if (exist_array[i]['Version'] != null && exist_array[i]['Version'] != 'undefined') {
+                        version = exist_array[i]['Version']
+                    }
+                    var image = ""
+                    if (exist_array[i]['Image'] != null && exist_array[i]['Image'] != 'undefined') {
+                        image = exist_array[i]['Image']
+                    }
+                    var fileMd5 = ""
+                    if (exist_array[i]['FileMd5'] != null && exist_array[i]['FileMd5'] != 'undefined') {
+                        fileMd5 = exist_array[i]['FileMd5']
+                    }
+                    var savePath = ""
+                    if (exist_array[i]['SavePath'] != null && exist_array[i]['SavePath'] != 'undefined') {
+                        savePath = exist_array[i]['SavePath']
+                    }
+                    var downPath = ""
+                    if (exist_array[i]['DownPath'] != null && exist_array[i]['DownPath'] != 'undefined') {
+                        savePath = exist_array[i]['DownPath']
+                    }
+                    var downUrl1 = ""
+                    if (exist_array[i]['DownUrl1'] != null && exist_array[i]['DownUrl1'] != 'undefined') {
+                        downUrl1 = exist_array[i]['DownUrl1']
+                    }
+                    var downUrl2 = ""
+                    if (exist_array[i]['DownUrl2'] != null && exist_array[i]['DownUrl2'] != 'undefined') {
+                        downUrl2 = exist_array[i]['DownUrl2']
+                    }
+                    var downUrl3 = ""
+                    if (exist_array[i]['DownUrl3'] != null && exist_array[i]['DownUrl3'] != 'undefined') {
+                        downUrl3 = exist_array[i]['DownUrl3']
+                    }
+                    var backDownUrl = ""
+                    if (exist_array[i]['BackDownUrl'] != null && exist_array[i]['BackDownUrl'] != 'undefined') {
+                        backDownUrl = exist_array[i]['BackDownUrl']
+                    }
+                    var versionName = ""
+                    if (exist_array[i]['VersionName'] != null && exist_array[i]['VersionName'] != 'undefined') {
+                        versionName = exist_array[i]['VersionName']
+                    }
+        
+                    value = [exist_array[i]['Id'], exist_array[i]['SongNum'], exist_array[i]['Name'], exist_array[i]['SingerName'], exist_array[i]['SingerId'], exist_array[i]['SongLanguageId'], 
+                    exist_array[i]['SongTypeId'], exist_array[i]['Track'], exist_array[i]['FirstSpell'], exist_array[i]['AllSpell'], exist_array[i]['NameLength'], 
+                    exist_array[i]['Hits'], exist_array[i]['Format'], exist_array[i]['ServerState'], image, savePath, downPath, 
+                    version, downUrl1, downUrl2, downUrl3, backDownUrl, fileMd5,
+                    exist_array[i]['ShowHidden'], exist_array[i]['Sort'], exist_array[i]['AddTime'], exist_array[i]['UpdateTime'], exist_array[i]['DownCount'], versionName];
+                    
+                    values_array.push(value);             
+                }
+
+                //insert not exist
+                console.log("start to insert songs not in DB...");
+                
+                for (var i=0; i<modified_formatData.length; i++) {
+                    
+                    var version = "";
+                    if (modified_formatData[i]['Version'] != null && modified_formatData[i]['Version'] != 'undefined') {
+                        version = modified_formatData[i]['Version']
+                    }
+                    var image = ""
+                    if (modified_formatData[i]['Image'] != null && modified_formatData[i]['Image'] != 'undefined') {
+                        image = modified_formatData[i]['Image']
+                    }
+                    var fileMd5 = ""
+                    if (modified_formatData[i]['FileMd5'] != null && modified_formatData[i]['FileMd5'] != 'undefined') {
+                        fileMd5 = modified_formatData[i]['FileMd5']
+                    }
+                    var savePath = ""
+                    if (modified_formatData[i]['SavePath'] != null && modified_formatData[i]['SavePath'] != 'undefined') {
+                        savePath = modified_formatData[i]['SavePath']
+                    }
+                    var downPath = ""
+                    if (modified_formatData[i]['DownPath'] != null && modified_formatData[i]['DownPath'] != 'undefined') {
+                        savePath = modified_formatData[i]['DownPath']
+                    }
+                    var downUrl1 = ""
+                    if (modified_formatData[i]['DownUrl1'] != null && modified_formatData[i]['DownUrl1'] != 'undefined') {
+                        downUrl1 = modified_formatData[i]['DownUrl1']
+                    }
+                    var downUrl2 = ""
+                    if (modified_formatData[i]['DownUrl2'] != null && modified_formatData[i]['DownUrl2'] != 'undefined') {
+                        downUrl2 = modified_formatData[i]['DownUrl2']
+                    }
+                    var downUrl3 = ""
+                    if (modified_formatData[i]['DownUrl3'] != null && modified_formatData[i]['DownUrl3'] != 'undefined') {
+                        downUrl3 = modified_formatData[i]['DownUrl3']
+                    }
+                    var backDownUrl = ""
+                    if (modified_formatData[i]['BackDownUrl'] != null && modified_formatData[i]['BackDownUrl'] != 'undefined') {
+                        backDownUrl = modified_formatData[i]['BackDownUrl']
+                    }
+                    var versionName = ""
+                    if (modified_formatData[i]['VersionName'] != null && modified_formatData[i]['VersionName'] != 'undefined') {
+                        versionName = modified_formatData[i]['VersionName']
+                    }
+        
+        
+                    value = [modified_formatData[i]['Id'], modified_formatData[i]['SongNum'], modified_formatData[i]['Name'], modified_formatData[i]['SingerName'], modified_formatData[i]['SingerId'], modified_formatData[i]['SongLanguageId'], 
+                    modified_formatData[i]['SongTypeId'], modified_formatData[i]['Track'], modified_formatData[i]['FirstSpell'], modified_formatData[i]['AllSpell'], modified_formatData[i]['NameLength'], 
+                    modified_formatData[i]['Hits'], modified_formatData[i]['Format'], modified_formatData[i]['ServerState'], image, savePath, downPath, 
+                    version, downUrl1, downUrl2, downUrl3, backDownUrl, fileMd5,
+                    modified_formatData[i]['ShowHidden'], modified_formatData[i]['Sort'], modified_formatData[i]['AddTime'], modified_formatData[i]['UpdateTime'], modified_formatData[i]['DownCount'], versionName];
+                    
+                    
+                    //if (i==0) {
+                    values_array.push(value);
+                    //console.log("value = "+value);
+                    //} 
+                }
+        
+                //console.log("values_array = "+values_array);
+        
+                connection.query(sql, [values_array], function(error, results, fields) {
+                    // If there is an issue with the query, output the error
+                    if (error) throw error;
+                    
+                    console.log("Number of records inserted: " + results.affectedRows);
+                    if (results.affectedRows > 0) {
+                        
+                        //response.redirect('/');
+                        response.render('main', { title: 'main' });
+                    }
+                });
+            }
+            else { //just insert all songs
+                console.log("start to insert...");
+                var sql = "INSERT INTO tb_song (Id, SongNum, Name, SingerName, SingerId, SongLanguageId, SongTypeId, Track, FirstSpell, AllSpell, NameLength, Hits, Format, ServerState, Image, SavePath, DownPath, Version, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, Sort, AddTime, UpdateTime, DownCount, VersionName) VALUES ?";
+        
+                var values_array = [];
+                for (var i=0; i<dataSize; i++) {
+                    
+                    var version = "";
+                    if (formatData[i]['Version'] != null && formatData[i]['Version'] != 'undefined') {
+                        version = formatData[i]['Version']
+                    }
+                    var image = ""
+                    if (formatData[i]['Image'] != null && formatData[i]['Image'] != 'undefined') {
+                        image = formatData[i]['Image']
+                    }
+                    var fileMd5 = ""
+                    if (formatData[i]['FileMd5'] != null && formatData[i]['FileMd5'] != 'undefined') {
+                        fileMd5 = formatData[i]['FileMd5']
+                    }
+                    var savePath = ""
+                    if (formatData[i]['SavePath'] != null && formatData[i]['SavePath'] != 'undefined') {
+                        savePath = formatData[i]['SavePath']
+                    }
+                    var downPath = ""
+                    if (formatData[i]['DownPath'] != null && formatData[i]['DownPath'] != 'undefined') {
+                        savePath = formatData[i]['DownPath']
+                    }
+                    var downUrl1 = ""
+                    if (formatData[i]['DownUrl1'] != null && formatData[i]['DownUrl1'] != 'undefined') {
+                        downUrl1 = formatData[i]['DownUrl1']
+                    }
+                    var downUrl2 = ""
+                    if (formatData[i]['DownUrl2'] != null && formatData[i]['DownUrl2'] != 'undefined') {
+                        downUrl2 = formatData[i]['DownUrl2']
+                    }
+                    var downUrl3 = ""
+                    if (formatData[i]['DownUrl3'] != null && formatData[i]['DownUrl3'] != 'undefined') {
+                        downUrl3 = formatData[i]['DownUrl3']
+                    }
+                    var backDownUrl = ""
+                    if (formatData[i]['BackDownUrl'] != null && formatData[i]['BackDownUrl'] != 'undefined') {
+                        backDownUrl = formatData[i]['BackDownUrl']
+                    }
+                    var versionName = ""
+                    if (formatData[i]['VersionName'] != null && formatData[i]['VersionName'] != 'undefined') {
+                        versionName = formatData[i]['VersionName']
+                    }
+        
+        
+                    value = [formatData[i]['Id'], formatData[i]['SongNum'], formatData[i]['Name'], formatData[i]['SingerName'], formatData[i]['SingerId'], formatData[i]['SongLanguageId'], 
+                    formatData[i]['SongTypeId'], formatData[i]['Track'], formatData[i]['FirstSpell'], formatData[i]['AllSpell'], formatData[i]['NameLength'], 
+                    formatData[i]['Hits'], formatData[i]['Format'], formatData[i]['ServerState'], image, savePath, downPath, 
+                    version, downUrl1, downUrl2, downUrl3, backDownUrl, fileMd5,
+                    formatData[i]['ShowHidden'], formatData[i]['Sort'], formatData[i]['AddTime'], formatData[i]['UpdateTime'], formatData[i]['DownCount'], versionName];
+                    
+                    
+                    //if (i==0) {
+                    values_array.push(value);
+                    //console.log("value = "+value);
+                    //}
+                    
+                    
+        
+                    //let insert_str = `INSERT INTO tb_song (SongNum, Name, SingerName, SingerId, SongLanguageId, SongTypeId, Track, FirstSpell, AllSpell, NameLength, Hits, Format, ServerState, Image, SavePath, DownPath, Version, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, Sort, AddTime, UpdateTime, DownCount) VALUES ('`+formatData[i]['SongNum']+ `', '`+formatData[i]['Name']+`', '`+formatData[i]['SingerName']+`', '`+formatData[i]['SingerId']+`', '`+formatData[i]['SongLanguageId']+`', '`+formatData[i]['SongTypeId']+`', '`+formatData[i]['Track']+`', '`+formatData[i]['FirstSpell']+`', '`+formatData[i]['AllSpell']+`', '`+formatData[i]['NameLength']+`', '`+formatData[i]['Hits']+`', '`+formatData[i]['Format']+`', '`+formatData[i]['ServerState']+`', '`+formatData[i]['Image']+`', '`+formatData[i]['SavePath']+`', '`+formatData[i]['DownPath']+`', '`+version+`', '`+formatData[i]['DownUrl1']+`', '`+formatData[i]['DownUrl2']+`', '`+formatData[i]['DownUrl3']+`', '`+formatData[i]['BackDownUrl']+`', '`+formatData[i]['FileMd5']+`', '`+formatData[i]['ShowHidden']+`', '`+formatData[i]['Sort']+`', '`+formatData[i]['AddTime']+`', '`+formatData[i]['UpdateTime']+`', '`+formatData[i]['DownCount']+`');`
+        
+                    //console.log("insert_str = "+insert_str);
+        
+                    
+                }
+        
+                //console.log("values_array = "+values_array);
+        
+                connection.query(sql, [values_array], function(error, results, fields) {
+                    // If there is an issue with the query, output the error
+                    if (error) throw error;
+                    
+                    console.log("Number of records inserted: " + results.affectedRows);
+                    if (results.affectedRows > 0) {
+                        
+                        //response.redirect('/');
+                        response.render('main', { title: 'main' });
+                    }
+                });
+            }
+    });
+
+    
+    
+    
+    
+    
+    
+    
+    //const res_data = JSON.parse(request.body);
+    //console.log("res_data = "+res_data);
+});
+
+module.exports = router;

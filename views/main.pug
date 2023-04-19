@@ -3,10 +3,23 @@ head
   meta(charset='utf-8')
   meta(name='viewport' content='width=device-width,minimum-scale=1')
   title Main
-  script(src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js')
+  link(rel='stylesheet' href='https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css')
+  //script(src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js')
   script(src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/jszip.js')
   script(src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js')
+
+  
+  script(src='https://code.jquery.com/jquery-3.5.1.js')
+  script(src='https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js')
+
+  script(type='text/javascript' src='https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js')
+  //script(src='/javascripts/FileSaver.js')
+  //script(src='/javascripts/jhxlsx.js')
+  script(type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.1/xlsx.full.min.js')
   script.
+    var songObj = null;
+    var songObj_by_version = [];
+    var file_name_version = "";
     var ExcelToJSON = function() {
       this.parseExcel = function(file) {
         var reader = new FileReader();
@@ -19,6 +32,19 @@ head
             // Here is your object
             var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
             var json_object = JSON.stringify(XL_row_object);
+
+            var count = Object.keys(XL_row_object).length;
+
+            var upload_song_obj = [];
+            for (var i=0; i<count; i++) {
+              var new_obj = XL_row_object[i];
+              //console.log("new_obj["+i+"] = "+new_obj['Idx']);
+              //remove column 'Idx'
+              new_obj.VersionName = file_name_version; 
+              //console.log("obj = "+obj['Idx']);
+              upload_song_obj.push(new_obj);
+            }
+
             console.log(JSON.parse(json_object));
             jQuery( '#xlx_json' ).val( json_object );
 
@@ -33,11 +59,12 @@ head
                     //var json = JSON.parse(xhr.responseText);
                     //console.log(json.email + ", " + json.password);
                     console.log("success!");
+                    location.reload();
                 }
             };
             //var data = JSON.stringify({"email": "hey@mail.com", "password": "101010"});
-            xhr.send(json_object);
-
+            //xhr.send(upload_song_obj);
+            xhr.send(JSON.stringify(upload_song_obj));
 
 
 
@@ -51,89 +78,339 @@ head
     };
     function handleFileSelect(evt) {
       var files = evt.target.files; // FileList object
+      //console.log("file_name = "+files[0].name);
+      file_name_version = files[0].name.split('.')[0];
+      console.log("file_name_version = "+file_name_version);
       var xl2json = new ExcelToJSON();
       xl2json.parseExcel(files[0]);
     }
-  //link(rel='stylesheet' href='https://getbootstrap.com/docs/4.4/dist/css/bootstrap.min.css')
-  //link(rel='stylesheet', href='/stylesheets/style.css')
+
+    function ExportToExcel(type, fn, dl) {
+      /*var elt = document.getElementById('tableArray');
+       var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+       return dl ?
+         XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }):
+         XLSX.writeFile(wb, fn || ('MySheetName.' + (type || 'xlsx')));
+      */
+      
+
+      //console.log("songObj = "+songObj[0]['Name']);
+      /*
+      var tabularData = [{
+        "sheetName":"Sheet1",
+        "data": songObj
+      }];
+
+      var options = {
+        fileName:"File Name"
+      };
+      Jhxlsx.export(tabularData, options);
+      */
+
+
+      
+      var new_song_obj = [];
+
+      if (songObj_by_version.length > 0) {
+        var count = songObj_by_version.length;
+        console.log("count = "+count);
+        for (var i=0; i<count; i++) {
+          //var new_obj = songObj_by_version[i];
+          var new_obj = Object.assign({}, songObj_by_version[i]);
+          //console.log("new_obj["+i+"] = "+new_obj['Idx']);
+          //remove column 'Idx'
+          delete new_obj.Idx;
+          delete new_obj.VersionName;
+          //console.log("obj = "+obj['Idx']);
+          new_song_obj.push(new_obj);
+        }
+      } else {
+        var count = Object.keys(songObj).length;
+        console.log("count = "+count);
+        for (var i=0; i<count; i++) {
+          //var new_obj = songObj[i];
+          var new_obj = Object.assign({}, songObj[i]);
+          //console.log("new_obj["+i+"] = "+new_obj['Idx']);
+          //remove column 'Idx'
+          delete new_obj.Idx;
+          delete new_obj.VersionName;
+          //console.log("obj = "+obj['Idx']);
+          new_song_obj.push(new_obj);
+        }
+      }
+
+      var current_select_version = document.getElementById('version_select').value;
+      var filename = current_select_version+".xlsx";
+
+      //filename='reports.xlsx';
+      var ws = XLSX.utils.json_to_sheet(new_song_obj);
+      //ws['!cols'] = [];
+      //ws['!cols'][0] = { hidden: true };
+      //delete (ws['A']);
+      var wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "New_Song");
+      XLSX.writeFile(wb,filename);
+    }
+
+    function editSong(id) {
+      console.log("id = "+id);
+    }
+
+    function onVersionChange(selectObject) {
+      var value = selectObject.value;
+      var value_array = value.split(',');
+      
+      document.getElementById('txt_loading').style.visibility = 'visible';
+      //var filter_data = [];
+      var obj_size = Object.keys(songObj).length;
+      console.log("onVersionChange obj_size = "+obj_size);
+      songObj_by_version = [];
+      for (var i=0; i<obj_size; i++) {
+
+        for (var j=0;j<value_array.length; j++) {
+          if (songObj[i]['VersionName'].includes(value_array[j]))
+          //if (value.includes(songObj[i]['VersionName']))
+          {
+            songObj_by_version.push(songObj[i]);
+            break;
+          }
+        }
+        
+      }
+      console.log("songObj_by_version.length = "+songObj_by_version.length);
+
+      $('#tableArray').dataTable().fnClearTable();
+      $('#tableArray').dataTable().fnAddData(songObj_by_version);
+
+      document.getElementById('txt_loading').style.display = "none";
+
+
+
+      /*
+      var currentLocation = window.location;
+
+      var protocol = window.location.protocol;
+      var hostname = window.location.hostname;
+      var port = window.location.port;
+
+      console.log("protocol = "+protocol);
+      console.log("hostname = "+hostname);
+      console.log("port = "+port);
+      let new_url = currentLocation+"main?VersionName="+value;
+      location.replace(new_url);
+      //let new_url = protocol+hostname+":"+port+"?VersionName="+value;
+      //location.replace(new_url);
+      */
+    }
   
-body
+bodyngObj
 h1(align='center') Songs
 
 //input#input(type='file')
 
+    
 form(align='center' enctype='multipart/form-data')
-  input#upload(type='file' name='files[]')
+  
+  span 匯入Excel  
+   input#upload(type='file' name='files[]')
+   input(type='button' value='匯出excel' onclick='ExportToExcel()')
+  
+  span#span_version_select|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+   select#version_select(onchange='onVersionChange(this)')
+    option(value='A版') A版
+    option(value='B版') B版
 
+  div#txt_loading 讀取中
+   img#img_loading(src='/images/loading-gif.gif' width='20')
 
 script.
   document.getElementById('upload').addEventListener('change', handleFileSelect, false);
-
+hr
 p#goods(align='center')
+  table#tableArray.table.table-striped.table-bordered.dt-responsive.nowrap.display(style='width:100%')
+    
 
 script.
+  //loading show
+  document.getElementById('txt_loading').style.visibility = 'visible';
+  
+
   var currentLocation = window.location;
   //console.log("currentLocation = "+currentLocation);
   var main_url = currentLocation+"main";
   const xmlhttp = new XMLHttpRequest();
   xmlhttp.onload = function() {
-  goodsObj = JSON.parse(this.responseText);
-  console.log("goodsObj = "+goodsObj);
-    let text = "<table border='1'><th colspan='12'> 所有歌曲 </th>"
-    text += "<tr><td></td><td>歌曲編號</td><td>歌曲名稱</td><td>歌手名稱</td><td>SingerId</td><td>SongLanguageId</td><td>SongTypeId</td><td>Track</td><td>FirstSpell</td><td>AllSpell</td><td>NameLength</td><td>編輯</td></tr>"
-    for (let x in goodsObj) {
-      //goods_id
-      text += "<tr><input type='hidden' id='goods_idx_"+x+"' name='goods_idx_"+x+"' value="+goodsObj[x].Id+">";
-      text += "<td><input name='btn_del_"+x+"' id='btn_del_"+x+"' type='button' value='刪除' onclick='onDeleteClick("+x+")'>";
-      text += "</td>";
-      //goods_no
-      text += "<td><span id='goods_no_text_"+x+"'>"+ goodsObj[x].SongNum + "</span>";
-      text += "<input style='display:none;background-color:yellow;' type='text' maxlength='4' size='4' id='goods_no_edit_"+x+"' name='goods_no_edit_"+x+"' value='"+goodsObj[x].SongNum+"'>";
-      text += "</td>";
-      //goods_name
-      text += "<td><span id='goods_name_text_"+x+"'>"+ goodsObj[x].Name +"</span>";
-      text += "<input style='display:none;background-color:yellow;' type='text' id='goods_name_edit_"+x+"' name='goods_name_edit_"+x+"' value='"+goodsObj[x].Name+"'>";
-      text += "</td>";
-      //goods_spec
-      text += "<td><span id='goods_spec_text_"+x+"'>"+ goodsObj[x].SingerName +"</span>";
-      text += "<input style='display:none;background-color:yellow;' type='text' id='goods_spec_edit_"+x+"' name='goods_spec_edit_"+x+"' value='"+goodsObj[x].SingerName+"'>";
-      text += "</td>";
-      //goods_unit
-      text += "<td><span id='goods_unit_text_"+x+"'>"+ goodsObj[x].SingerId +"</span>";
-      text += "<input style='display:none;background-color:yellow;' type='text' id='goods_unit_edit_"+x+"' name='goods_unit_edit_"+x+"' value='"+goodsObj[x].SingerId+"'>";
-      text += "</td>";
-      //goods_supplier_name
-      text += "<td><span id='goods_supplier_name_text_"+x+"'>"+ goodsObj[x].SongLanguageId +"</span>";
-      text += "<input style='display:none;background-color:yellow;' type='text' maxlength='5' size='5' id='goods_supplier_name_edit_"+x+"' name='goods_supplier_name_edit_"+x+"' value='"+goodsObj[x].SongLanguageId+"'>";
-      text += "</td>";
-      //goods_supplier_no
-      text += "<td><span id='goods_supplier_no_text_"+x+"'>"+ goodsObj[x].SongTypeId +"</span>";
-      text += "<input style='display:none;background-color:yellow;' type='text' maxlength='5' size='5' id='goods_supplier_no_edit_"+x+"' name='goods_supplier_no_edit_"+x+"' value='"+goodsObj[x].SongTypeId+"'>";
-      text += "</td>";
-      //goods_create_date
-      text += "<td><span id='goods_create_date_text_"+x+"'>"+ goodsObj[x].Track +"</span>";
-      //text += "<input style='display:none;background-color:yellow;' type='text' id='goods_create_date_edit_"+x+"' name='goods_create_date_edit_"+x+"' value='"+goodsObj[x].goods_create_date+"'>";
-      text += "</td>";
-      //goods_last_update
-      text += "<td><span id='goods_last_update_text_"+x+"'>"+ goodsObj[x].FirstSpell +"</span>";
-      //text += "<input style='display:none;background-color:yellow;' type='text' id='goods_last_update_edit_"+x+"' name='goods_last_update_edit_"+x+"' value='"+goodsObj[x].goods_last_update+"'>";
-      text += "</td>";
-      //goods_total
-      text += "<td><span id='goods_total_text_"+x+"'>"+ goodsObj[x].AllSpell +"</span>";
-      //text += "<input style='display:none;background-color:yellow;' type='text' id='goods_total_edit_"+x+"' name='goods_total_edit_"+x+"' value='"+goodsObj[x].goods_total+"'>";
-      text += "</td>";
-      //goods_photo_url
-      text += "<td><span id='goods_photo_url_text_"+x+"'>"+ goodsObj[x].NameLength +"</span>";
-      //text += "<input style='display:none;background-color:yellow;' type='text' id='goods_photo_url_edit_"+x+"' name='goods_photo_url_edit_"+x+"' value='"+goodsObj[x].goods_photo_url+"'>";
-      text += "</td>";
-      text += "<td><input name='btn_edit_"+x+"' id='btn_edit_"+x+"' type='button' value='編輯' onclick='onEditClick("+x+")'>";
-      text += "<input style='display:none' name='btn_save_"+x+"' id='btn_save_"+x+"' type='button' value='儲存' onclick='onSaveClick("+x+")'>";
-      text += "<input style='display:none' name='btn_cancel_"+x+"' id='btn_cancel_"+x+"' type='button' value='取消' onclick='onCancelClick("+x+")'>";
-      text += "</td>";
-      text += "</tr>";
+
+    if (this.responseText != "No Data!") {
+      
+      songObj = JSON.parse(this.responseText);
+      //console.log("songObj = "+songObj);
+      var count = Object.keys(songObj).length;
+      var select_option_array = [];
+      for (var i=0; i<count; i++) {
+        if (select_option_array.length == 0) {
+          console.log("select_option_array.length = "+select_option_array.length);
+          select_option_array.push(songObj[i]['VersionName']);
+        } else {
+          var found = false;
+          for (j=0;j<select_option_array.length; j++) {
+            if (select_option_array[j] == songObj[i]['VersionName']) {
+              found = true;
+              break;
+            } 
+          }
+
+          if (!found) {
+            select_option_array.push(songObj[i]['VersionName']);
+          }
+        }
+      }
+
+      console.log("select_option_array = "+select_option_array);
+
+      var span_version_select = document.getElementById('span_version_select');
+      var innerHtmlString = "<select id='version_select' onchange='onVersionChange(this)'>";
+      for (var k=0; k<select_option_array.length; k++) {
+        innerHtmlString += "<option value='"+select_option_array[k]+"'>"+select_option_array[k]+"</option>";
+      }
+      innerHtmlString += "</select>";
+      span_version_select.innerHTML = innerHtmlString;
+
+      var dt = $('#tableArray').DataTable({
+        "data": songObj,
+        
+        "columns": [
+          { data: null ,title: "操作功能",  // 這邊是欄位
+            render: function (data, type, row) {
+              return '<button type="button" class="btn btn-warning btn-sm">編輯</button> ' +
+                      '<button type="button" class="btn btn-danger btn-sm">刪除</button>'
+              } 
+          },
+          { data: 'Idx', title: "Idx" },
+          { data: 'Id', title: "Id" },
+          { data: 'SongNum', title: "SongNum" },
+          { data: 'Name', title: "Name" },
+          { data: 'SingerName', title: "SingerName" },
+          { data: 'SingerId', title: "SingerId" },
+          { data: 'SongLanguageId', title: "SongLanguageId" },
+          { data: 'SongTypeId', title: "SongTypeId" },
+          { data: 'Track', title: "Track" },
+          { data: 'FirstSpell', title: "FirstSpell" },
+          { data: 'AllSpell', title: "AllSpell" },
+          { data: 'NameLength', title: "NameLength" },
+          { data: 'Hits', title: "Hits" },
+          { data: 'Format', title: "Format" },
+          { data: 'ServerState', title: "ServerState" },
+          { data: 'Image', title: "Image" },
+          { data: 'SavePath', title: "SavePath" },
+          { data: 'DownPath', title: "DownPath" },
+          { data: 'Version', title: "Version" },
+          { data: 'DownUrl1', title: "DownUrl1" },
+          { data: 'DownUrl2', title: "DownUrl2" },
+          { data: 'DownUrl3', title: "DownUrl3" },
+          { data: 'BackDownUrl', title: "BackDownUrl" },
+          { data: 'FileMd5', title: "FileMd5" },
+          { data: 'ShowHidden', title: "ShowHidden" },
+          { data: 'Sort', title: "Sort" },
+          { data: 'AddTime', title: "AddTime" },
+          { data: 'UpdateTime', title: "UpdateTime" },
+          { data: 'DownCount', title: "DownCount" },
+          { data: 'VersionName', title: "VersionName" },
+        ],
+        language: {
+          "lengthMenu": "顯示 _MENU_ 筆資料",
+          "sProcessing": "處理中...",
+          "sZeroRecords": "没有匹配结果",
+          "sInfo": "目前有 _MAX_ 筆資料",
+          "sInfoEmpty": "目前共有 0 筆紀錄",
+          "sInfoFiltered": " ",
+          "sInfoPostFix": "",
+          "sSearch": "搜尋:",
+          "sUrl": "",
+          "sEmptyTable": "尚未有資料紀錄存在",
+          "sLoadingRecords": "載入資料中...",
+          "sInfoThousands": ",",
+          "oPaginate": {
+              "sFirst": "首頁",
+              "sPrevious": "上一頁",
+              "sNext": "下一頁",
+              "sLast": "末頁"
+          },
+          "order": [[0, "desc"]],
+          "oAria": {
+              "sSortAscending": ": 以升序排列此列",
+              "sSortDescending": ": 以降序排列此列"
+          }
+        },
+        "lengthMenu": [ [10, 25, 50, 100], [10, 25, 50, 100] ],
+        //"bDestroy": true,
+        /*
+        language: {
+          url: "https://cdn.datatables.net/plug-ins/1.11.3/i18n/zh_Hant.json" 
+        },
+        */
+      })
+
+      //loading hide
+      document.getElementById('txt_loading').style.display = "none";
+
+      $('#tableArray tbody').on( 'click', 'button', function () {
+        var tr = $(this).closest('tr');
+        var value = $(tr).find('td').eq(2)[0].innerHTML;
+        //alert(value);
+
+        var currentLocation = window.location;
+        var url = currentLocation+"editsong";
+        var xhr = new XMLHttpRequest();
+
+        var json_object = `{ "SongNum": "`+value+`" }`;
+
+        //console.log("json_object = "+json_object['SongNum']);
+        /*
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Accept", "application/json");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+          var json = JSON.parse(xhr.responseText);
+              console.log("json = "+json);
+              console.log("success!");
+          if (xhr.readyState === 4 && xhr.status === 200) {
+              
+              //location.reload();
+              //let new_url = url+"?SongNum="+value;
+              //location.replace(new_url);
+            }
+          };
+        xhr.send(json_object);
+        */
+        //return false;
+        
+        let new_url = url+"?SongNum="+value;
+        location.replace(new_url);
+        /*
+        xhr.onload = function() {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+              //var json = JSON.parse(xhr.responseText);
+              //console.log("json = "+json);
+              console.log("success!");
+              //location.reload();
+              //let new_url = url+"?SongNum="+value;
+              //location.replace(new_url);
+          }
+          
+        }
+        xhr.open("GET", main_url, true);
+        xhr.send();
+        */
+
+      });
+
+      //hide Idx column
+      dt.column(1).visible(false);
     }
-    text += "</table>"
-    document.getElementById("goods").innerHTML = text;
   }
   xmlhttp.open("GET", main_url, true);
   xmlhttp.send();
+
+
+  

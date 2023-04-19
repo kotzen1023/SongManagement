@@ -12,19 +12,20 @@ const connection = mysql.createConnection({
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-
+    
     let login_name = req.cookies.login_name;
     let session = req.cookies.session;
     console.log('login_name = '+login_name+', session = '+session);
 
+    //connection.query('SELECT Id, SongNum, Name, SingerName, SingerId, SongLanguageId, SongTypeId, Track, FirstSpell, AllSpell, NameLength, Hits, Format, ServerState, Image, SavePath, DownPath, Version, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, Sort, AddTime, UpdateTime, DownCount FROM tb_song', function(error, results, fields) {
     connection.query('SELECT * FROM tb_song', function(error, results, fields) {
-        // If there is an issue with the query, output the error
+    // If there is an issue with the query, output the error
         if (error) throw error;
         
         if (results.length > 0) {
-            console.log('results = '+results+", size = "+results.length);
+            //console.log('results = '+results+", size = "+results.length);
 
-            console.log('result json= '+JSON.stringify(results));
+            //console.log('result json= '+JSON.stringify(results));
             /*
             res.render('details', {
                 title: 'Details - Pug ExpressJS NodeJS Tutorial',
@@ -39,65 +40,12 @@ router.get('/', function(req, res, next) {
         }			
         res.end();
     });
+	
 
     //res.send('respond with a resource');
 
 
 
-});
-
-router.post('/', function(request, response, next) {
-    console.log("upload xlsx");
-	// Capture the input fields
-	/*let username = request.body.username;
-	let password = request.body.password;
-	// Ensure the input fields exists and are not empty
-	let password_hash = createHash("sha3-512").update(password).digest("hex")
-	console.log("password_hash = "+password_hash);
-	if (username && password) {
-		// Execute SQL query that'll select the account from the database based on the specified username and password
-		connection.query('SELECT * FROM tb_user WHERE account = ? AND password = ?', [username, password_hash], function(error, results, fields) {
-			// If there is an issue with the query, output the error
-			if (error) throw error;
-			// If the account exists
-			if (results.length > 0) {
-				// Authenticate the user
-				request.session.loggedin = true;
-				request.session.username = username;
-
-				let session = get_random_string(64)
-
-				//update user login time and session.
-				var query = 'UPDATE tb_user SET last_login = ?, session = ? WHERE account=?';
-
-				let date_string = get_date_string();
-
-				connection.query(query,[date_string,session,username], function (err, result, rows, fields) {
-					if(err) {
-    					console.log(err.message);
-						//console.log('1');
-    					// do some stuff here
-  					} else {
-    					console.log(rows);
-  					}
-				});
-				
-				response.cookie('login_name', username, { path: '/', maxAge:3600000});
-				response.cookie('session', session, { path: '/', maxAge:3600000});
-				
-				// Redirect to home page
-				response.redirect('/');
-				//response.render('main', { title: 'main' });
-			} else {
-				response.send('Incorrect Username and/or Password!');
-			}			
-			response.end();
-		});
-	} else {
-		response.send('Please enter Username and Password!');
-		response.end();
-	}
-    */
 });
 
 module.exports = router;
