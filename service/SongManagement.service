@@ -1,0 +1,14 @@
+[Unit]
+Description=Song Edit
+After=multi-user.target
+Conflicts=getty@tty1.service
+
+[Service]
+Enviroment=NODE_PORT=3000
+Type=simple
+WorkingDirectory=/home/ubuntu/SongManagement
+ExecStart=npm start
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
