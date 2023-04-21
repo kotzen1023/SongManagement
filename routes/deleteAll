@@ -1,0 +1,47 @@
+const mysql = require('mysql2');
+var express = require('express');
+var router = express.Router();
+
+const connection = mysql.createConnection({
+	host     : 'localhost',
+	user     : 'song',
+	password : 'password',
+	database : 'song'
+});
+
+/* GET users listing. */
+router.get('/', function(req, res, next) {
+    res.send('respond with a resource');
+});
+
+router.post('/', function(request, response, next) {
+    console.log("delete all");
+	//console.log(request.body);
+    
+    var sql_str = "DELETE FROM tb_song WHERE 1;";
+
+    console.log("sql_str = "+sql_str);
+
+    connection.query(sql_str, function(error, results, fields) {
+        // If there is an issue with the query, output the error
+        if (error) throw error;
+        
+        //let data = JSON.stringify(results);
+        
+        console.log("results.affectedRows  = "+results.affectedRows );
+        if (results.affectedRows  > 0) {
+            response.redirect('/');
+        } else {
+            response.send('Update song failed!');
+        }
+        //response.send(JSON.stringify(results));
+        //response.redirect('/editsong');
+        //response.render('editsong', { Name: results[0].Name });
+        //console.log("Number of records inserted: " + JSON.stringify(results));
+        response.end();
+    });
+    
+
+});
+
+module.exports = router;

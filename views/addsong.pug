@@ -1,0 +1,243 @@
+doctype html
+head
+  meta(charset='utf-8')
+  meta(name='viewport' content='width=device-width,minimum-scale=1')
+  script(src='https://code.jquery.com/jquery-3.5.1.js')
+  title 新增歌曲
+  script.
+    var data = `#{data}`;
+    var dataAlternated = data.replaceAll("&quot;", "\"");
+    
+    var dataJsonArray = JSON.parse(dataAlternated);
+    console.log("dataJsonArray.length = "+dataJsonArray.length);
+
+    function back() {
+        var hostLocation = window.location.origin;
+        console.log("hostLocation = "+hostLocation);
+        window.location.replace(hostLocation);
+    }
+
+    function addCheck() {
+        var inputId = document.getElementById('inputId').value;
+        var inputSongNum = document.getElementById('inputSongNum').value;
+        var inputSingerId = document.getElementById('inputSingerId');
+        var inputSongLanguageId = document.getElementById('inputSongLanguageId');
+        var inputSongTypeId = document.getElementById('inputSongTypeId');
+        var inputNameLength = document.getElementById('inputNameLength');
+        var inputHits = document.getElementById('inputHits');
+        var inputServerState = document.getElementById('inputServerState');
+        var inputShowHidden = document.getElementById('inputShowHidden');
+        var inputSort = document.getElementById('inputSort');
+        var inputDownCount = document.getElementById('inputDownCount');
+
+        console.log("inputSingerId = "+inputSingerId);
+
+        for (var i=0; i<dataJsonArray.length; i++) {
+            if (parseInt(dataJsonArray[i]['Id'], 10) == parseInt(inputId, 10)) {
+                window.alert("已有相同Id");
+                return false;
+            }
+
+            if (parseInt(dataJsonArray[i]['SongNum'], 10) == parseInt(inputSongNum, 10)) {
+                window.alert("已有相同SongNum");
+                return false;
+            }
+        }
+
+        if (inputSingerId.value == '') {
+            inputSingerId.value = 0;
+        }
+
+        if (inputSongLanguageId.value == '') {
+            inputSongLanguageId.value = 2;
+        }
+
+        if (inputSongTypeId.value == '') {
+            inputSongTypeId.value = 13;
+        }
+
+        if (inputNameLength.value == '') {
+            inputNameLength.value = 0;
+        }
+
+        if (inputHits.value == '') {
+            inputHits.value = 0;
+        }
+
+        if (inputServerState.value == '') {
+            inputServerState.value = 1;
+        }
+
+        if (inputServerState.value == '') {
+            inputServerState.value = 1;
+        }
+
+        if (inputShowHidden.value == '') {
+            inputShowHidden.value = 1;
+        }
+
+        if (inputSort.value == '') {
+            inputSort.value = 1;
+        }
+
+        if (inputDownCount.value == '') {
+            inputDownCount.value = 0;
+        }
+
+        console.log("inputNameLength = "+inputNameLength.value);
+
+        //return false;
+
+    }    
+
+bodyngObj
+h1(align='center') 新增歌曲
+
+//p(align='center') #{data}
+
+hr
+form(action='/addsong/add' method='post' onsubmit="return addCheck(this)")
+
+    table(align='center')
+        tr
+            td Id
+            td 
+                input(id='inputId' name='inputId' type='text')
+        tr
+            td SongNum
+            td
+                input(id='inputSongNum' name='inputSongNum' type='text')
+        tr
+            td Name
+            td
+                textarea(id='inputName' name='inputName' cols='64' rows='4')
+        tr
+            td SingerName
+            td
+                input(id='inputSingerName' name='inputSingerName' type='text' size='64')
+        tr
+            td SingerId
+            td
+                input(id='inputSingerId' name='inputSingerId' type='text')
+        tr
+            td SongLanguageId
+            td
+                input(id='inputSongLanguageId' name='inputSongLanguageId' type='text')
+        tr
+            td SongTypeId
+            td
+                input(id='inputSongTypeId' name='inputSongTypeId' type='text')
+        tr
+            td Track
+            td
+                input(id='inputTrack' name='inputTrack' type='text')
+        tr
+            td FirstSpell
+            td
+                //input(type='text' value=`${FirstSpell}`)
+                textarea(id='inputFirstSpell' name='inputFirstSpell' cols='64' rows='4')
+        tr
+            td AllSpell
+            td
+                //input(type='text' value=`${AllSpell}`)
+                textarea(id='inputAllSpell' name='inputAllSpell' cols='64' rows='4')
+        tr
+            td NameLength
+            td
+                input(id='inputNameLength' name='inputNameLength' type='text')
+        tr
+            td Hits
+            td
+                input(id='inputHits' name='inputHits' type='text')
+        tr
+            td Format
+            td
+                input(id='inputFormat' name='inputFormat' type='text')
+        tr
+            td ServerState
+            td
+                input(id='inputServerState' name='inputServerState' type='text')
+        tr
+            td Image	
+            td
+                input(id='inputImage' name='inputImage' type='text')
+        tr
+            td SavePath	
+            td
+                input(id='inputSavePath' name='inputSavePath' type='text')
+        tr
+            td DownPath	
+            td
+                input(id='inputDownPath' name='inputDownPath' type='text')
+        tr
+            td Version	
+            td
+                input(id='inputVersion' name='inputVersion' type='text')
+        tr
+            td DownUrl1	
+            td
+                //input(type='text' value=`${DownUrl1}`)
+                textarea(id='inputDownUrl1' name='inputDownUrl1' cols='64' rows='4')
+        tr
+            td DownUrl2		
+            td
+                //input(type='text' value=`${DownUrl2}`)
+                textarea(id='inputDownUrl2' name='inputDownUrl2' cols='64' rows='4')
+        tr
+            td DownUrl3		
+            td
+                //input(type='text' value=`${DownUrl3}`)
+                textarea(id='inputDownUrl3' name='inputDownUrl3' cols='64'  rows='4')
+        tr
+            td BackDownUrl		
+            td
+                //input(type='text' value=`${BackDownUrl}`)
+                textarea(id='inputBackDownUrl' name='inputBackDownUrl' cols='64' rows='4')
+        tr
+            td FileMd5		
+            td
+                input(id='inputFileMd5' name='inputFileMd5' type='text')
+        tr
+            td ShowHidden		
+            td
+                input(id='inputShowHidden' name='inputShowHidden' type='text')
+        tr
+            td Sort		
+            td
+                input(id='inputSort' name='inputSort' type='text')
+        tr
+            td AddTime		
+            td
+                input(id='inputAddTime' name='inputAddTime' type='text')
+        tr
+            td UpdateTime		
+            td
+                input(id='inputUpdateTime' name='inputUpdateTime' type='text')
+        tr
+            td DownCount		
+            td
+                input(id='inputDownCount' name='inputDownCount' type='text')
+        tr
+            td VersionName		
+            td
+                textarea(id='inputVersionName' name='inputVersionName' cols='64' rows='4')
+
+    span
+        div(align='center')
+            input(type='button' value='取消' onclick='back()')
+            |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            input(type='submit' value='確定')
+script.
+
+    //var data = `${data}`;
+    //console.log(dataAlternated);
+
+    $('#inputName').bind('input propertychange', function () {
+        var songNameTextAreaText = document.getElementById('inputName').value;
+        var songNameLengthInput = document.getElementById('inputNameLength');
+
+        songNameLengthInput.value = songNameTextAreaText.length
+
+        //console.log("songNameTextAreaText length ="+songNameTextAreaText.length);
+
+    });

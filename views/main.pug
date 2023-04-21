@@ -45,7 +45,7 @@ head
               upload_song_obj.push(new_obj);
             }
 
-            console.log(JSON.parse(json_object));
+            //console.log(JSON.parse(json_object));
             jQuery( '#xlx_json' ).val( json_object );
 
             var currentLocation = window.location;
@@ -144,12 +144,14 @@ head
 
       //filename='reports.xlsx';
       var ws = XLSX.utils.json_to_sheet(new_song_obj);
+      new_song_obj = [];
       //ws['!cols'] = [];
       //ws['!cols'][0] = { hidden: true };
       //delete (ws['A']);
       var wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "New_Song");
-      XLSX.writeFile(wb,filename);
+      XLSX.utils.book_append_sheet(wb, ws, "Song_Song");
+      XLSX.writeFile(wb,filename,{compression:true});
+      ws = null;
     }
 
     function editSong(id) {
@@ -183,42 +185,65 @@ head
       $('#tableArray').dataTable().fnAddData(songObj_by_version);
 
       document.getElementById('txt_loading').style.display = "none";
+    }
 
+    function deleteAll() {
 
+      if (confirm('確定刪除所有歌曲?(可以再以excel檔案重新匯入)')) {
+        // Save it!
+        var currentLocation = window.location;
+      
+        var url = currentLocation+"deleteAll";
+        console.log("url = "+url);
+        var xhr = new XMLHttpRequest();
+        var post_str = "delete=true"
+        xhr.open("POST", url, true);
+        //xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                //var json = JSON.parse(xhr.responseText);
+                //console.log(json.email + ", " + json.password);
+                console.log("success!");
+                location.reload();
+            }
+        };
+        //var data = JSON.stringify({"email": "hey@mail.com", "password": "101010"});
+        //xhr.send(upload_song_obj);
+        xhr.send(post_str);
+      } else {
+        // Do nothing!
+        
+      } 
+    }
 
-      /*
+    function addNew() {
       var currentLocation = window.location;
-
-      var protocol = window.location.protocol;
-      var hostname = window.location.hostname;
-      var port = window.location.port;
-
-      console.log("protocol = "+protocol);
-      console.log("hostname = "+hostname);
-      console.log("port = "+port);
-      let new_url = currentLocation+"main?VersionName="+value;
-      location.replace(new_url);
-      //let new_url = protocol+hostname+":"+port+"?VersionName="+value;
-      //location.replace(new_url);
-      */
+      var url = currentLocation+"addsong";
+      
+      location.replace(url);
     }
   
 bodyngObj
-h1(align='center') Songs
+h1(align='center') 全部歌曲
 
+//input(type='button' value='刪除全部歌曲' onclick='deleteAll()')
 //input#input(type='file')
 
     
 form(align='center' enctype='multipart/form-data')
   
-  span 匯入Excel  
+  span(style='padding:0px 20px 0px 0px;')
+   input(type='button' value='新增歌曲' onclick='addNew()')
+
+  span(style='padding:0px 20px 0px 0px;')
+   input(type='button' value='刪除全部歌曲' onclick='deleteAll()')
+
+  span(style='padding:0px 20px 0px 0px;') 匯入Excel  
    input#upload(type='file' name='files[]')
    input(type='button' value='匯出excel' onclick='ExportToExcel()')
   
-  span#span_version_select|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-   select#version_select(onchange='onVersionChange(this)')
-    option(value='A版') A版
-    option(value='B版') B版
+  span#span_version_select(style='padding:0px 20px 0px 0px;')
+   select#version_select
 
   div#txt_loading 讀取中
    img#img_loading(src='/images/loading-gif.gif' width='20')
@@ -238,9 +263,114 @@ script.
   var currentLocation = window.location;
   //console.log("currentLocation = "+currentLocation);
   var main_url = currentLocation+"main";
+  console.log("main_url = "+main_url);
+  /*
+  $(document).ready(function() {
+    //http://www.datatables.net
+    $('#tableArray').dataTable({
+        //"sPaginationType": "full_numbers",
+        "bPaginate": true,
+        "bProcessing": true,
+        "bServerSide": true,
+        "sAjaxSource": main_url,
+        "sAjaxDataProp": "",
+        "fnServerData": function(url, data, callback) {
+            
+            $.ajax({
+                "url": url,
+                "data": data,
+                "success": callback,
+                "contentType": "application/x-www-form-urlencoded; charset=utf-8",
+                "dataType": "json",
+                "type": "GET",
+                "cache": false,
+                "error": function() {
+                    alert("DataTables warning: JSON data from server failed to load or be parsed. " +
+                    "This is most likely to be caused by a JSON formatting error.");
+                }
+            });
+        },
+        language: {
+          "lengthMenu": "顯示 _MENU_ 筆資料",
+          "sProcessing": "處理中...",
+          "sZeroRecords": "没有匹配结果",
+          "sInfo": "目前有 _MAX_ 筆資料",
+          "sInfoEmpty": "目前共有 0 筆紀錄",
+          "sInfoFiltered": " ",
+          "sInfoPostFix": "",
+          "sSearch": "搜尋:",
+          "sUrl": "",
+          "sEmptyTable": "尚未有資料紀錄存在",
+          "sLoadingRecords": "載入資料中...",
+          "sInfoThousands": ",",
+          "oPaginate": {
+              "sFirst": "首頁",
+              "sPrevious": "上一頁",
+              "sNext": "下一頁",
+              "sLast": "末頁"
+          },
+          "order": [[0, "desc"]],
+          "oAria": {
+              "sSortAscending": ": 以升序排列此列",
+              "sSortDescending": ": 以降序排列此列"
+          }
+        },
+        "lengthMenu": [ [10, 25, 50, 100], [10, 25, 50, 100] ],
+        "aoColumns": [
+            { data: null ,title: "操作功能",  // 這邊是欄位
+              render: function (data, type, row) {
+                return '<button type="button" class="btn btn-warning btn-sm">編輯</button> ' +
+                        '<button type="button" class="btn btn-danger btn-sm">刪除</button>'
+                } 
+            },
+            //{ "mDataProp": "Idx", title: "Idx" },
+            //{ "mDataProp": 'Id', title: "Id" },
+            { data: 'SongNum', title: "SongNum" },
+            { data: 'Name', title: "Name" },
+            { data: 'SingerName', title: "SingerName" },
+            
+        ],
+        
+    });
+
+    //on edit button click
+    $('#tableArray tbody').on( 'click', 'button.btn-warning', function () {
+      var tr = $(this).closest('tr');
+      var value = $(tr).find('td').eq(1)[0].innerHTML;
+      //alert(value);
+
+      var currentLocation = window.location;
+      var url = currentLocation+"editsong";
+      var xhr = new XMLHttpRequest();
+
+      var json_object = `{ "SongNum": "`+value+`" }`;
+      
+      let new_url = url+"?SongNum="+value;
+      location.replace(new_url);
+
+    });
+    //on delete button click
+    $('#tableArray tbody').on( 'click', 'button.btn-danger', function () {
+      var tr = $(this).closest('tr');
+      var value = $(tr).find('td').eq(1)[0].innerHTML;
+      //alert(value);
+
+      var currentLocation = window.location;
+      var url = currentLocation+"deletesong";
+      var xhr = new XMLHttpRequest();
+
+      var json_object = `{ "SongNum": "`+value+`" }`;
+      
+      let new_url = url+"?SongNum="+value;
+      location.replace(new_url);
+    });
+  });                    
+  */
+
+  
   const xmlhttp = new XMLHttpRequest();
   xmlhttp.onload = function() {
-
+    //console.log("this.responseText = "+this.responseText);
     if (this.responseText != "No Data!") {
       
       songObj = JSON.parse(this.responseText);
@@ -276,141 +406,125 @@ script.
       innerHtmlString += "</select>";
       span_version_select.innerHTML = innerHtmlString;
 
-      var dt = $('#tableArray').DataTable({
-        "data": songObj,
-        
-        "columns": [
-          { data: null ,title: "操作功能",  // 這邊是欄位
-            render: function (data, type, row) {
-              return '<button type="button" class="btn btn-warning btn-sm">編輯</button> ' +
-                      '<button type="button" class="btn btn-danger btn-sm">刪除</button>'
-              } 
-          },
-          { data: 'Idx', title: "Idx" },
-          { data: 'Id', title: "Id" },
-          { data: 'SongNum', title: "SongNum" },
-          { data: 'Name', title: "Name" },
-          { data: 'SingerName', title: "SingerName" },
-          { data: 'SingerId', title: "SingerId" },
-          { data: 'SongLanguageId', title: "SongLanguageId" },
-          { data: 'SongTypeId', title: "SongTypeId" },
-          { data: 'Track', title: "Track" },
-          { data: 'FirstSpell', title: "FirstSpell" },
-          { data: 'AllSpell', title: "AllSpell" },
-          { data: 'NameLength', title: "NameLength" },
-          { data: 'Hits', title: "Hits" },
-          { data: 'Format', title: "Format" },
-          { data: 'ServerState', title: "ServerState" },
-          { data: 'Image', title: "Image" },
-          { data: 'SavePath', title: "SavePath" },
-          { data: 'DownPath', title: "DownPath" },
-          { data: 'Version', title: "Version" },
-          { data: 'DownUrl1', title: "DownUrl1" },
-          { data: 'DownUrl2', title: "DownUrl2" },
-          { data: 'DownUrl3', title: "DownUrl3" },
-          { data: 'BackDownUrl', title: "BackDownUrl" },
-          { data: 'FileMd5', title: "FileMd5" },
-          { data: 'ShowHidden', title: "ShowHidden" },
-          { data: 'Sort', title: "Sort" },
-          { data: 'AddTime', title: "AddTime" },
-          { data: 'UpdateTime', title: "UpdateTime" },
-          { data: 'DownCount', title: "DownCount" },
-          { data: 'VersionName', title: "VersionName" },
-        ],
-        language: {
-          "lengthMenu": "顯示 _MENU_ 筆資料",
-          "sProcessing": "處理中...",
-          "sZeroRecords": "没有匹配结果",
-          "sInfo": "目前有 _MAX_ 筆資料",
-          "sInfoEmpty": "目前共有 0 筆紀錄",
-          "sInfoFiltered": " ",
-          "sInfoPostFix": "",
-          "sSearch": "搜尋:",
-          "sUrl": "",
-          "sEmptyTable": "尚未有資料紀錄存在",
-          "sLoadingRecords": "載入資料中...",
-          "sInfoThousands": ",",
-          "oPaginate": {
-              "sFirst": "首頁",
-              "sPrevious": "上一頁",
-              "sNext": "下一頁",
-              "sLast": "末頁"
-          },
-          "order": [[0, "desc"]],
-          "oAria": {
-              "sSortAscending": ": 以升序排列此列",
-              "sSortDescending": ": 以降序排列此列"
-          }
-        },
-        "lengthMenu": [ [10, 25, 50, 100], [10, 25, 50, 100] ],
-        //"bDestroy": true,
-        /*
-        language: {
-          url: "https://cdn.datatables.net/plug-ins/1.11.3/i18n/zh_Hant.json" 
-        },
-        */
-      })
-
-      //loading hide
-      document.getElementById('txt_loading').style.display = "none";
-
-      $('#tableArray tbody').on( 'click', 'button', function () {
-        var tr = $(this).closest('tr');
-        var value = $(tr).find('td').eq(2)[0].innerHTML;
-        //alert(value);
-
-        var currentLocation = window.location;
-        var url = currentLocation+"editsong";
-        var xhr = new XMLHttpRequest();
-
-        var json_object = `{ "SongNum": "`+value+`" }`;
-
-        //console.log("json_object = "+json_object['SongNum']);
-        /*
-        xhr.open("POST", url, true);
-        xhr.setRequestHeader("Accept", "application/json");
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.onreadystatechange = function () {
-          var json = JSON.parse(xhr.responseText);
-              console.log("json = "+json);
-              console.log("success!");
-          if (xhr.readyState === 4 && xhr.status === 200) {
-              
-              //location.reload();
-              //let new_url = url+"?SongNum="+value;
-              //location.replace(new_url);
-            }
-          };
-        xhr.send(json_object);
-        */
-        //return false;
-        
-        let new_url = url+"?SongNum="+value;
-        location.replace(new_url);
-        /*
-        xhr.onload = function() {
-          if (xhr.readyState === 4 && xhr.status === 200) {
-              //var json = JSON.parse(xhr.responseText);
-              //console.log("json = "+json);
-              console.log("success!");
-              //location.reload();
-              //let new_url = url+"?SongNum="+value;
-              //location.replace(new_url);
-          }
+      $(document).ready(function() {
+        var dt = $('#tableArray').DataTable({
+          "data": songObj,
           
-        }
-        xhr.open("GET", main_url, true);
-        xhr.send();
-        */
+          "columns": [
+            { data: null ,title: "操作功能",  // 這邊是欄位
+              render: function (data, type, row) {
+                return '<button type="button" class="btn btn-warning btn-sm">編輯</button> ' +
+                        '<button type="button" class="btn btn-danger btn-sm">刪除</button>'
+                } 
+            },
+            { data: 'Idx', title: "Idx" },
+            { data: 'Id', title: "Id" },
+            { data: 'SongNum', title: "SongNum" },
+            { data: 'Name', title: "Name" },
+            { data: 'SingerName', title: "SingerName" },
+            { data: 'SingerId', title: "SingerId" },
+            { data: 'SongLanguageId', title: "SongLanguageId" },
+            { data: 'SongTypeId', title: "SongTypeId" },
+            { data: 'Track', title: "Track" },
+            { data: 'FirstSpell', title: "FirstSpell" },
+            { data: 'AllSpell', title: "AllSpell" },
+            { data: 'NameLength', title: "NameLength" },
+            { data: 'Hits', title: "Hits" },
+            { data: 'Format', title: "Format" },
+            { data: 'ServerState', title: "ServerState" },
+            { data: 'Image', title: "Image" },
+            { data: 'SavePath', title: "SavePath" },
+            { data: 'DownPath', title: "DownPath" },
+            { data: 'Version', title: "Version" },
+            { data: 'DownUrl1', title: "DownUrl1" },
+            { data: 'DownUrl2', title: "DownUrl2" },
+            { data: 'DownUrl3', title: "DownUrl3" },
+            { data: 'BackDownUrl', title: "BackDownUrl" },
+            { data: 'FileMd5', title: "FileMd5" },
+            { data: 'ShowHidden', title: "ShowHidden" },
+            { data: 'Sort', title: "Sort" },
+            { data: 'AddTime', title: "AddTime" },
+            { data: 'UpdateTime', title: "UpdateTime" },
+            { data: 'DownCount', title: "DownCount" },
+            { data: 'VersionName', title: "VersionName" },
+          ],
+          language: {
+            "lengthMenu": "顯示 _MENU_ 筆資料",
+            "sProcessing": "處理中...",
+            "sZeroRecords": "没有匹配结果",
+            "sInfo": "目前有 _MAX_ 筆資料",
+            "sInfoEmpty": "目前共有 0 筆紀錄",
+            "sInfoFiltered": " ",
+            "sInfoPostFix": "",
+            "sSearch": "搜尋:",
+            "sUrl": "",
+            "sEmptyTable": "尚未有資料紀錄存在",
+            "sLoadingRecords": "載入資料中...",
+            "sInfoThousands": ",",
+            "oPaginate": {
+                "sFirst": "首頁",
+                "sPrevious": "上一頁",
+                "sNext": "下一頁",
+                "sLast": "末頁"
+            },
+            "order": [[0, "desc"]],
+            "oAria": {
+                "sSortAscending": ": 以升序排列此列",
+                "sSortDescending": ": 以降序排列此列"
+            }
+          },
+          "lengthMenu": [ [10, 25, 50, 100], [10, 25, 50, 100] ],
+        })
 
+        //loading hide
+        document.getElementById('txt_loading').style.display = "none";
+
+        //on edit button click
+        $('#tableArray tbody').on( 'click', 'button.btn-warning', function () {
+          var tr = $(this).closest('tr');
+          var value = $(tr).find('td').eq(2)[0].innerHTML;
+          //alert(value);
+
+          var currentLocation = window.location;
+          var url = currentLocation+"editsong";
+          var xhr = new XMLHttpRequest();
+
+          var json_object = `{ "SongNum": "`+value+`" }`;
+          
+          let new_url = url+"?SongNum="+value;
+          location.replace(new_url);
+
+        });
+        //on delete button click
+        $('#tableArray tbody').on( 'click', 'button.btn-danger', function () {
+          var tr = $(this).closest('tr');
+          var value = $(tr).find('td').eq(2)[0].innerHTML;
+          //alert(value);
+
+          var currentLocation = window.location;
+          var url = currentLocation+"deletesong";
+          var xhr = new XMLHttpRequest();
+
+          var json_object = `{ "SongNum": "`+value+`" }`;
+          
+          let new_url = url+"?SongNum="+value;
+          location.replace(new_url);
+        });
+
+        //hide Idx column
+        dt.column(1).visible(false);
       });
 
-      //hide Idx column
-      dt.column(1).visible(false);
+      
+    } else {
+      document.getElementById('txt_loading').style.display = "none";
+      var noData = document.getElementById('goods');
+      noData.innerHTML = "沒有任何資料";
     }
   }
   xmlhttp.open("GET", main_url, true);
   xmlhttp.send();
+  
 
 
   

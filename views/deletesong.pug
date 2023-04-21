@@ -1,0 +1,149 @@
+doctype html
+head
+  meta(charset='utf-8')
+  meta(name='viewport' content='width=device-width,minimum-scale=1')
+  title 刪除歌曲
+  script.
+    function back() {
+        var hostLocation = window.location.origin;
+        console.log("hostLocation = "+hostLocation);
+        window.location.replace(hostLocation);
+    }  
+
+bodyngObj
+h1(align='center') 刪除歌曲
+
+hr
+form(action='/deletesong/delete' method='post')
+
+    table(align='center')
+        tr
+            td Id
+            td 
+                span #{Id}
+                //input(id='inputId' name='inputId' type='hidden' value=`${Id}`)
+        tr
+            td SongNum
+            td #{SongNum}
+                input(id='inputSongNum' name='inputSongNum' type='hidden' value=`${SongNum}`)
+        tr
+            td Name
+            td #{Name}
+                //textarea(id='inputName' name='inputName' cols='64' rows='4') #{Name}
+        tr
+            td SingerName
+            td #{SingerName}
+                //input(id='inputSingerName' name='inputSingerName' type='text' size='64' value=`${SingerName}`)
+        tr
+            td SingerId
+            td #{SingerId}
+                //input(id='inputSingerId' name='inputSingerId' type='text' value=`${SingerId}`)
+        tr
+            td SongLanguageId
+            td #{SongLanguageId}
+                //input(id='inputSongLanguageId' name='inputSongLanguageId' type='text' value=`${SongLanguageId}`)
+        tr
+            td SongTypeId
+            td #{SongTypeId}
+                //input(id='inputSongTypeId' name='inputSongTypeId' type='text' value=`${SongTypeId}`)
+        tr
+            td Track
+            td #{Track}
+                //input(id='inputTrack' name='inputTrack' type='text' value=`${Track}`)
+        tr
+            td FirstSpell
+            td #{FirstSpell}
+                //input(type='text' value=`${FirstSpell}`)
+                //textarea(id='inputFirstSpell' name='inputFirstSpell' cols='64' rows='4') #{FirstSpell}
+        tr
+            td AllSpell
+            td #{AllSpell}
+                //input(type='text' value=`${AllSpell}`)
+                //textarea(id='inputAllSpell' name='inputAllSpell' cols='64' rows='4') #{AllSpell}
+        tr
+            td NameLength
+            td #{NameLength}
+                //input(id='inputNameLength' name='inputNameLength' type='text' value=`${NameLength}`)
+        tr
+            td Hits
+            td #{Hits}
+                //input(id='inputHits' name='inputHits' type='text' value=`${Hits}`)
+        tr
+            td Format
+            td #{Format}
+                //input(id='inputFormat' name='inputFormat' type='text' value=`${Format}`)
+        tr
+            td ServerState
+            td #{ServerState}
+                //input(id='inputServerState' name='inputServerState' type='text' value=`${ServerState}`)
+        tr
+            td Image	
+            td #{Image}
+                //input(id='inputImage' name='inputImage' type='text' value=`${Image}`)
+        tr
+            td SavePath	
+            td #{SavePath}
+                //input(id='inputSavePath' name='inputSavePath' type='text' value=`${SavePath}`)
+        tr
+            td DownPath	
+            td #{DownPath}
+                //input(id='inputDownPath' name='inputDownPath' type='text' value=`${DownPath}`)
+        tr
+            td Version	
+            td #{Version}
+                //input(id='inputVersion' name='inputVersion' type='text' value=`${Version}`)
+        tr
+            td DownUrl1	
+            td #{DownUrl1}
+                //input(type='text' value=`${DownUrl1}`)
+                //textarea(id='inputDownUrl1' name='inputDownUrl1' cols='64' rows='4') #{DownUrl1}
+        tr
+            td DownUrl2		
+            td #{DownUrl2}
+                //input(type='text' value=`${DownUrl2}`)
+                //textarea(id='inputDownUrl2' name='inputDownUrl2' cols='64' rows='4') #{DownUrl2}
+        tr
+            td DownUrl3		
+            td #{DownUrl3}
+                //input(type='text' value=`${DownUrl3}`)
+                //textarea(id='inputDownUrl3' name='inputDownUrl3' cols='64'  rows='4') #{DownUrl3}
+        tr
+            td BackDownUrl		
+            td #{BackDownUrl}
+                //input(type='text' value=`${BackDownUrl}`)
+                //textarea(id='inputBackDownUrl' name='inputBackDownUrl' cols='64' rows='4') #{BackDownUrl}
+        tr
+            td FileMd5		
+            td #{FileMd5}
+                //input(id='inputFileMd5' name='inputFileMd5' type='text' value=`${FileMd5}`)
+        tr
+            td ShowHidden		
+            td #{ShowHidden}
+                //input(id='inputShowHidden' name='inputShowHidden' type='text' value=`${ShowHidden}`)
+        tr
+            td Sort		
+            td #{Sort}
+                //input(id='inputSort' name='inputSort' type='text' value=`${Sort}`)
+        tr
+            td AddTime		
+            td #{AddTime}
+                //input(id='inputAddTime' name='inputAddTime' type='text' value=`${AddTime}`)
+        tr
+            td UpdateTime		
+            td #{UpdateTime}
+                //input(id='inputUpdateTime' name='inputUpdateTime' type='text' value=`${UpdateTime}`)
+        tr
+            td DownCount		
+            td #{DownCount}
+                //input(id='inputDownCount' name='inputDownCount' type='text' value=`${DownCount}`)
+        tr
+            td VersionName		
+            td #{VersionName}
+                //textarea(id='inputVersionName' name='inputVersionName' cols='64' rows='4') #{VersionName}
+
+    span
+        div(align='center')
+            input(type='button' value='取消' onclick='back()')
+            |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            input(type='submit' value='確定')
+    

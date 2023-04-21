@@ -34,7 +34,9 @@ router.get('/', function(req, res, next) {
             */
             // Redirect to home page
             //response.redirect('/main');
+            //ret_str = "{\"data\": "+JSON.stringify(results)+"}";
             res.send(JSON.stringify(results));
+            //res.send(ret_str);
         } else {
             res.send('No Data!');
         }			

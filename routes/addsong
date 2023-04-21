@@ -1,0 +1,147 @@
+const mysql = require('mysql2');
+var express = require('express');
+var router = express.Router();
+
+const connection = mysql.createConnection({
+	host     : 'localhost',
+	user     : 'song',
+	password : 'password',
+	database : 'song'
+});
+
+/* GET editsong listing. */
+router.get('/', function(req, res, next) {
+    console.log("addsong");
+
+    connection.query('SELECT Id, SongNum FROM tb_song', function(error, results, fields) {
+        if (error) throw error;
+        
+        if (results.length > 0) {
+            //console.log('results = '+results+", size = "+results.length);
+
+            //console.log('result json= '+JSON.stringify(results));
+            /*
+            res.render('details', {
+                title: 'Details - Pug ExpressJS NodeJS Tutorial',
+                dat: results
+            });
+            */
+            // Redirect to home page
+            //response.redirect('/main');
+            //ret_str = "{\"data\": "+JSON.stringify(results)+"}";
+            //res.send(JSON.stringify(results));
+            //console.log("data = "+JSON.stringify(results));
+            res.render('addsong', { 'data' : JSON.stringify(results) });
+            //res.send(ret_str);
+        } else {
+            res.send('No Data!');
+        }			
+        res.end();
+    });
+
+    //res.render('addsong', { title: 'addsong' });
+    //res.end();
+});
+
+router.post('/add', function(request, response, next) {
+    
+    let Id = request.body.inputId;
+    let SongNum = request.body.inputSongNum;
+	let Name = request.body.inputName;
+    let SingerName = request.body.inputSingerName;
+    let SingerId = request.body.inputSingerId;
+    let SongLanguageId = request.body.inputSongLanguageId;
+    let SongTypeId = request.body.inputSongTypeId;
+    let Track = request.body.inputTrack;
+    let FirstSpell = request.body.inputFirstSpell;
+    let AllSpell = request.body.inputAllSpell;
+    let NameLength = request.body.inputNameLength;
+    let Hits = request.body.inputHits;
+    let Format = request.body.inputFormat;
+    let ServerState = request.body.inputServerState;
+    let Image = request.body.inputImage;
+    let SavePath = request.body.inputSavePath;
+    let DownPath = request.body.inputDownPath;
+    let Version = request.body.inputVersion;
+    let DownUrl1 = request.body.inputDownUrl1;
+    let DownUrl2 = request.body.inputDownUrl2;
+    let DownUrl3 = request.body.inputDownUrl3;
+    let BackDownUrl = request.body.inputBackDownUrl;
+    let FileMd5 = request.body.inputFileMd5;
+    let ShowHidden = request.body.inputShowHidden;
+    let Sort = request.body.inputSort;
+    let AddTime = request.body.inputAddTime;
+    let UpdateTime = request.body.inputUpdateTime;
+    let DownCount = request.body.inputDownCount;
+    let VersionName = request.body.inputVersionName;
+
+    console.log("Id = "+Id);
+    console.log("SongNum = "+SongNum);
+    console.log("Name = "+Name);
+    console.log("SingerName = "+SingerName);
+    console.log("SingerId = "+SingerId);
+    console.log("SongLanguageId = "+SongLanguageId);
+    console.log("SongTypeId = "+SongTypeId);
+    console.log("Track = "+Track);
+    console.log("FirstSpell = "+FirstSpell);
+    console.log("AllSpell = "+AllSpell);
+    console.log("NameLength = "+NameLength);
+    console.log("Hits = "+Hits);
+    console.log("Format = "+Format);
+    console.log("ServerState = "+ServerState);
+    console.log("Image = "+Image);
+    console.log("SavePath = "+SavePath);
+    console.log("DownPath = "+DownPath);
+    console.log("Version = "+Version);
+    console.log("DownUrl1 = "+DownUrl1);
+    console.log("DownUrl2 = "+DownUrl2);
+    console.log("DownUrl3 = "+DownUrl3);
+    console.log("BackDownUrl = "+BackDownUrl);
+    console.log("FileMd5 = "+FileMd5);
+    console.log("ShowHidden = "+ShowHidden);
+    console.log("Sort = "+Sort);
+    console.log("AddTime = "+AddTime);
+    console.log("UpdateTime = "+UpdateTime);
+    console.log("DownCount = "+DownCount);
+    console.log("VersionName = "+VersionName);
+    
+    //let formatData = request.body;
+
+    //console.log("SongNum = "+formatData['SongNum']);
+    var sql_str = "INSERT INTO tb_song (Id, SongNum, Name, SingerName, SingerId, SongLanguageId, SongTypeId, Track, FirstSpell, AllSpell, NameLength, Hits, Format, ServerState, Image, SavePath, DownPath, Version, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, Sort, AddTime, UpdateTime, DownCount, VersionName) VALUES ?";
+    console.log("sql_str = "+sql_str);
+
+    var values_array = [];
+    value = [Id, SongNum, Name, SingerName, SingerId, SongLanguageId, SongTypeId, Track, FirstSpell, AllSpell, NameLength, Hits, Format, ServerState, Image, SavePath, DownPath, Version, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, Sort, AddTime, UpdateTime, DownCount, VersionName];
+
+    values_array.push(value);
+
+    connection.query(sql_str, [values_array], function(error, results, fields) {
+                    // If there is an issue with the query, output the error
+        if (error) throw error;
+        
+        console.log("Number of records inserted: " + results.affectedRows);
+        if (results.affectedRows > 0) {
+            
+            response.redirect('/');
+            //response.render('main', { title: 'main' });
+        } else {
+            response.send('add song failed!');
+        }
+        //response.send(JSON.stringify(results));
+        //response.redirect('/editsong');
+        //response.render('editsong', { Name: results[0].Name });
+        //console.log("Number of records inserted: " + JSON.stringify(results));
+        //response.end();
+        response.end();
+    });
+
+    
+    
+    
+    
+    
+    
+});
+
+module.exports = router;
