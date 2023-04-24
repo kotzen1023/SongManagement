@@ -34,7 +34,8 @@ router.get('/', function(req, res, next) {
             res.render('addsong', { 'data' : JSON.stringify(results) });
             //res.send(ret_str);
         } else {
-            res.send('No Data!');
+            res.render('addsong');
+            //res.send('No Data!');
         }			
         res.end();
     });
