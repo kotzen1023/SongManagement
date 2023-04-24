@@ -77,6 +77,8 @@ head
       };
     };
     function handleFileSelect(evt) {
+      
+      
       var files = evt.target.files; // FileList object
       //console.log("file_name = "+files[0].name);
       file_name_version = files[0].name.split('.')[0];
@@ -159,10 +161,13 @@ head
     }
 
     function onVersionChange(selectObject) {
+
+      document.getElementById('txt_loading').style.visibility = 'visible';
+      
       var value = selectObject.value;
       var value_array = value.split(',');
       
-      document.getElementById('txt_loading').style.visibility = 'visible';
+      
       //var filter_data = [];
       var obj_size = Object.keys(songObj).length;
       console.log("onVersionChange obj_size = "+obj_size);
@@ -184,7 +189,7 @@ head
       $('#tableArray').dataTable().fnClearTable();
       $('#tableArray').dataTable().fnAddData(songObj_by_version);
 
-      document.getElementById('txt_loading').style.display = "none";
+      document.getElementById('txt_loading').style.visibility = "hidden";
     }
 
     function deleteAll() {
@@ -436,10 +441,34 @@ script.
             { data: 'SavePath', title: "SavePath" },
             { data: 'DownPath', title: "DownPath" },
             { data: 'Version', title: "Version" },
-            { data: 'DownUrl1', title: "DownUrl1" },
-            { data: 'DownUrl2', title: "DownUrl2" },
-            { data: 'DownUrl3', title: "DownUrl3" },
-            { data: 'BackDownUrl', title: "BackDownUrl" },
+            { data: 'DownUrl1', title: "DownUrl1", render: function (data, type, row, meta) {
+                if (type === "display") {
+                    data = '<a href="' + data + '" target="_blank">' + data + '</a>';
+                }
+                return data;
+              } 
+            },
+            { data: 'DownUrl2', title: "DownUrl2", render: function (data, type, row, meta) {
+                if (type === "display") {
+                    data = '<a href="' + data + '" target="_blank">' + data + '</a>';
+                }
+                return data;
+              } 
+            },
+            { data: 'DownUrl3', title: "DownUrl3", render: function (data, type, row, meta) {
+                if (type === "display") {
+                    data = '<a href="' + data + '" target="_blank">' + data + '</a>';
+                }
+                return data;
+              } 
+            },
+            { data: 'BackDownUrl', title: "BackDownUrl", render: function (data, type, row, meta) {
+                if (type === "display") {
+                    data = '<a href="' + data + '" target="_blank">' + data + '</a>';
+                }
+                return data;
+              } 
+            },
             { data: 'FileMd5', title: "FileMd5" },
             { data: 'ShowHidden', title: "ShowHidden" },
             { data: 'Sort', title: "Sort" },
@@ -477,7 +506,7 @@ script.
         })
 
         //loading hide
-        document.getElementById('txt_loading').style.display = "none";
+        document.getElementById('txt_loading').style.visibility = "hidden";
 
         //on edit button click
         $('#tableArray tbody').on( 'click', 'button.btn-warning', function () {
@@ -517,7 +546,7 @@ script.
 
       
     } else {
-      document.getElementById('txt_loading').style.display = "none";
+      document.getElementById('txt_loading').style.visibility = "hidden";
       var noData = document.getElementById('goods');
       noData.innerHTML = "沒有任何資料";
     }
