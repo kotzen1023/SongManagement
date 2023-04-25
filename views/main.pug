@@ -385,7 +385,16 @@ script.
       for (var i=0; i<count; i++) {
         if (select_option_array.length == 0) {
           console.log("select_option_array.length = "+select_option_array.length);
-          select_option_array.push(songObj[i]['VersionName']);
+          //select_option_array.push(songObj[i]['VersionName']);
+
+          //check if contain ","
+          if (songObj[i]['VersionName'].includes(",")) {
+            var option_array = songObj[i]['VersionName'].split(",");
+            for (j=0;j<option_array.length; j++) {
+              select_option_array.push(option_array[j]);
+            }
+          }
+
         } else {
           var found = false;
           for (j=0;j<select_option_array.length; j++) {
@@ -396,10 +405,45 @@ script.
           }
 
           if (!found) {
-            select_option_array.push(songObj[i]['VersionName']);
+            //select_option_array.push(songObj[i]['VersionName']);
+
+            if (songObj[i]['VersionName'].includes(",")) {
+              var option_array = songObj[i]['VersionName'].split(",");
+              
+              for (var k=0;k<option_array.length; k++) {
+                var found_option = false;
+                for (var z=0;z<select_option_array.length; z++) {
+                  if (option_array[k] == select_option_array[z]) {
+                    found_option = true;
+                    break;
+                  }
+                }
+
+                if (!found_option) {
+                  select_option_array.push(option_array[k]);
+                }
+
+               
+              }
+
+              
+            }
           }
         }
       }
+      //sort 
+      select_option_array = select_option_array.sort();
+      
+      var combine_str = "";
+      for (var i=0;i<select_option_array.length; i++) {
+        if (i==0) {
+          combine_str += select_option_array[i];
+        } else {
+          combine_str += ","+select_option_array[i];
+        }
+      }
+      //insert the combine string to the first of the select_option_array
+      select_option_array.splice(0, 0, combine_str);
 
       console.log("select_option_array = "+select_option_array);
 
