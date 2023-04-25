@@ -269,32 +269,172 @@ script.
   //console.log("currentLocation = "+currentLocation);
   var main_url = currentLocation+"main";
   console.log("main_url = "+main_url);
-  /*
+  
   $(document).ready(function() {
-    //http://www.datatables.net
-    $('#tableArray').dataTable({
-        //"sPaginationType": "full_numbers",
-        "bPaginate": true,
-        "bProcessing": true,
-        "bServerSide": true,
-        "sAjaxSource": main_url,
-        "sAjaxDataProp": "",
-        "fnServerData": function(url, data, callback) {
-            
-            $.ajax({
-                "url": url,
-                "data": data,
-                "success": callback,
-                "contentType": "application/x-www-form-urlencoded; charset=utf-8",
-                "dataType": "json",
-                "type": "GET",
-                "cache": false,
-                "error": function() {
-                    alert("DataTables warning: JSON data from server failed to load or be parsed. " +
-                    "This is most likely to be caused by a JSON formatting error.");
+    //var songObj;
+    var dt;
+    var select_option_array = [];
+    getdata();
+    function getdata() {
+      const getSongs = async () => {
+        console.log("getSongs");
+        const data = await fetch(main_url, {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json',                                  
+          }
+        });
+        const jsondata = await data.json();
+        console.log("jsondata = "+jsondata);
+        songObj=jsondata;
+        var count = Object.keys(songObj).length;
+
+        for (var i=0; i<count; i++) {
+          if (select_option_array.length == 0) {
+            console.log("select_option_array.length = "+select_option_array.length);
+            //select_option_array.push(songObj[i]['VersionName']);
+
+            //check if contain ","
+            if (songObj[i]['VersionName'].includes(",")) {
+              var option_array = songObj[i]['VersionName'].split(",");
+              for (j=0;j<option_array.length; j++) {
+                select_option_array.push(option_array[j]);
+              }
+            }
+
+          } else {
+            var found = false;
+            for (j=0;j<select_option_array.length; j++) {
+              if (select_option_array[j] == songObj[i]['VersionName']) {
+                found = true;
+                break;
+              } 
+            }
+
+            if (!found) {
+              //select_option_array.push(songObj[i]['VersionName']);
+
+              if (songObj[i]['VersionName'].includes(",")) {
+                var option_array = songObj[i]['VersionName'].split(",");
+                
+                for (var k=0;k<option_array.length; k++) {
+                  var found_option = false;
+                  for (var z=0;z<select_option_array.length; z++) {
+                    if (option_array[k] == select_option_array[z]) {
+                      found_option = true;
+                      break;
+                    }
+                  }
+
+                  if (!found_option) {
+                    select_option_array.push(option_array[k]);
+                  }
+
+                
                 }
-            });
-        },
+
+                
+              }
+            }
+          }
+        }
+        //sort 
+        select_option_array = select_option_array.sort();
+        
+        var combine_str = "";
+        for (var i=0;i<select_option_array.length; i++) {
+          if (i==0) {
+            combine_str += select_option_array[i];
+          } else {
+            combine_str += ","+select_option_array[i];
+          }
+        }
+        //insert the combine string to the first of the select_option_array
+        select_option_array.splice(0, 0, combine_str);
+
+        console.log("select_option_array = "+select_option_array);
+
+        var span_version_select = document.getElementById('span_version_select');
+        var innerHtmlString = "<select id='version_select' onchange='onVersionChange(this)'>";
+        for (var k=0; k<select_option_array.length; k++) {
+          innerHtmlString += "<option value='"+select_option_array[k]+"'>"+select_option_array[k]+"</option>";
+        }
+        innerHtmlString += "</select>";
+        span_version_select.innerHTML = innerHtmlString;
+
+
+        initialiseTable();
+        return jsondata;
+      };
+      getSongs();
+    }
+
+    function initialiseTable(){
+      dt = $('#tableArray').DataTable({
+        "paging": true,
+        "data": songObj,
+        "columns": [
+          { data: null ,title: "操作功能",  // 這邊是欄位
+            render: function (data, type, row) {
+              return '<button type="button" class="btn btn-warning btn-sm">編輯</button> ' +
+                      '<button type="button" class="btn btn-danger btn-sm">刪除</button>'
+              } 
+          },
+          { data: 'Idx', title: "Idx" },
+          { data: 'Id', title: "Id" },
+          { data: 'SongNum', title: "SongNum" },
+          { data: 'Name', title: "Name" },
+          { data: 'SingerName', title: "SingerName" },
+          { data: 'SingerId', title: "SingerId" },
+          { data: 'SongLanguageId', title: "SongLanguageId" },
+          { data: 'SongTypeId', title: "SongTypeId" },
+          { data: 'Track', title: "Track" },
+          { data: 'FirstSpell', title: "FirstSpell" },
+          { data: 'AllSpell', title: "AllSpell" },
+          { data: 'NameLength', title: "NameLength" },
+          { data: 'Hits', title: "Hits" },
+          { data: 'Format', title: "Format" },
+          { data: 'ServerState', title: "ServerState" },
+          { data: 'Image', title: "Image" },
+          { data: 'SavePath', title: "SavePath" },
+          { data: 'DownPath', title: "DownPath" },
+          { data: 'Version', title: "Version" },
+          { data: 'DownUrl1', title: "DownUrl1", render: function (data, type, row, meta) {
+              if (type === "display") {
+                  data = '<a href="' + data + '" target="_blank">' + data + '</a>';
+              }
+              return data;
+            } 
+          },
+          { data: 'DownUrl2', title: "DownUrl2", render: function (data, type, row, meta) {
+              if (type === "display") {
+                  data = '<a href="' + data + '" target="_blank">' + data + '</a>';
+              }
+              return data;
+            } 
+          },
+          { data: 'DownUrl3', title: "DownUrl3", render: function (data, type, row, meta) {
+              if (type === "display") {
+                  data = '<a href="' + data + '" target="_blank">' + data + '</a>';
+              }
+              return data;
+            } 
+          },
+          { data: 'BackDownUrl', title: "BackDownUrl", render: function (data, type, row, meta) {
+              if (type === "display") {
+                  data = '<a href="' + data + '" target="_blank">' + data + '</a>';
+              }
+              return data;
+            } 
+          },
+          { data: 'FileMd5', title: "FileMd5" },
+          { data: 'ShowHidden', title: "ShowHidden" },
+          { data: 'Sort', title: "Sort" },
+          { data: 'AddTime', title: "AddTime" },
+          { data: 'UpdateTime', title: "UpdateTime" },
+          { data: 'DownCount', title: "DownCount" },
+          { data: 'VersionName', title: "VersionName" },
+        ],
         language: {
           "lengthMenu": "顯示 _MENU_ 筆資料",
           "sProcessing": "處理中...",
@@ -321,58 +461,52 @@ script.
           }
         },
         "lengthMenu": [ [10, 25, 50, 100], [10, 25, 50, 100] ],
-        "aoColumns": [
-            { data: null ,title: "操作功能",  // 這邊是欄位
-              render: function (data, type, row) {
-                return '<button type="button" class="btn btn-warning btn-sm">編輯</button> ' +
-                        '<button type="button" class="btn btn-danger btn-sm">刪除</button>'
-                } 
-            },
-            //{ "mDataProp": "Idx", title: "Idx" },
-            //{ "mDataProp": 'Id', title: "Id" },
-            { data: 'SongNum', title: "SongNum" },
-            { data: 'Name', title: "Name" },
-            { data: 'SingerName', title: "SingerName" },
-            
-        ],
+      });
+
+
+      //loading hide
+      document.getElementById('txt_loading').style.visibility = "hidden";
+
+      //on edit button click
+      $('#tableArray tbody').on( 'click', 'button.btn-warning', function () {
+        var tr = $(this).closest('tr');
+        var value = $(tr).find('td').eq(2)[0].innerHTML;
+        //alert(value);
+
+        var currentLocation = window.location;
+        var url = currentLocation+"editsong";
+        var xhr = new XMLHttpRequest();
+
+        var json_object = `{ "SongNum": "`+value+`" }`;
         
-    });
+        let new_url = url+"?SongNum="+value;
+        location.replace(new_url);
 
-    //on edit button click
-    $('#tableArray tbody').on( 'click', 'button.btn-warning', function () {
-      var tr = $(this).closest('tr');
-      var value = $(tr).find('td').eq(1)[0].innerHTML;
-      //alert(value);
+      });
+      //on delete button click
+      $('#tableArray tbody').on( 'click', 'button.btn-danger', function () {
+        var tr = $(this).closest('tr');
+        var value = $(tr).find('td').eq(2)[0].innerHTML;
+        //alert(value);
 
-      var currentLocation = window.location;
-      var url = currentLocation+"editsong";
-      var xhr = new XMLHttpRequest();
+        var currentLocation = window.location;
+        var url = currentLocation+"deletesong";
+        var xhr = new XMLHttpRequest();
 
-      var json_object = `{ "SongNum": "`+value+`" }`;
-      
-      let new_url = url+"?SongNum="+value;
-      location.replace(new_url);
+        var json_object = `{ "SongNum": "`+value+`" }`;
+        
+        let new_url = url+"?SongNum="+value;
+        location.replace(new_url);
+      });
 
-    });
-    //on delete button click
-    $('#tableArray tbody').on( 'click', 'button.btn-danger', function () {
-      var tr = $(this).closest('tr');
-      var value = $(tr).find('td').eq(1)[0].innerHTML;
-      //alert(value);
-
-      var currentLocation = window.location;
-      var url = currentLocation+"deletesong";
-      var xhr = new XMLHttpRequest();
-
-      var json_object = `{ "SongNum": "`+value+`" }`;
-      
-      let new_url = url+"?SongNum="+value;
-      location.replace(new_url);
-    });
+      //hide Idx column
+      dt.column(1).visible(false);
+    }
   });                    
-  */
+  
 
   
+  /*
   const xmlhttp = new XMLHttpRequest();
   xmlhttp.onload = function() {
     //console.log("this.responseText = "+this.responseText);
@@ -597,6 +731,7 @@ script.
   }
   xmlhttp.open("GET", main_url, true);
   xmlhttp.send();
+  */
   
 
 
