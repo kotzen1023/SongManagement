@@ -22,7 +22,7 @@ router.post('/', function(request, response, next) {
     let formatData = request.body;
     var dataSize = Object.keys(formatData).length;
     
-    
+    console.log("formatData[0] = "+formatData[0]['*歌曲编号']);
     //clear before insert
     /*
     console.log("delete before insert...");
@@ -113,7 +113,7 @@ router.post('/', function(request, response, next) {
                     }
                     var downPath = ""
                     if (exist_array[i]['DownPath'] != null && exist_array[i]['DownPath'] != 'undefined') {
-                        savePath = exist_array[i]['DownPath']
+                        downPath = exist_array[i]['DownPath']
                     }
                     var downUrl1 = ""
                     if (exist_array[i]['DownUrl1'] != null && exist_array[i]['DownUrl1'] != 'undefined') {
@@ -168,7 +168,7 @@ router.post('/', function(request, response, next) {
                     }
                     var downPath = ""
                     if (modified_formatData[i]['DownPath'] != null && modified_formatData[i]['DownPath'] != 'undefined') {
-                        savePath = modified_formatData[i]['DownPath']
+                        downPath = modified_formatData[i]['DownPath']
                     }
                     var downUrl1 = ""
                     if (modified_formatData[i]['DownUrl1'] != null && modified_formatData[i]['DownUrl1'] != 'undefined') {
@@ -226,53 +226,217 @@ router.post('/', function(request, response, next) {
                 var values_array = [];
                 for (var i=0; i<dataSize; i++) {
                     
+                    var id = "0";
+                    if (formatData[i]['Id'] != null && formatData[i]['Id'] != 'undefined') {
+                        id = formatData[i]['Id'];
+                    }
+
+                    var songnum = "";
+                    if (formatData[i]['SongNum'] != null && formatData[i]['SongNum'] != 'undefined') {
+                        songnum = formatData[i]['SongNum'];
+                    }
+
+                    var name = "";
+                    if (formatData[i]['Name'] != null && formatData[i]['Name'] != 'undefined') {
+                        name = formatData[i]['Name'];
+                    }
+
+                    var singername = "";
+                    if (formatData[i]['SingerName'] != null && formatData[i]['SingerName'] != 'undefined') {
+                        singername = formatData[i]['SingerName'];
+                    }
+
+                    var singerid = "0";
+                    if (formatData[i]['SingerId'] != null && formatData[i]['SingerId'] != 'undefined') {
+                        singerid = formatData[i]['SingerId'];
+                    }
+
+                    var songlanguageid = "";
+                    if (formatData[i]['SongLanguageId'] != null && formatData[i]['SongLanguageId'] != 'undefined') {
+                        songlanguageid = formatData[i]['SongLanguageId'];
+                    }
+
+                    var songtypeid = "";
+                    if (formatData[i]['SongTypeId'] != null && formatData[i]['SongTypeId'] != 'undefined') {
+                        songtypeid = formatData[i]['SongLanguageId'];
+                    }
+
+                    var track = "";
+                    if (formatData[i]['Track'] != null && formatData[i]['Track'] != 'undefined') {
+                        track = formatData[i]['Track'];
+                    }
+
+                    var format = "";
+                    if (formatData[i]['Format'] != null && formatData[i]['Format'] != 'undefined') {
+                        format = formatData[i]['Format'];
+                    }
+
+                    var serverstate = "1";
+                    if (formatData[i]['ServerState'] != null && formatData[i]['ServerState'] != 'undefined') {
+                        serverstate = formatData[i]['ServerState'];
+                    }
+
+                    var firstspell = "";
+                    if (formatData[i]['FirstSpell'] != null && formatData[i]['FirstSpell'] != 'undefined') {
+                        firstspell = formatData[i]['FirstSpell'];
+                    }
+
+                    var allspell = "";
+                    if (formatData[i]['AllSpell'] != null && formatData[i]['AllSpell'] != 'undefined') {
+                        allspell = formatData[i]['AllSpell'];
+                    }
+
+                    var namelength = "0";
+                    if (formatData[i]['NameLength'] != null && formatData[i]['NameLength'] != 'undefined') {
+                        namelength = formatData[i]['NameLength'];
+                    }
+
+                    var hits = "0";
+                    if (formatData[i]['Hits'] != null && formatData[i]['Hits'] != 'undefined') {
+                        hits = formatData[i]['Hits'];
+                    }
+
                     var version = "";
                     if (formatData[i]['Version'] != null && formatData[i]['Version'] != 'undefined') {
-                        version = formatData[i]['Version']
+                        version = formatData[i]['Version'];
                     }
                     var image = ""
                     if (formatData[i]['Image'] != null && formatData[i]['Image'] != 'undefined') {
-                        image = formatData[i]['Image']
+                        image = formatData[i]['Image'];
                     }
                     var fileMd5 = ""
                     if (formatData[i]['FileMd5'] != null && formatData[i]['FileMd5'] != 'undefined') {
-                        fileMd5 = formatData[i]['FileMd5']
+                        fileMd5 = formatData[i]['FileMd5'];
                     }
                     var savePath = ""
                     if (formatData[i]['SavePath'] != null && formatData[i]['SavePath'] != 'undefined') {
-                        savePath = formatData[i]['SavePath']
+                        savePath = formatData[i]['SavePath'];
                     }
                     var downPath = ""
                     if (formatData[i]['DownPath'] != null && formatData[i]['DownPath'] != 'undefined') {
-                        savePath = formatData[i]['DownPath']
+                        downPath = formatData[i]['DownPath'];
                     }
                     var downUrl1 = ""
                     if (formatData[i]['DownUrl1'] != null && formatData[i]['DownUrl1'] != 'undefined') {
-                        downUrl1 = formatData[i]['DownUrl1']
+                        downUrl1 = formatData[i]['DownUrl1'];
                     }
                     var downUrl2 = ""
                     if (formatData[i]['DownUrl2'] != null && formatData[i]['DownUrl2'] != 'undefined') {
-                        downUrl2 = formatData[i]['DownUrl2']
+                        downUrl2 = formatData[i]['DownUrl2'];
                     }
                     var downUrl3 = ""
                     if (formatData[i]['DownUrl3'] != null && formatData[i]['DownUrl3'] != 'undefined') {
-                        downUrl3 = formatData[i]['DownUrl3']
+                        downUrl3 = formatData[i]['DownUrl3'];
                     }
                     var backDownUrl = ""
                     if (formatData[i]['BackDownUrl'] != null && formatData[i]['BackDownUrl'] != 'undefined') {
-                        backDownUrl = formatData[i]['BackDownUrl']
+                        backDownUrl = formatData[i]['BackDownUrl'];
                     }
+
+                    var showhidden = "1"
+                    if (formatData[i]['ShowHidden'] != null && formatData[i]['ShowHidden'] != 'undefined') {
+                        showhidden = formatData[i]['ShowHidden'];
+                    }
+                    var sort = "1"
+                    if (formatData[i]['Sort'] != null && formatData[i]['Sort'] != 'undefined') {
+                        sort = formatData[i]['Sort'];
+                    }
+                    var addtime = ""
+                    if (formatData[i]['AddTime'] != null && formatData[i]['AddTime'] != 'undefined') {
+                        addtime = formatData[i]['AddTime'];
+                    }
+                    var updatetime = ""
+                    if (formatData[i]['UpdateTime'] != null && formatData[i]['UpdateTime'] != 'undefined') {
+                        updatetime = formatData[i]['UpdateTime'];
+                    }
+                    var downcount = "0"
+                    if (formatData[i]['DownCount'] != null && formatData[i]['DownCount'] != 'undefined') {
+                        downcount = formatData[i]['DownCount'];
+                    }
+
                     var versionName = ""
                     if (formatData[i]['VersionName'] != null && formatData[i]['VersionName'] != 'undefined') {
-                        versionName = formatData[i]['VersionName']
+                        versionName = formatData[i]['VersionName'];
+                    }
+
+                    //for 239 plus
+                    if (formatData[i]['编号'] != null && formatData[i]['编号'] != 'undefined') {
+                        id = formatData[i]['编号'];
+                    }
+
+                    if (formatData[i]['*歌曲编号'] != null && formatData[i]['*歌曲编号'] != 'undefined') {
+                        songnum = formatData[i]['*歌曲编号'];
+                    }
+
+                    if (formatData[i]['*歌曲名称'] != null && formatData[i]['*歌曲名称'] != 'undefined') {
+                        name = formatData[i]['*歌曲名称'];
+                    }
+
+                    if (formatData[i]['NameLength'] == 'undefined') {
+                        namelength = formatData[i]['*歌曲名称'].length;
+                    }
+
+                    if (formatData[i]['*歌星名称'] != null && formatData[i]['*歌星名称'] != 'undefined') {
+                        singername = formatData[i]['*歌星名称'];
+                    }
+
+                    if (formatData[i]['歌名首拼'] != null && formatData[i]['歌名首拼'] != 'undefined') {
+                        firstspell = formatData[i]['歌名首拼'];
+                    }
+
+                    if (formatData[i]['歌名全拼'] != null && formatData[i]['歌名全拼'] != 'undefined') {
+                        allspell = formatData[i]['歌名全拼'];
                     }
         
+                    if (formatData[i]['*歌曲语言'] != null && formatData[i]['*歌曲语言'] != 'undefined') {
+                        songlanguageid = formatData[i]['*歌曲语言'];
+                    }
+
+                    if (formatData[i]['*歌曲类型'] != null && formatData[i]['*歌曲类型'] != 'undefined') {
+                        songtypeid = formatData[i]['*歌曲类型'];
+                    }
+
+                    if (formatData[i]['*歌曲音轨'] != null && formatData[i]['*歌曲音轨'] != 'undefined') {
+                        track = formatData[i]['*歌曲音轨'];
+                    }
+
+                    if (formatData[i]['*歌曲格式'] != null && formatData[i]['*歌曲格式'] != 'undefined') {
+                        format = formatData[i]['*歌曲格式'];
+                    }
+
+                    if (formatData[i]['*存放路径'] != null && formatData[i]['*存放路径'] != 'undefined') {
+                        savePath = formatData[i]['*存放路径'];
+                    }
+
+                    if (formatData[i]['*下载路径'] != null && formatData[i]['*下载路径'] != 'undefined') {
+                        downPath = formatData[i]['*下载路径'];
+                    }
+
+                    if (formatData[i]['歌曲版本'] != null && formatData[i]['歌曲版本'] != 'undefined') {
+                        version = formatData[i]['歌曲版本'];
+                    }
+
+                    if (formatData[i]['下载地址1'] != null && formatData[i]['下载地址1'] != 'undefined') {
+                        downUrl1 = formatData[i]['下载地址1'];
+                    }
+
+                    if (formatData[i]['下载地址2'] != null && formatData[i]['下载地址2'] != 'undefined') {
+                        downUrl2 = formatData[i]['下载地址2'];
+                    }
         
-                    value = [formatData[i]['Id'], formatData[i]['SongNum'], formatData[i]['Name'], formatData[i]['SingerName'], formatData[i]['SingerId'], formatData[i]['SongLanguageId'], 
-                    formatData[i]['SongTypeId'], formatData[i]['Track'], formatData[i]['FirstSpell'], formatData[i]['AllSpell'], formatData[i]['NameLength'], 
-                    formatData[i]['Hits'], formatData[i]['Format'], formatData[i]['ServerState'], image, savePath, downPath, 
+                    if (formatData[i]['下载地址3'] != null && formatData[i]['下载地址3'] != 'undefined') {
+                        downUrl3 = formatData[i]['下载地址3'];
+                    }
+
+                    if (formatData[i]['备用下载地址'] != null && formatData[i]['备用下载地址'] != 'undefined') {
+                        backDownUrl = formatData[i]['备用下载地址'];
+                    }
+
+                    value = [id, songnum, name, singername, singerid, songlanguageid, 
+                    songtypeid, track, firstspell, allspell, namelength, 
+                    hits, format, serverstate, image, savePath, downPath, 
                     version, downUrl1, downUrl2, downUrl3, backDownUrl, fileMd5,
-                    formatData[i]['ShowHidden'], formatData[i]['Sort'], formatData[i]['AddTime'], formatData[i]['UpdateTime'], formatData[i]['DownCount'], versionName];
+                    showhidden, sort, addtime, updatetime, downcount, versionName];
                     
                     
                     //if (i==0) {

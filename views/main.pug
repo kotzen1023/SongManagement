@@ -108,9 +108,10 @@ head
       };
       Jhxlsx.export(tabularData, options);
       */
-
+      var machine = document.getElementById('machine_select').value;
 
       
+
       var new_song_obj = [];
 
       if (songObj_by_version.length > 0) {
@@ -123,8 +124,59 @@ head
           //remove column 'Idx'
           delete new_obj.Idx;
           delete new_obj.VersionName;
-          //console.log("obj = "+obj['Idx']);
-          new_song_obj.push(new_obj);
+
+          if (machine == 1) {// for 239 plus
+            new_obj["编号"] = new_obj.Id;
+            new_obj["*歌曲编号"] = new_obj.SongNum;
+            new_obj["*歌曲名称"] = new_obj.Name;
+            new_obj["歌名首拼"] = new_obj.FirstSpell;
+            new_obj["歌名全拼"] = new_obj.AllSpell;
+            new_obj["*歌星名称"] = new_obj.SingerName;
+            new_obj["*歌曲语言"] = new_obj.SongLanguageId;
+            new_obj["*歌曲类型"] = new_obj.SongTypeId;
+            new_obj["*歌曲音轨"] = new_obj.Track;
+            new_obj["*歌曲格式"] = new_obj.Format;
+            new_obj["*存放路径"] = new_obj.SavePath;
+            new_obj["*下载路径"] = new_obj.DownPath;
+            new_obj["歌曲版本"] = new_obj.Version;
+            new_obj["下载地址1"] = new_obj.DownUrl1;
+            new_obj["下载地址2"] = new_obj.DownUrl2;
+            new_obj["下载地址3"] = new_obj.DownUrl3;
+            new_obj["备用下载地址"] = new_obj.BackDownUrl;
+            delete new_obj.Id;
+            delete new_obj.SongNum;
+            delete new_obj.Name;
+            delete new_obj.FirstSpell;
+            delete new_obj.AllSpell;
+            delete new_obj.SingerName;
+            delete new_obj.SongLanguageId;
+            delete new_obj.SongTypeId;
+            delete new_obj.Track;
+            delete new_obj.Format;
+            delete new_obj.SavePath;
+            delete new_obj.DownPath;
+            delete new_obj.Version;
+            delete new_obj.DownUrl1;
+            delete new_obj.DownUrl2;
+            delete new_obj.DownUrl3;
+            delete new_obj.BackDownUrl;
+
+            delete new_obj.SingerId;
+            delete new_obj.NameLength;
+            delete new_obj.Hits;
+            delete new_obj.ServerState;
+            delete new_obj.Image;
+            delete new_obj.ShowHidden;
+            delete new_obj.Sort;
+            delete new_obj.AddTime;
+            delete new_obj.UpdateTime;
+            delete new_obj.DownCount;
+            delete new_obj.FileMd5;
+
+            new_song_obj.push(new_obj);
+          } else {
+            new_song_obj.push(new_obj);
+          }
         }
       } else {
         var count = Object.keys(songObj).length;
@@ -137,7 +189,58 @@ head
           delete new_obj.Idx;
           delete new_obj.VersionName;
           //console.log("obj = "+obj['Idx']);
-          new_song_obj.push(new_obj);
+          if (machine == 1) {// for 239 plus
+            new_obj["编号"] = new_obj.Id;
+            new_obj["*歌曲编号"] = new_obj.SongNum;
+            new_obj["*歌曲名称"] = new_obj.Name;
+            new_obj["歌名首拼"] = new_obj.FirstSpell;
+            new_obj["歌名全拼"] = new_obj.AllSpell;
+            new_obj["*歌星名称"] = new_obj.SingerName;
+            new_obj["*歌曲语言"] = new_obj.SongLanguageId;
+            new_obj["*歌曲类型"] = new_obj.SongTypeId;
+            new_obj["*歌曲音轨"] = new_obj.Track;
+            new_obj["*歌曲格式"] = new_obj.Format;
+            new_obj["*存放路径"] = new_obj.SavePath;
+            new_obj["*下载路径"] = new_obj.DownPath;
+            new_obj["歌曲版本"] = new_obj.Version;
+            new_obj["下载地址1"] = new_obj.DownUrl1;
+            new_obj["下载地址2"] = new_obj.DownUrl2;
+            new_obj["下载地址3"] = new_obj.DownUrl3;
+            new_obj["备用下载地址"] = new_obj.BackDownUrl;
+            delete new_obj.Id;
+            delete new_obj.SongNum;
+            delete new_obj.Name;
+            delete new_obj.FirstSpell;
+            delete new_obj.AllSpell;
+            delete new_obj.SingerName;
+            delete new_obj.SongLanguageId;
+            delete new_obj.SongTypeId;
+            delete new_obj.Track;
+            delete new_obj.Format;
+            delete new_obj.SavePath;
+            delete new_obj.DownPath;
+            delete new_obj.Version;
+            delete new_obj.DownUrl1;
+            delete new_obj.DownUrl2;
+            delete new_obj.DownUrl3;
+            delete new_obj.BackDownUrl;
+
+            delete new_obj.SingerId;
+            delete new_obj.NameLength;
+            delete new_obj.Hits;
+            delete new_obj.ServerState;
+            delete new_obj.Image;
+            delete new_obj.ShowHidden;
+            delete new_obj.Sort;
+            delete new_obj.AddTime;
+            delete new_obj.UpdateTime;
+            delete new_obj.DownCount;
+            delete new_obj.FileMd5;
+
+            new_song_obj.push(new_obj);
+          } else {
+            new_song_obj.push(new_obj);
+          }
         }
       }
 
@@ -167,29 +270,39 @@ head
       var value = selectObject.value;
       var value_array = value.split(',');
       
-      
-      //var filter_data = [];
-      var obj_size = Object.keys(songObj).length;
-      console.log("onVersionChange obj_size = "+obj_size);
-      songObj_by_version = [];
-      for (var i=0; i<obj_size; i++) {
+      if (value == "全部歌曲") {
+        $('#tableArray').dataTable().fnClearTable();
+        $('#tableArray').dataTable().fnAddData(songObj);
+      } else {
+        //var filter_data = [];
+        var obj_size = Object.keys(songObj).length;
+        console.log("onVersionChange obj_size = "+obj_size);
+        songObj_by_version = [];
+        for (var i=0; i<obj_size; i++) {
 
-        for (var j=0;j<value_array.length; j++) {
-          if (songObj[i]['VersionName'].includes(value_array[j]))
-          //if (value.includes(songObj[i]['VersionName']))
-          {
-            songObj_by_version.push(songObj[i]);
-            break;
+          for (var j=0;j<value_array.length; j++) {
+            if (songObj[i]['VersionName'].includes(value_array[j]))
+            //if (value.includes(songObj[i]['VersionName']))
+            {
+              songObj_by_version.push(songObj[i]);
+              break;
+            }
           }
+          
         }
-        
+        console.log("songObj_by_version.length = "+songObj_by_version.length);
+
+        $('#tableArray').dataTable().fnClearTable();
+        $('#tableArray').dataTable().fnAddData(songObj_by_version);
+
       }
-      console.log("songObj_by_version.length = "+songObj_by_version.length);
-
-      $('#tableArray').dataTable().fnClearTable();
-      $('#tableArray').dataTable().fnAddData(songObj_by_version);
-
+      
       document.getElementById('txt_loading').style.visibility = "hidden";
+    }
+
+    function onMachineChange(selectObject) {
+      var value = selectObject.value;
+      console.log("machine select = "+value);
     }
 
     function deleteAll() {
@@ -250,6 +363,9 @@ form(align='center' enctype='multipart/form-data')
   span#span_version_select(style='padding:0px 20px 0px 0px;')
    select#version_select
 
+  span#span_machine_select(style='padding:0px 20px 0px 0px;') 機型選取
+   select#machine_select
+
   div#txt_loading 讀取中
    img#img_loading(src='/images/loading-gif.gif' width='20')
 
@@ -300,6 +416,8 @@ script.
               for (j=0;j<option_array.length; j++) {
                 select_option_array.push(option_array[j]);
               }
+            } else {
+              select_option_array.push(songObj[i]['VersionName']);
             }
 
           } else {
@@ -332,25 +450,30 @@ script.
 
                 
                 }
-
-                
+              } else {
+                select_option_array.push(songObj[i]['VersionName']);
               }
             }
           }
         }
-        //sort 
+        
+        //sort
+
         select_option_array = select_option_array.sort();
         
-        var combine_str = "";
-        for (var i=0;i<select_option_array.length; i++) {
-          if (i==0) {
-            combine_str += select_option_array[i];
-          } else {
-            combine_str += ","+select_option_array[i];
-          }
+        if (select_option_array.length > 0) {
+          var combine_str = "全部歌曲";
+          /*for (var i=0;i<select_option_array.length; i++) {
+            if (i==0) {
+              combine_str += select_option_array[i];
+            } else {
+              combine_str += ","+select_option_array[i];
+            }
+          }*/
+          //insert the combine string to the first of the select_option_array
+          select_option_array.splice(0, 0, combine_str);
         }
-        //insert the combine string to the first of the select_option_array
-        select_option_array.splice(0, 0, combine_str);
+        
 
         console.log("select_option_array = "+select_option_array);
 
@@ -362,6 +485,15 @@ script.
         innerHtmlString += "</select>";
         span_version_select.innerHTML = innerHtmlString;
 
+
+        var span_machine_select = document.getElementById('span_machine_select');
+        var innerString = "機型選取<select id='machine_select' onchange='onMachineChange(this)'>";
+       
+        innerString += "<option value='0'>239</option>";
+        innerString += "<option value='1'>239 plus</option>";
+        
+        innerString += "</select>";
+        span_machine_select.innerHTML = innerString;
 
         initialiseTable();
         return jsondata;
