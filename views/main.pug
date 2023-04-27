@@ -109,14 +109,16 @@ head
       Jhxlsx.export(tabularData, options);
       */
       var machine = document.getElementById('machine_select').value;
+      var current_select_version = document.getElementById('version_select').value;
+      
 
       
 
       var new_song_obj = [];
 
-      if (songObj_by_version.length > 0) {
+      if (current_select_version != "全部歌曲" && songObj_by_version.length > 0) {
         var count = songObj_by_version.length;
-        console.log("count = "+count);
+        console.log("songObj_by_version.length = "+count);
         for (var i=0; i<count; i++) {
           //var new_obj = songObj_by_version[i];
           var new_obj = Object.assign({}, songObj_by_version[i]);
@@ -180,7 +182,7 @@ head
         }
       } else {
         var count = Object.keys(songObj).length;
-        console.log("count = "+count);
+        console.log("songObj count = "+count);
         for (var i=0; i<count; i++) {
           //var new_obj = songObj[i];
           var new_obj = Object.assign({}, songObj[i]);
@@ -244,7 +246,7 @@ head
         }
       }
 
-      var current_select_version = document.getElementById('version_select').value;
+      
       var filename = current_select_version+".xlsx";
 
       //filename='reports.xlsx';

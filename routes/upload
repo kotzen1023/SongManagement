@@ -94,6 +94,224 @@ router.post('/', function(request, response, next) {
                 var sql = "INSERT INTO tb_song (Id, SongNum, Name, SingerName, SingerId, SongLanguageId, SongTypeId, Track, FirstSpell, AllSpell, NameLength, Hits, Format, ServerState, Image, SavePath, DownPath, Version, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, Sort, AddTime, UpdateTime, DownCount, VersionName) VALUES ?";
                 //insert exist
                 for (var i=0; i<exist_array.length; i++) {
+
+                    var id = "0";
+                    if (exist_array[i]['Id'] != null && exist_array[i]['Id'] != 'undefined') {
+                        id = exist_array[i]['Id'];
+                    }
+
+                    var songnum = "";
+                    if (exist_array[i]['SongNum'] != null && exist_array[i]['SongNum'] != 'undefined') {
+                        songnum = exist_array[i]['SongNum'];
+                    }
+
+                    var name = "";
+                    if (exist_array[i]['Name'] != null && exist_array[i]['Name'] != 'undefined') {
+                        name = exist_array[i]['Name'];
+                    }
+
+                    var singername = "";
+                    if (exist_array[i]['SingerName'] != null && exist_array[i]['SingerName'] != 'undefined') {
+                        singername = exist_array[i]['SingerName'];
+                    }
+
+                    var singerid = "0";
+                    if (exist_array[i]['SingerId'] != null && exist_array[i]['SingerId'] != 'undefined') {
+                        singerid = exist_array[i]['SingerId'];
+                    }
+
+                    var songlanguageid = "";
+                    if (exist_array[i]['SongLanguageId'] != null && exist_array[i]['SongLanguageId'] != 'undefined') {
+                        songlanguageid = exist_array[i]['SongLanguageId'];
+                    }
+
+                    var songtypeid = "";
+                    if (exist_array[i]['SongTypeId'] != null && exist_array[i]['SongTypeId'] != 'undefined') {
+                        songtypeid = exist_array[i]['SongLanguageId'];
+                    }
+
+                    var track = "";
+                    if (exist_array[i]['Track'] != null && exist_array[i]['Track'] != 'undefined') {
+                        track = exist_array[i]['Track'];
+                    }
+
+                    var format = "";
+                    if (exist_array[i]['Format'] != null && exist_array[i]['Format'] != 'undefined') {
+                        format = exist_array[i]['Format'];
+                    }
+
+                    var serverstate = "1";
+                    if (exist_array[i]['ServerState'] != null && exist_array[i]['ServerState'] != 'undefined') {
+                        serverstate = exist_array[i]['ServerState'];
+                    }
+
+                    var firstspell = "";
+                    if (exist_array[i]['FirstSpell'] != null && exist_array[i]['FirstSpell'] != 'undefined') {
+                        firstspell = exist_array[i]['FirstSpell'];
+                    }
+
+                    var allspell = "";
+                    if (exist_array[i]['AllSpell'] != null && exist_array[i]['AllSpell'] != 'undefined') {
+                        allspell = exist_array[i]['AllSpell'];
+                    }
+
+                    var namelength = "0";
+                    if (exist_array[i]['NameLength'] != null && exist_array[i]['NameLength'] != 'undefined') {
+                        namelength = exist_array[i]['NameLength'];
+                    }
+
+                    var hits = "0";
+                    if (exist_array[i]['Hits'] != null && exist_array[i]['Hits'] != 'undefined') {
+                        hits = exist_array[i]['Hits'];
+                    }
+
+                    var version = "";
+                    if (exist_array[i]['Version'] != null && exist_array[i]['Version'] != 'undefined') {
+                        version = exist_array[i]['Version'];
+                    }
+                    var image = ""
+                    if (exist_array[i]['Image'] != null && exist_array[i]['Image'] != 'undefined') {
+                        image = exist_array[i]['Image'];
+                    }
+                    var fileMd5 = ""
+                    if (exist_array[i]['FileMd5'] != null && exist_array[i]['FileMd5'] != 'undefined') {
+                        fileMd5 = exist_array[i]['FileMd5'];
+                    }
+                    var savePath = ""
+                    if (exist_array[i]['SavePath'] != null && exist_array[i]['SavePath'] != 'undefined') {
+                        savePath = exist_array[i]['SavePath'];
+                    }
+                    var downPath = ""
+                    if (exist_array[i]['DownPath'] != null && exist_array[i]['DownPath'] != 'undefined') {
+                        downPath = exist_array[i]['DownPath'];
+                    }
+                    var downUrl1 = ""
+                    if (exist_array[i]['DownUrl1'] != null && exist_array[i]['DownUrl1'] != 'undefined') {
+                        downUrl1 = exist_array[i]['DownUrl1'];
+                    }
+                    var downUrl2 = ""
+                    if (exist_array[i]['DownUrl2'] != null && exist_array[i]['DownUrl2'] != 'undefined') {
+                        downUrl2 = exist_array[i]['DownUrl2'];
+                    }
+                    var downUrl3 = ""
+                    if (exist_array[i]['DownUrl3'] != null && exist_array[i]['DownUrl3'] != 'undefined') {
+                        downUrl3 = exist_array[i]['DownUrl3'];
+                    }
+                    var backDownUrl = ""
+                    if (exist_array[i]['BackDownUrl'] != null && exist_array[i]['BackDownUrl'] != 'undefined') {
+                        backDownUrl = exist_array[i]['BackDownUrl'];
+                    }
+
+                    var showhidden = "1"
+                    if (exist_array[i]['ShowHidden'] != null && exist_array[i]['ShowHidden'] != 'undefined') {
+                        showhidden = exist_array[i]['ShowHidden'];
+                    }
+                    var sort = "1"
+                    if (exist_array[i]['Sort'] != null && exist_array[i]['Sort'] != 'undefined') {
+                        sort = exist_array[i]['Sort'];
+                    }
+                    var addtime = ""
+                    if (exist_array[i]['AddTime'] != null && exist_array[i]['AddTime'] != 'undefined') {
+                        addtime = exist_array[i]['AddTime'];
+                    }
+                    var updatetime = ""
+                    if (exist_array[i]['UpdateTime'] != null && exist_array[i]['UpdateTime'] != 'undefined') {
+                        updatetime = exist_array[i]['UpdateTime'];
+                    }
+                    var downcount = "0"
+                    if (exist_array[i]['DownCount'] != null && exist_array[i]['DownCount'] != 'undefined') {
+                        downcount = exist_array[i]['DownCount'];
+                    }
+
+                    var versionName = ""
+                    if (exist_array[i]['VersionName'] != null && exist_array[i]['VersionName'] != 'undefined') {
+                        versionName = exist_array[i]['VersionName'];
+                    }
+
+                    //for 239 plus
+                    if (exist_array[i]['编号'] != null && exist_array[i]['编号'] != 'undefined') {
+                        id = exist_array[i]['编号'];
+                    }
+
+                    if (exist_array[i]['*歌曲编号'] != null && exist_array[i]['*歌曲编号'] != 'undefined') {
+                        songnum = exist_array[i]['*歌曲编号'];
+                    }
+
+                    if (exist_array[i]['*歌曲名称'] != null && exist_array[i]['*歌曲名称'] != 'undefined') {
+                        name = exist_array[i]['*歌曲名称'];
+                    }
+
+                    if (exist_array[i]['NameLength'] == 'undefined') {
+                        namelength = exist_array[i]['*歌曲名称'].length;
+                    }
+
+                    if (exist_array[i]['*歌星名称'] != null && exist_array[i]['*歌星名称'] != 'undefined') {
+                        singername = exist_array[i]['*歌星名称'];
+                    }
+
+                    if (exist_array[i]['歌名首拼'] != null && exist_array[i]['歌名首拼'] != 'undefined') {
+                        firstspell = exist_array[i]['歌名首拼'];
+                    }
+
+                    if (exist_array[i]['歌名全拼'] != null && exist_array[i]['歌名全拼'] != 'undefined') {
+                        allspell = exist_array[i]['歌名全拼'];
+                    }
+        
+                    if (exist_array[i]['*歌曲语言'] != null && exist_array[i]['*歌曲语言'] != 'undefined') {
+                        songlanguageid = exist_array[i]['*歌曲语言'];
+                    }
+
+                    if (exist_array[i]['*歌曲类型'] != null && exist_array[i]['*歌曲类型'] != 'undefined') {
+                        songtypeid = exist_array[i]['*歌曲类型'];
+                    }
+
+                    if (exist_array[i]['*歌曲音轨'] != null && exist_array[i]['*歌曲音轨'] != 'undefined') {
+                        track = exist_array[i]['*歌曲音轨'];
+                    }
+
+                    if (exist_array[i]['*歌曲格式'] != null && exist_array[i]['*歌曲格式'] != 'undefined') {
+                        format = exist_array[i]['*歌曲格式'];
+                    }
+
+                    if (exist_array[i]['*存放路径'] != null && exist_array[i]['*存放路径'] != 'undefined') {
+                        savePath = exist_array[i]['*存放路径'];
+                    }
+
+                    if (exist_array[i]['*下载路径'] != null && exist_array[i]['*下载路径'] != 'undefined') {
+                        downPath = exist_array[i]['*下载路径'];
+                    }
+
+                    if (exist_array[i]['歌曲版本'] != null && exist_array[i]['歌曲版本'] != 'undefined') {
+                        version = exist_array[i]['歌曲版本'];
+                    }
+
+                    if (exist_array[i]['下载地址1'] != null && exist_array[i]['下载地址1'] != 'undefined') {
+                        downUrl1 = exist_array[i]['下载地址1'];
+                    }
+
+                    if (exist_array[i]['下载地址2'] != null && exist_array[i]['下载地址2'] != 'undefined') {
+                        downUrl2 = exist_array[i]['下载地址2'];
+                    }
+        
+                    if (exist_array[i]['下载地址3'] != null && exist_array[i]['下载地址3'] != 'undefined') {
+                        downUrl3 = exist_array[i]['下载地址3'];
+                    }
+
+                    if (exist_array[i]['备用下载地址'] != null && exist_array[i]['备用下载地址'] != 'undefined') {
+                        backDownUrl = exist_array[i]['备用下载地址'];
+                    }
+
+                    value = [id, songnum, name, singername, singerid, songlanguageid, 
+                    songtypeid, track, firstspell, allspell, namelength, 
+                    hits, format, serverstate, image, savePath, downPath, 
+                    version, downUrl1, downUrl2, downUrl3, backDownUrl, fileMd5,
+                    showhidden, sort, addtime, updatetime, downcount, versionName];
+
+
+
+
+                    /*
+
                     
                     var version = "";
                     if (exist_array[i]['Version'] != null && exist_array[i]['Version'] != 'undefined') {
@@ -141,7 +359,7 @@ router.post('/', function(request, response, next) {
                     exist_array[i]['Hits'], exist_array[i]['Format'], exist_array[i]['ServerState'], image, savePath, downPath, 
                     version, downUrl1, downUrl2, downUrl3, backDownUrl, fileMd5,
                     exist_array[i]['ShowHidden'], exist_array[i]['Sort'], exist_array[i]['AddTime'], exist_array[i]['UpdateTime'], exist_array[i]['DownCount'], versionName];
-                    
+                    */
                     values_array.push(value);             
                 }
 
@@ -150,6 +368,220 @@ router.post('/', function(request, response, next) {
                 
                 for (var i=0; i<modified_formatData.length; i++) {
                     
+                    var id = "0";
+                    if (modified_formatData[i]['Id'] != null && modified_formatData[i]['Id'] != 'undefined') {
+                        id = modified_formatData[i]['Id'];
+                    }
+
+                    var songnum = "";
+                    if (modified_formatData[i]['SongNum'] != null && modified_formatData[i]['SongNum'] != 'undefined') {
+                        songnum = modified_formatData[i]['SongNum'];
+                    }
+
+                    var name = "";
+                    if (modified_formatData[i]['Name'] != null && modified_formatData[i]['Name'] != 'undefined') {
+                        name = modified_formatData[i]['Name'];
+                    }
+
+                    var singername = "";
+                    if (modified_formatData[i]['SingerName'] != null && modified_formatData[i]['SingerName'] != 'undefined') {
+                        singername = modified_formatData[i]['SingerName'];
+                    }
+
+                    var singerid = "0";
+                    if (modified_formatData[i]['SingerId'] != null && modified_formatData[i]['SingerId'] != 'undefined') {
+                        singerid = modified_formatData[i]['SingerId'];
+                    }
+
+                    var songlanguageid = "";
+                    if (modified_formatData[i]['SongLanguageId'] != null && modified_formatData[i]['SongLanguageId'] != 'undefined') {
+                        songlanguageid = modified_formatData[i]['SongLanguageId'];
+                    }
+
+                    var songtypeid = "";
+                    if (modified_formatData[i]['SongTypeId'] != null && modified_formatData[i]['SongTypeId'] != 'undefined') {
+                        songtypeid = modified_formatData[i]['SongLanguageId'];
+                    }
+
+                    var track = "";
+                    if (modified_formatData[i]['Track'] != null && modified_formatData[i]['Track'] != 'undefined') {
+                        track = modified_formatData[i]['Track'];
+                    }
+
+                    var format = "";
+                    if (modified_formatData[i]['Format'] != null && modified_formatData[i]['Format'] != 'undefined') {
+                        format = modified_formatData[i]['Format'];
+                    }
+
+                    var serverstate = "1";
+                    if (modified_formatData[i]['ServerState'] != null && modified_formatData[i]['ServerState'] != 'undefined') {
+                        serverstate = modified_formatData[i]['ServerState'];
+                    }
+
+                    var firstspell = "";
+                    if (modified_formatData[i]['FirstSpell'] != null && modified_formatData[i]['FirstSpell'] != 'undefined') {
+                        firstspell = modified_formatData[i]['FirstSpell'];
+                    }
+
+                    var allspell = "";
+                    if (modified_formatData[i]['AllSpell'] != null && modified_formatData[i]['AllSpell'] != 'undefined') {
+                        allspell = modified_formatData[i]['AllSpell'];
+                    }
+
+                    var namelength = "0";
+                    if (modified_formatData[i]['NameLength'] != null && modified_formatData[i]['NameLength'] != 'undefined') {
+                        namelength = modified_formatData[i]['NameLength'];
+                    }
+
+                    var hits = "0";
+                    if (modified_formatData[i]['Hits'] != null && modified_formatData[i]['Hits'] != 'undefined') {
+                        hits = modified_formatData[i]['Hits'];
+                    }
+
+                    var version = "";
+                    if (modified_formatData[i]['Version'] != null && modified_formatData[i]['Version'] != 'undefined') {
+                        version = modified_formatData[i]['Version'];
+                    }
+                    var image = ""
+                    if (modified_formatData[i]['Image'] != null && modified_formatData[i]['Image'] != 'undefined') {
+                        image = modified_formatData[i]['Image'];
+                    }
+                    var fileMd5 = ""
+                    if (modified_formatData[i]['FileMd5'] != null && modified_formatData[i]['FileMd5'] != 'undefined') {
+                        fileMd5 = modified_formatData[i]['FileMd5'];
+                    }
+                    var savePath = ""
+                    if (modified_formatData[i]['SavePath'] != null && modified_formatData[i]['SavePath'] != 'undefined') {
+                        savePath = modified_formatData[i]['SavePath'];
+                    }
+                    var downPath = ""
+                    if (modified_formatData[i]['DownPath'] != null && modified_formatData[i]['DownPath'] != 'undefined') {
+                        downPath = modified_formatData[i]['DownPath'];
+                    }
+                    var downUrl1 = ""
+                    if (modified_formatData[i]['DownUrl1'] != null && modified_formatData[i]['DownUrl1'] != 'undefined') {
+                        downUrl1 = modified_formatData[i]['DownUrl1'];
+                    }
+                    var downUrl2 = ""
+                    if (modified_formatData[i]['DownUrl2'] != null && modified_formatData[i]['DownUrl2'] != 'undefined') {
+                        downUrl2 = modified_formatData[i]['DownUrl2'];
+                    }
+                    var downUrl3 = ""
+                    if (modified_formatData[i]['DownUrl3'] != null && modified_formatData[i]['DownUrl3'] != 'undefined') {
+                        downUrl3 = modified_formatData[i]['DownUrl3'];
+                    }
+                    var backDownUrl = ""
+                    if (modified_formatData[i]['BackDownUrl'] != null && modified_formatData[i]['BackDownUrl'] != 'undefined') {
+                        backDownUrl = modified_formatData[i]['BackDownUrl'];
+                    }
+
+                    var showhidden = "1"
+                    if (modified_formatData[i]['ShowHidden'] != null && modified_formatData[i]['ShowHidden'] != 'undefined') {
+                        showhidden = modified_formatData[i]['ShowHidden'];
+                    }
+                    var sort = "1"
+                    if (modified_formatData[i]['Sort'] != null && modified_formatData[i]['Sort'] != 'undefined') {
+                        sort = modified_formatData[i]['Sort'];
+                    }
+                    var addtime = ""
+                    if (modified_formatData[i]['AddTime'] != null && modified_formatData[i]['AddTime'] != 'undefined') {
+                        addtime = modified_formatData[i]['AddTime'];
+                    }
+                    var updatetime = ""
+                    if (modified_formatData[i]['UpdateTime'] != null && modified_formatData[i]['UpdateTime'] != 'undefined') {
+                        updatetime = modified_formatData[i]['UpdateTime'];
+                    }
+                    var downcount = "0"
+                    if (modified_formatData[i]['DownCount'] != null && modified_formatData[i]['DownCount'] != 'undefined') {
+                        downcount = modified_formatData[i]['DownCount'];
+                    }
+
+                    var versionName = ""
+                    if (modified_formatData[i]['VersionName'] != null && modified_formatData[i]['VersionName'] != 'undefined') {
+                        versionName = modified_formatData[i]['VersionName'];
+                    }
+
+                    //for 239 plus
+                    if (modified_formatData[i]['编号'] != null && modified_formatData[i]['编号'] != 'undefined') {
+                        id = modified_formatData[i]['编号'];
+                    }
+
+                    if (modified_formatData[i]['*歌曲编号'] != null && modified_formatData[i]['*歌曲编号'] != 'undefined') {
+                        songnum = modified_formatData[i]['*歌曲编号'];
+                    }
+
+                    if (modified_formatData[i]['*歌曲名称'] != null && modified_formatData[i]['*歌曲名称'] != 'undefined') {
+                        name = modified_formatData[i]['*歌曲名称'];
+                    }
+
+                    if (modified_formatData[i]['NameLength'] == 'undefined') {
+                        namelength = modified_formatData[i]['*歌曲名称'].length;
+                    }
+
+                    if (modified_formatData[i]['*歌星名称'] != null && modified_formatData[i]['*歌星名称'] != 'undefined') {
+                        singername = modified_formatData[i]['*歌星名称'];
+                    }
+
+                    if (modified_formatData[i]['歌名首拼'] != null && modified_formatData[i]['歌名首拼'] != 'undefined') {
+                        firstspell = modified_formatData[i]['歌名首拼'];
+                    }
+
+                    if (modified_formatData[i]['歌名全拼'] != null && modified_formatData[i]['歌名全拼'] != 'undefined') {
+                        allspell = modified_formatData[i]['歌名全拼'];
+                    }
+        
+                    if (modified_formatData[i]['*歌曲语言'] != null && modified_formatData[i]['*歌曲语言'] != 'undefined') {
+                        songlanguageid = modified_formatData[i]['*歌曲语言'];
+                    }
+
+                    if (modified_formatData[i]['*歌曲类型'] != null && modified_formatData[i]['*歌曲类型'] != 'undefined') {
+                        songtypeid = modified_formatData[i]['*歌曲类型'];
+                    }
+
+                    if (modified_formatData[i]['*歌曲音轨'] != null && modified_formatData[i]['*歌曲音轨'] != 'undefined') {
+                        track = modified_formatData[i]['*歌曲音轨'];
+                    }
+
+                    if (modified_formatData[i]['*歌曲格式'] != null && modified_formatData[i]['*歌曲格式'] != 'undefined') {
+                        format = modified_formatData[i]['*歌曲格式'];
+                    }
+
+                    if (modified_formatData[i]['*存放路径'] != null && modified_formatData[i]['*存放路径'] != 'undefined') {
+                        savePath = modified_formatData[i]['*存放路径'];
+                    }
+
+                    if (modified_formatData[i]['*下载路径'] != null && modified_formatData[i]['*下载路径'] != 'undefined') {
+                        downPath = modified_formatData[i]['*下载路径'];
+                    }
+
+                    if (modified_formatData[i]['歌曲版本'] != null && modified_formatData[i]['歌曲版本'] != 'undefined') {
+                        version = modified_formatData[i]['歌曲版本'];
+                    }
+
+                    if (modified_formatData[i]['下载地址1'] != null && modified_formatData[i]['下载地址1'] != 'undefined') {
+                        downUrl1 = modified_formatData[i]['下载地址1'];
+                    }
+
+                    if (modified_formatData[i]['下载地址2'] != null && modified_formatData[i]['下载地址2'] != 'undefined') {
+                        downUrl2 = modified_formatData[i]['下载地址2'];
+                    }
+        
+                    if (modified_formatData[i]['下载地址3'] != null && modified_formatData[i]['下载地址3'] != 'undefined') {
+                        downUrl3 = modified_formatData[i]['下载地址3'];
+                    }
+
+                    if (modified_formatData[i]['备用下载地址'] != null && modified_formatData[i]['备用下载地址'] != 'undefined') {
+                        backDownUrl = modified_formatData[i]['备用下载地址'];
+                    }
+
+                    value = [id, songnum, name, singername, singerid, songlanguageid, 
+                        songtypeid, track, firstspell, allspell, namelength, 
+                        hits, format, serverstate, image, savePath, downPath, 
+                        version, downUrl1, downUrl2, downUrl3, backDownUrl, fileMd5,
+                        showhidden, sort, addtime, updatetime, downcount, versionName];
+
+
+                    /*
                     var version = "";
                     if (modified_formatData[i]['Version'] != null && modified_formatData[i]['Version'] != 'undefined') {
                         version = modified_formatData[i]['Version']
@@ -197,7 +629,7 @@ router.post('/', function(request, response, next) {
                     modified_formatData[i]['Hits'], modified_formatData[i]['Format'], modified_formatData[i]['ServerState'], image, savePath, downPath, 
                     version, downUrl1, downUrl2, downUrl3, backDownUrl, fileMd5,
                     modified_formatData[i]['ShowHidden'], modified_formatData[i]['Sort'], modified_formatData[i]['AddTime'], modified_formatData[i]['UpdateTime'], modified_formatData[i]['DownCount'], versionName];
-                    
+                    */
                     
                     //if (i==0) {
                     values_array.push(value);
