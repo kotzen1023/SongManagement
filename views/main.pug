@@ -374,6 +374,12 @@ form(align='center' enctype='multipart/form-data')
 script.
   document.getElementById('upload').addEventListener('change', handleFileSelect, false);
 hr
+
+p#firstSpellZero
+p#allSpellZero
+
+hr
+
 p#goods(align='center')
   table#tableArray.table.table-striped.table-bordered.dt-responsive.nowrap.display(style='width:100%')
     
@@ -406,6 +412,8 @@ script.
         //console.log("jsondata = "+jsondata);
         songObj=jsondata;
         var count = Object.keys(songObj).length;
+        var firstSpellZeroCount = 0;
+        var allSpellZeroCount = 0;
 
         for (var i=0; i<count; i++) {
           if (select_option_array.length == 0) {
@@ -457,8 +465,24 @@ script.
               }
             }
           }
+
+          if (songObj[i]['FirstSpell'] == "") {
+            firstSpellZeroCount += 1;
+          }
+
+          if (songObj[i]['AllSpell'] == "") {
+            allSpellZeroCount += 1;
+          } 
         }
         
+
+        var firstSpellZeroObj = document.getElementById('firstSpellZero');
+        var allSpellZeroObj = document.getElementById('allSpellZero');
+        firstSpellZeroObj.innerHTML = "FirstSpell 空白數量: ";
+        firstSpellZeroObj.innerHTML += firstSpellZeroCount
+
+        allSpellZeroObj.innerHTML = "AllSpell 空白數量: ";
+        allSpellZeroObj.innerHTML += allSpellZeroCount
         //sort
 
         select_option_array = select_option_array.sort();

@@ -63,11 +63,32 @@ router.post('/', function(request, response, next) {
                         if (parseInt(formatData[i]['SongNum']) == parseInt(exist_array[j]['SongNum'])) {
                             found = true;
 
+                            if (exist_array[j]['VersionName'].includes(",")) {
+                                var ver_arry = exist_array[j]['VersionName'].split(',');
+                                var found_same_version_name = false;
+                                for (var z=0; z <ver_arry.length; z++) {
+                                    if (ver_arry[z] == formatData[i]['VersionName']) {
+                                        //found same version name, means will 'not be add
+                                        found_same_version_name = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!found_same_version_name) { // not found, add it
+                                    let concat_str = ","+formatData[i]['VersionName'];
+                                    exist_array[j]['VersionName'] = exist_array[j]['VersionName'].concat(concat_str);
+                                }
+                            } else if (exist_array[j]['VersionName'] != formatData[i]['VersionName']) {
+                                let concat_str = ","+formatData[i]['VersionName'];
+                                exist_array[j]['VersionName'] = exist_array[j]['VersionName'].concat(concat_str);
+                            }
+    
+                            /*
                             if (!exist_array[j]['VersionName'].includes(formatData[i]['VersionName'])) {
                                 let concat_str = ","+formatData[i]['VersionName'];
                                 exist_array[j]['VersionName'] = exist_array[j]['VersionName'].concat(concat_str);
                                 //console.log(" exist_array[j]['VersionName'] = "+ exist_array[j]['VersionName']);
-                            }
+                            }*/
 
                             break;
                         }
@@ -78,7 +99,7 @@ router.post('/', function(request, response, next) {
                     }
                 }
                 console.log("modified_formatData size = "+modified_formatData.length);
-                //clear before insert
+                //clear before insert 
                 
                 console.log("delete before insert...");
                 var clear_sql = "DELETE FROM tb_song WHERE 1";
