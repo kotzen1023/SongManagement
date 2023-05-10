@@ -475,14 +475,18 @@ script.
           } 
         }
         
+        if (firstSpellZeroCount > 0) {
+          var firstSpellZeroObj = document.getElementById('firstSpellZero');
+          firstSpellZeroObj.innerHTML = "FirstSpell 空白數量: ";
+          firstSpellZeroObj.innerHTML += firstSpellZeroCount
+        }
 
-        var firstSpellZeroObj = document.getElementById('firstSpellZero');
-        var allSpellZeroObj = document.getElementById('allSpellZero');
-        firstSpellZeroObj.innerHTML = "FirstSpell 空白數量: ";
-        firstSpellZeroObj.innerHTML += firstSpellZeroCount
-
-        allSpellZeroObj.innerHTML = "AllSpell 空白數量: ";
-        allSpellZeroObj.innerHTML += allSpellZeroCount
+        if (allSpellZeroCount > 0) {
+          var allSpellZeroObj = document.getElementById('allSpellZero');
+          allSpellZeroObj.innerHTML = "AllSpell 空白數量: ";
+          allSpellZeroObj.innerHTML += allSpellZeroCount
+        }
+        
         //sort
 
         select_option_array = select_option_array.sort();
