@@ -8,9 +8,186 @@ head
         var hostLocation = window.location.origin;
         console.log("hostLocation = "+hostLocation);
         window.location.replace(hostLocation);
-    }  
+    }
 
-bodyngObj
+    function language_change() {
+        var lang_input = document.getElementById('language');
+        var lang_select = document.getElementById('language_select');
+        lang_input.value = lang_select.value;
+        console.log("lang_input.value = "+lang_input.value);
+    }
+
+    function load_language() {
+        var option_string = '#{lang}';
+        var option_array = option_string.split(',')
+        var lang_select = document.getElementById('language_select');
+        lang_select.innerHTML = "<select id='language_select' name='language_select' onchange='language_change()'>";
+        for (var i=0; i<option_array.length; i++) {
+            console.log("#{language}, "+option_array[i]);
+            if ("#{language}" == option_array[i]) {
+                console.log("same!");
+                lang_select.innerHTML += "<option value='"+option_array[i]+"' selected>"+option_array[i]+"</option>"
+            } else {
+                lang_select.innerHTML += "<option value='"+option_array[i]+"'>"+option_array[i]+"</option>"
+            }
+
+            
+        }
+        lang_select.innerHTML += "</select>";
+    }
+
+    function area_change() {
+        var area_input = document.getElementById('area');
+        var area_select = document.getElementById('area_select');
+        area_input.value = area_select.value;
+        console.log("area_input.value = "+area_input.value);
+    }
+
+    function load_area() {
+        var option_string = '#{area1}';
+        var option_array = option_string.split(',')
+        var area_select = document.getElementById('area_select');
+        area_select.innerHTML = "<select id='area_select' name='area_select' onchange='area_change()'>";
+        for (var i=0; i<option_array.length; i++) {
+            console.log("#{area}, "+option_array[i]);
+            if ("#{area}" == option_array[i]) {
+                console.log("same!");
+                area_select.innerHTML += "<option value='"+option_array[i]+"' selected>"+option_array[i]+"</option>"
+            } else {
+                area_select.innerHTML += "<option value='"+option_array[i]+"'>"+option_array[i]+"</option>"
+            }
+
+            
+        }
+        area_select.innerHTML += "</select>";
+    }
+    function mood_change() {
+        var mood_input = document.getElementById('mood');
+        var mood_select = document.getElementById('mood_select');
+        mood_input.value = mood_select.value;
+        console.log("mood_input.value = "+mood_input.value);
+    }
+
+    function load_mood() {
+        var option_string = '#{mood1}';
+        var option_array = option_string.split(',')
+        var mood_select = document.getElementById('mood_select');
+        mood_select.innerHTML = "<select id='mood_select' name='mood_select' onchange='mood_change()'>";
+        for (var i=0; i<option_array.length; i++) {
+            console.log("#{mood}, "+option_array[i]);
+            if ("#{mood}" == option_array[i]) {
+                console.log("same!");
+                mood_select.innerHTML += "<option value='"+option_array[i]+"' selected>"+option_array[i]+"</option>"
+            } else {
+                mood_select.innerHTML += "<option value='"+option_array[i]+"'>"+option_array[i]+"</option>"
+            }
+
+            
+        }
+        mood_select.innerHTML += "</select>";
+    }
+    function sex_change() {
+        var sex_input = document.getElementById('sex');
+        var sex_select = document.getElementById('sex_select');
+        sex_input.value = sex_select.value;
+        console.log("sex_input.value = "+sex_input.value);
+    }
+
+    function load_sex() {
+        var option_string = '#{sex1}';
+        var option_array = option_string.split(',')
+        var sex_select = document.getElementById('sex_select');
+        sex_select.innerHTML = "<select id='sex_select' name='sex_select' onchange='sex_change()'>";
+        for (var i=0; i<option_array.length; i++) {
+            console.log("#{sex}, "+option_array[i]);
+            if ("#{sex}" == option_array[i]) {
+                console.log("same!");
+                sex_select.innerHTML += "<option value='"+option_array[i]+"' selected>"+option_array[i]+"</option>"
+            } else {
+                sex_select.innerHTML += "<option value='"+option_array[i]+"'>"+option_array[i]+"</option>"
+            }
+
+            
+        }
+        sex_select.innerHTML += "</select>";
+    }
+    function antiphonal_change() {
+        var antiphonal_input = document.getElementById('antiphonal');
+        var antiphonal_select = document.getElementById('antiphonal_select');
+        antiphonal_input.value = antiphonal_select.value;
+        console.log("antiphonal_input.value = "+antiphonal_input.value);
+    }
+
+    function load_antiphonal() {
+        var option_string = '#{antiphonal1}';
+        var option_array = option_string.split(',')
+        var antiphonal_select = document.getElementById('antiphonal_select');
+        antiphonal_select.innerHTML = "<select id='antiphonal_select' name='antiphonal_select' onchange='antiphonal_change()'>";
+        for (var i=0; i<option_array.length; i++) {
+            console.log("#{antiphonal}, "+option_array[i]);
+            if ("#{antiphonal}" == option_array[i]) {
+                console.log("same!");
+                antiphonal_select.innerHTML += "<option value='"+option_array[i]+"' selected>"+option_array[i]+"</option>"
+            } else {
+                antiphonal_select.innerHTML += "<option value='"+option_array[i]+"'>"+option_array[i]+"</option>"
+            }
+
+            
+        }
+        antiphonal_select.innerHTML += "</select>";
+    }
+    function vendor_change() {
+        var vendor_input = document.getElementById('vendor');
+        var vendor_select = document.getElementById('vendor_select');
+        vendor_input.value = vendor_select.value;
+        console.log("vendor_input.value = "+vendor_input.value);
+    }
+
+    function load_vendor() {
+        var option_string = '#{vendor1}';
+        var option_array = option_string.split(',')
+        var vendor_select = document.getElementById('vendor_select');
+        vendor_select.innerHTML = "<select id='vendor_select' name='vendor_select' onchange='vendor_change()'>";
+        for (var i=0; i<option_array.length; i++) {
+            console.log("#{vendor}, "+option_array[i]);
+            if ("#{vendor}" == option_array[i]) {
+                console.log("same!");
+                vendor_select.innerHTML += "<option value='"+option_array[i]+"' selected>"+option_array[i]+"</option>"
+            } else {
+                vendor_select.innerHTML += "<option value='"+option_array[i]+"'>"+option_array[i]+"</option>"
+            }
+
+            
+        }
+        vendor_select.innerHTML += "</select>";
+    }
+    function machine_change() {
+        var machine_input = document.getElementById('machine');
+        var machine_select = document.getElementById('machine_select');
+        machine_input.value = machine_select.value;
+        console.log("machine_input.value = "+machine_input.value);
+    }
+
+    function load_machine() {
+        var option_string = '#{machine1}';
+        var option_array = option_string.split(',')
+        var machine_select = document.getElementById('machine_select');
+        machine_select.innerHTML = "<select id='machine_select' name='machine_select' onchange='machine_change()'>";
+        for (var i=0; i<option_array.length; i++) {
+            console.log("#{machine}, "+option_array[i]);
+            if ("#{machine}" == option_array[i]) {
+                console.log("same!");
+                machine_select.innerHTML += "<option value='"+option_array[i]+"' selected>"+option_array[i]+"</option>"
+            } else {
+                machine_select.innerHTML += "<option value='"+option_array[i]+"'>"+option_array[i]+"</option>"
+            }
+
+            
+        }
+        machine_select.innerHTML += "</select>";
+    }
+
+bodyngObj(onload='myfun()')
 h1(align='center') 編輯歌曲
 
 hr
@@ -18,129 +195,205 @@ form(action='/editsong/change' method='post')
 
     table(align='center')
         tr
-            td Id
-            td 
-                //span #{Id}
-                input(id='inputId' name='inputId' type='text' value=`${Id}`)
+            td id
+            td #{id}
+                
+                input(id='id' name='id' type='hidden' value=`${id}`)
         tr
-            td SongNum
+            td video_file
             td
-                input(id='inputSongNum' name='inputSongNum' type='text' value=`${SongNum}`)
+                input(id='video_file' name='video_file' type='text' value=`${video_file}`)
         tr
-            td Name
+            td title
             td
-                textarea(id='inputName' name='inputName' cols='64' rows='4') #{Name}
+                textarea(id='title' name='title' cols='64' rows='4') #{title}
         tr
-            td SingerName
+            td title_word_count
             td
-                input(id='inputSingerName' name='inputSingerName' type='text' size='64' value=`${SingerName}`)
+                input(id='title_word_count' name='title_word_count' type='text' value=`${title_word_count}`)
         tr
-            td SingerId
+            td singer
             td
-                input(id='inputSingerId' name='inputSingerId' type='text' value=`${SingerId}`)
+                input(id='singer' name='singer' type='text' size='64' value=`${singer}`)
         tr
-            td SongLanguageId
+            td language
             td
-                input(id='inputSongLanguageId' name='inputSongLanguageId' type='text' value=`${SongLanguageId}`)
+                input(id='language' name='language' type='hidden' value=`${language}`)
+                select(id='language_select' name='language_select' onchange='language_change()')
+                script.
+                    load_language()
         tr
-            td SongTypeId
+            td area
             td
-                input(id='inputSongTypeId' name='inputSongTypeId' type='text' value=`${SongTypeId}`)
+                input(id='area' name='area' type='hidden' value=`${area}`)
+                select(id='area_select' name='area_select' onchange='area_change()')
+                script.
+                    load_area()
         tr
-            td Track
+            td genre
             td
-                input(id='inputTrack' name='inputTrack' type='text' value=`${Track}`)
+                input(id='genre' name='genre' type='text' value=`${genre}`)
         tr
-            td FirstSpell
+            td mood
             td
-                //input(type='text' value=`${FirstSpell}`)
-                textarea(id='inputFirstSpell' name='inputFirstSpell' cols='64' rows='4') #{FirstSpell}
+                input(id='mood' name='mood' type='hidden' value=`${mood}`)
+                select(id='mood_select' name='mood_select' onchange='mood_change()')
+                script.
+                    load_mood()
         tr
-            td AllSpell
+            td last_name_strokes
             td
-                //input(type='text' value=`${AllSpell}`)
-                textarea(id='inputAllSpell' name='inputAllSpell' cols='64' rows='4') #{AllSpell}
+                input(id='last_name_strokes' name='last_name_strokes' type='text' value=`${last_name_strokes}`)
         tr
-            td NameLength
+            td singer_zhuyin_first_char
             td
-                input(id='inputNameLength' name='inputNameLength' type='text' value=`${NameLength}`)
+                input(id='singer_zhuyin_first_char' name='singer_zhuyin_first_char' type='text' size='64' value=`${singer_zhuyin_first_char}`)
         tr
-            td Hits
+            td singer_pinyin_first_char
             td
-                input(id='inputHits' name='inputHits' type='text' value=`${Hits}`)
+                input(id='singer_pinyin_first_char' name='singer_pinyin_first_char' type='text' size='64' value=`${singer_pinyin_first_char}`)
         tr
-            td Format
+            td title_zhuyin_first_char
             td
-                input(id='inputFormat' name='inputFormat' type='text' value=`${Format}`)
+                input(id='title_zhuyin_first_char' name='title_zhuyin_first_char' type='text' size='64' value=`${title_zhuyin_first_char}`)
         tr
-            td ServerState
+            td title_pinyin_first_char
             td
-                input(id='inputServerState' name='inputServerState' type='text' value=`${ServerState}`)
+                input(id='title_pinyin_first_char' name='title_pinyin_first_char' type='text' size='64' value=`${title_pinyin_first_char}`)
         tr
-            td Image	
+            td sex	
             td
-                input(id='inputImage' name='inputImage' type='text' value=`${Image}`)
+                input(id='sex' name='sex' type='hidden' value=`${sex}`)
+                select(id='sex_select' name='sex_select' onchange='sex_change()')
+                script.
+                    load_sex()
         tr
-            td SavePath	
+            td featuring	
             td
-                input(id='inputSavePath' name='inputSavePath' type='text' value=`${SavePath}`)
+                input(id='featuring' name='featuring' type='text' size='64' value=`${featuring}`)
         tr
-            td DownPath	
+            td antiphonal	
             td
-                input(id='inputDownPath' name='inputDownPath' type='text' value=`${DownPath}`)
+                input(id='antiphonal' name='antiphonal' type='hidden' value=`${antiphonal}`)
+                select(id='antiphonal_select' name='antiphonal_select' onchange='antiphonal_change()')
+                script.
+                    load_antiphonal()
         tr
-            td Version	
+            td vendor	
             td
-                input(id='inputVersion' name='inputVersion' type='text' value=`${Version}`)
+                input(id='vendor' name='vendor' type='hidden' value=`${vendor}`)
+                select(id='vendor_select' name='vendor_select' onchange='vendor_change()')
+                script.
+                    load_vendor()
         tr
-            td DownUrl1	
-            td
-                //input(type='text' value=`${DownUrl1}`)
-                textarea(id='inputDownUrl1' name='inputDownUrl1' cols='64' rows='4') #{DownUrl1}
+            td request_count	
+            td #{request_count}
+                //input(id='request_count' name='request_count' type='text' value=`${request_count}`)
         tr
-            td DownUrl2		
+            td is_new		
             td
-                //input(type='text' value=`${DownUrl2}`)
-                textarea(id='inputDownUrl2' name='inputDownUrl2' cols='64' rows='4') #{DownUrl2}
+                input(id='is_new' name='is_new' type='text' value=`${is_new}`)
         tr
-            td DownUrl3		
+            td vocal		
             td
-                //input(type='text' value=`${DownUrl3}`)
-                textarea(id='inputDownUrl3' name='inputDownUrl3' cols='64'  rows='4') #{DownUrl3}
+                input(id='vocal' name='vocal' type='text' value=`${vocal}`)
         tr
-            td BackDownUrl		
-            td
+            td add_date		
+            td #{add_date}
                 //input(type='text' value=`${BackDownUrl}`)
-                textarea(id='inputBackDownUrl' name='inputBackDownUrl' cols='64' rows='4') #{BackDownUrl}
+                
         tr
-            td FileMd5		
+            td activity_tag1		
             td
-                input(id='inputFileMd5' name='inputFileMd5' type='text' value=`${FileMd5}`)
+                input(id='activity_tag1' name='activity_tag1' type='text' size='64' value=`${activity_tag1}`)
         tr
-            td ShowHidden		
+            td volume		
             td
-                input(id='inputShowHidden' name='inputShowHidden' type='text' value=`${ShowHidden}`)
+                input(id='volume' name='volume' type='text' value=`${volume}`)
         tr
-            td Sort		
+            td description		
             td
-                input(id='inputSort' name='inputSort' type='text' value=`${Sort}`)
+                input(id='description' name='description' type='text' value=`${description}`)
         tr
-            td AddTime		
+            td file_cd		
             td
-                input(id='inputAddTime' name='inputAddTime' type='text' value=`${AddTime}`)
+                input(id='file_cd' name='file_cd' type='text' value=`${file_cd}`)
         tr
-            td UpdateTime		
+            td sort		
             td
-                input(id='inputUpdateTime' name='inputUpdateTime' type='text' value=`${UpdateTime}`)
+                input(id='sort' name='sort' type='text' value=`${sort}`)
         tr
-            td DownCount		
+            td rlsound		
             td
-                input(id='inputDownCount' name='inputDownCount' type='text' value=`${DownCount}`)
+                input(id='rlsound' name='rlsound' type='text' value=`${rlsound}`)
         tr
-            td VersionName		
+            td rlsound2		
             td
-                textarea(id='inputVersionName' name='inputVersionName' cols='64' rows='4') #{VersionName}
-
+                input(id='rlsound2' name='rlsound2' type='text' value=`${rlsound2}`)
+        tr
+            td ch		
+            td
+                input(id='ch' name='ch' type='text' value=`${ch}`)
+        tr
+            td add_no		
+            td
+                input(id='add_no' name='add_no' type='text' value=`${add_no}`)
+        tr
+            td light		
+            td
+                input(id='light' name='light' type='text' value=`${light}`)
+        tr
+            td newer		
+            td
+                input(id='newer' name='newer' type='text' value=`${newer}`)
+        tr
+            td son1		
+            td
+                input(id='son1' name='son1' type='text' value=`${son1}`)
+        tr
+            td son2		
+            td
+                input(id='son2' name='son2' type='text' value=`${son2}`)
+        tr
+            td son3		
+            td
+                input(id='son3' name='son3' type='text' value=`${son3}`)
+        tr
+            td ok		
+            td
+                input(id='ok' name='ok' type='text' value=`${ok}`)
+        tr
+            td machine		
+            td
+                input(id='machine' name='machine' type='hidden' value=`${machine}`)
+                select(id='machine_select' name='machine_select' onchange='machine_change()')
+                script.
+                    load_machine()
+        tr
+            td video_length		
+            td
+                input(id='video_length' name='video_length' type='text' value=`${video_length}`)
+        tr
+            td tv		
+            td
+                input(id='tv' name='tv' type='text' value=`${tv}`)
+        tr
+            td activity_tag2		
+            td
+                input(id='activity_tag2' name='activity_tag2' type='text' value=`${activity_tag2}`)
+        tr
+            td activity_tag3		
+            td
+                input(id='activity_tag3' name='activity_tag3' type='text' value=`${activity_tag3}`)
+        tr
+            td version		
+            td
+                input(id='version' name='version' type='text' value=`${version}`)
+        tr
+            td version_name		
+            td
+                textarea(id='version_name' name='version_name' cols='64' rows='4') #{version_name}
+        
     span
         div(align='center')
             input(type='button' value='取消' onclick='back()')

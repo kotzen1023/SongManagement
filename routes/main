@@ -18,7 +18,8 @@ router.get('/', function(req, res, next) {
     console.log('login_name = '+login_name+', session = '+session);
 
     //connection.query('SELECT Id, SongNum, Name, SingerName, SingerId, SongLanguageId, SongTypeId, Track, FirstSpell, AllSpell, NameLength, Hits, Format, ServerState, Image, SavePath, DownPath, Version, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, Sort, AddTime, UpdateTime, DownCount FROM tb_song', function(error, results, fields) {
-    connection.query('SELECT * FROM tb_song', function(error, results, fields) {
+    //connection.query('SELECT * FROM tb_song', function(error, results, fields) {
+    connection.query('SELECT * FROM tb_song_original', function(error, results, fields) {
     // If there is an issue with the query, output the error
         if (error) throw error;
         

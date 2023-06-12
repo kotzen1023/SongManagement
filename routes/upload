@@ -37,7 +37,8 @@ router.post('/', function(request, response, next) {
     */
 
     //get column SongNum in DB
-    connection.query('SELECT * FROM tb_song', function(error, results_songNum, fields) {
+    //connection.query('SELECT * FROM tb_song', function(error, results_songNum, fields) {
+    connection.query('SELECT * FROM tb_song_original', function(error, results_songNum, fields) {
         // If there is an issue with the query, output the error
             if (error) throw error;
             var exist_array = [];
@@ -60,9 +61,11 @@ router.post('/', function(request, response, next) {
                 for (var i=0; i<dataSize; i++) {
                     var found = false;
                     for (var j=0; j<exist_array.length; j++) {
-                        if (parseInt(formatData[i]['SongNum']) == parseInt(exist_array[j]['SongNum'])) {
+                        //if (parseInt(formatData[i]['SongNum']) == parseInt(exist_array[j]['SongNum'])) {
+                        if (parseInt(formatData[i]['id']) == parseInt(exist_array[j]['id']) || parseInt(formatData[i]['SongNum']) == parseInt(exist_array[j]['id'])) {
                             found = true;
 
+                            /*
                             if (exist_array[j]['VersionName'].includes(",")) {
                                 var ver_arry = exist_array[j]['VersionName'].split(',');
                                 var found_same_version_name = false;
@@ -81,6 +84,27 @@ router.post('/', function(request, response, next) {
                             } else if (exist_array[j]['VersionName'] != formatData[i]['VersionName']) {
                                 let concat_str = ","+formatData[i]['VersionName'];
                                 exist_array[j]['VersionName'] = exist_array[j]['VersionName'].concat(concat_str);
+                            }
+                            */
+
+                            if (exist_array[j]['version_name'].includes(",")) {
+                                var ver_arry = exist_array[j]['version_name'].split(',');
+                                var found_same_version_name = false;
+                                for (var z=0; z <ver_arry.length; z++) {
+                                    if (ver_arry[z] == formatData[i]['version_name']) {
+                                        //found same version name, means will 'not be add
+                                        found_same_version_name = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!found_same_version_name) { // not found, add it
+                                    let concat_str = ","+formatData[i]['version_name'];
+                                    exist_array[j]['version_name'] = exist_array[j]['version_name'].concat(concat_str);
+                                }
+                            } else if (exist_array[j]['version_name'] != formatData[i]['version_name']) {
+                                let concat_str = ","+formatData[i]['version_name'];
+                                exist_array[j]['version_name'] = exist_array[j]['version_name'].concat(concat_str);
                             }
     
                             /*
@@ -102,7 +126,8 @@ router.post('/', function(request, response, next) {
                 //clear before insert 
                 
                 console.log("delete before insert...");
-                var clear_sql = "DELETE FROM tb_song WHERE 1";
+                //var clear_sql = "DELETE FROM tb_song WHERE 1";
+                var clear_sql = "DELETE FROM tb_song_original WHERE 1";
                 connection.query(clear_sql, [values_array], function(error, results, fields) {
                     // If there is an issue with the query, output the error
                     if (error) throw error;
@@ -112,28 +137,315 @@ router.post('/', function(request, response, next) {
                 });
 
                 var values_array = [];
-                var sql = "INSERT INTO tb_song (Id, SongNum, Name, SingerName, SingerId, SongLanguageId, SongTypeId, Track, FirstSpell, AllSpell, NameLength, Hits, Format, ServerState, Image, SavePath, DownPath, Version, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, Sort, AddTime, UpdateTime, DownCount, VersionName) VALUES ?";
+                //var sql = "INSERT INTO tb_song (Id, SongNum, Name, SingerName, SingerId, SongLanguageId, SongTypeId, Track, FirstSpell, AllSpell, NameLength, Hits, Format, ServerState, Image, SavePath, DownPath, Version, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, Sort, AddTime, UpdateTime, DownCount, VersionName) VALUES ?";
+                var sql = "INSERT INTO tb_song_original (id, video_file, title, title_word_count, singer, language, area, genre, mood, last_name_strokes, singer_zhuyin_first_char, singer_pinyin_first_char, title_zhuyin_first_char, title_pinyin_first_char, sex, featuring, antiphonal, vendor, request_count, is_new, vocal, add_date, activity_tag1, volume, description, file_cd, sort, rlsound, rlsound2, ch, add_no, light, newer, son1, son2, son3, ok, machine, video_length, tv, activity_tag2, activity_tag3, version, version_name, singerid, songlanguageid, songtypeid, track, allspell, hits, serverstate, image, savePath, downPath, downUrl1, downUrl2, downUrl3, backDownUrl, fileMd5, showhidden, updatetime) VALUES ?";
                 //insert exist
                 for (var i=0; i<exist_array.length; i++) {
 
                     var id = "0";
-                    if (exist_array[i]['Id'] != null && exist_array[i]['Id'] != 'undefined') {
-                        id = exist_array[i]['Id'];
+                    if (exist_array[i]['id'] != null && exist_array[i]['id'] != 'undefined') {
+                        id = exist_array[i]['id'];
                     }
 
-                    var songnum = "";
+                    //var songnum = "";
+                    var video_file = "";
+                    if (exist_array[i]['video_file'] != null && exist_array[i]['video_file'] != 'undefined') {
+                        video_file = exist_array[i]['video_file'];
+                    }
+
+                    //var name = "";
+                    var title = "";
+                    if (exist_array[i]['title'] != null && exist_array[i]['title'] != 'undefined') {
+                        title = exist_array[i]['title'];
+                    }
+
+                    //var singername = "";
+                    var title_word_count = "0";
+                    if (exist_array[i]['title_word_count'] != null && exist_array[i]['title_word_count'] != 'undefined') {
+                        title_word_count = exist_array[i]['title_word_count'];
+                    } else {
+                        //title_word_count = title.length;
+                        var left_brackets = title.indexOf("(");
+                        var left_brackets_c = title.indexOf("（");
+                        if (left_brackets >= 0) { //found left brackets
+                            //console.log("found left brackets: "+title);
+                            if (left_brackets == 0) { //the title start with left brackets
+
+                            } else {
+                                var split_array = title.split("(");
+                                //test if all letters and numbers
+                                if (split_array[0].match(/^[A-Za-z0-9'\s]*$/)) {
+                                    //console.log("all letters and numbers:"+ title);
+                                    var spite_letters_nums = split_array[0].split(" ");
+                                    title_word_count = spite_letters_nums.length
+                                } else {
+                                    title_word_count = split_array[0].trim().length
+                                }
+                            }
+                        } else if (left_brackets_c >= 0) { //found left chinese brackets
+                            //console.log("found left chinese brackets: "+title);
+                            if (left_brackets_c ==0) { //the title start with left brackets
+
+                            } else {
+                                var split_array = title.split("（");
+                                //test if all letters and numbers
+                                if (split_array[0].match(/^[A-Za-z0-9'\s]*$/)) {
+                                    //console.log("all letters and numbers:"+ title);
+                                    var spite_letters_nums = split_array[0].split(" ");
+                                    title_word_count = spite_letters_nums.length
+                                } else {
+                                    title_word_count = split_array[0].trim().length
+                                }
+                            }
+                        } else { //not found "("
+                            //console.log("brackets not found: "+title);
+                            if (title.match(/^[A-Za-z0-9'\s]*$/)) {
+                                //console.log("all letters and numbers:"+ title);
+                                var spite_letters_nums = title.split(" ");
+                                title_word_count = spite_letters_nums.length
+                            } else {
+                                title_word_count = title.trim().length;
+                            }
+                            
+                        }
+                    }
+
+                    //var singerid = "0";
+                    var singer = "";
+                    if (exist_array[i]['singer'] != null && exist_array[i]['singer'] != 'undefined') {
+                        singer = exist_array[i]['singer'];
+                    }
+
+                    //var songlanguageid = "";
+                    var language = "";
+                    if (exist_array[i]['language'] != null && exist_array[i]['language'] != 'undefined') {
+                        language = exist_array[i]['language'];
+                    }
+
+                    //var songtypeid = "";
+                    var area = "";
+                    if (exist_array[i]['area'] != null && exist_array[i]['area'] != 'undefined') {
+                        area = exist_array[i]['area'];
+                    }
+
+                    //var track = "";
+                    var genre = "";
+                    if (exist_array[i]['genre'] != null && exist_array[i]['genre'] != 'undefined') {
+                        genre = exist_array[i]['genre'];
+                    }
+
+                    //var format = "";
+                    var mood = "";
+                    if (exist_array[i]['mood'] != null && exist_array[i]['mood'] != 'undefined') {
+                        mood = exist_array[i]['mood'];
+                    }
+
+                    //var serverstate = "1";
+                    var last_name_strokes = "0";
+                    if (exist_array[i]['last_name_strokes'] != null && exist_array[i]['last_name_strokes'] != 'undefined') {
+                        last_name_strokes = exist_array[i]['last_name_strokes'];
+                    }
+
+                    //var firstspell = "";
+                    var singer_zhuyin_first_char = "";
+                    if (exist_array[i]['singer_zhuyin_first_char'] != null && exist_array[i]['singer_zhuyin_first_char'] != 'undefined') {
+                        singer_zhuyin_first_char = exist_array[i]['singer_zhuyin_first_char'];
+                    }
+
+                    //var allspell = "";
+                    var singer_pinyin_first_char = "";
+                    if (exist_array[i]['singer_pinyin_first_char'] != null && exist_array[i]['singer_pinyin_first_char'] != 'undefined') {
+                        singer_pinyin_first_char = exist_array[i]['singer_pinyin_first_char'].toLowerCase();
+                    }
+
+                    //var namelength = "0";
+                    var title_zhuyin_first_char = "";
+                    if (exist_array[i]['title_zhuyin_first_char'] != null && exist_array[i]['title_zhuyin_first_char'] != 'undefined') {
+                        title_zhuyin_first_char = exist_array[i]['title_zhuyin_first_char'];
+                    }
+
+                    //var hits = "0";
+                    var title_pinyin_first_char = "";
+                    if (exist_array[i]['title_pinyin_first_char'] != null && exist_array[i]['title_pinyin_first_char'] != 'undefined') {
+                        title_pinyin_first_char = exist_array[i]['title_pinyin_first_char'].toLowerCase();
+                    }
+
+                    //var version = "";
+                    var sex = "";
+                    if (exist_array[i]['sex'] != null && exist_array[i]['sex'] != 'undefined') {
+                        sex = exist_array[i]['sex'];
+                    }
+
+                    //var image = ""
+                    var featuring = ""
+                    if (exist_array[i]['featuring'] != null && exist_array[i]['featuring'] != 'undefined') {
+                        featuring = exist_array[i]['featuring'];
+                    }
+                    
+                    //var fileMd5 = ""
+                    var antiphonal = ""
+                    if (exist_array[i]['antiphonal'] != null && exist_array[i]['antiphonal'] != 'undefined') {
+                        antiphonal = exist_array[i]['antiphonal'];
+                    }
+
+                    //var savePath = ""
+                    var vendor = ""
+                    if (exist_array[i]['vendor'] != null && exist_array[i]['vendor'] != 'undefined') {
+                        vendor = exist_array[i]['vendor'];
+                    }
+
+                    //var downPath = ""
+                    var request_count = "0"
+                    if (exist_array[i]['request_count'] != null && exist_array[i]['request_count'] != 'undefined') {
+                        request_count = exist_array[i]['request_count'];
+                    }
+
+                    //var downUrl1 = ""
+                    var is_new = ""
+                    if (exist_array[i]['is_new'] != null && exist_array[i]['is_new'] != 'undefined') {
+                        is_new = exist_array[i]['is_new'];
+                    }
+
+                    //var downUrl2 = ""
+                    var vocal = ""
+                    if (exist_array[i]['vocal'] != null && exist_array[i]['vocal'] != 'undefined') {
+                        vocal = exist_array[i]['vocal'];
+                    }
+
+                    //var downUrl3 = ""
+                    var add_date = ""
+                    if (exist_array[i]['add_date'] != null && exist_array[i]['add_date'] != 'undefined') {
+                        add_date = exist_array[i]['add_date'];
+                    }
+
+                    //var backDownUrl = ""
+                    var activity_tag1 = ""
+                    if (exist_array[i]['activity_tag1'] != null && exist_array[i]['activity_tag1'] != 'undefined') {
+                        activity_tag1 = exist_array[i]['activity_tag1'];
+                    }
+
+                    //var showhidden = "1"
+                    var volume = "10000"
+                    if (exist_array[i]['volume'] != null && exist_array[i]['volume'] != 'undefined') {
+                        volume = exist_array[i]['volume'];
+                    }
+
+                    //var sort = "1"
+                    var description = "1"
+                    if (exist_array[i]['description'] != null && exist_array[i]['description'] != 'undefined') {
+                        description = exist_array[i]['description'];
+                    }
+
+                    //var addtime = ""
+                    var file_cd = ""
+                    if (exist_array[i]['file_cd'] != null && exist_array[i]['file_cd'] != 'undefined') {
+                        file_cd = exist_array[i]['file_cd'];
+                    }
+
+                    //var updatetime = ""
+                    var sort = ""
+                    if (exist_array[i]['sort'] != null && exist_array[i]['sort'] != 'undefined') {
+                        sort = exist_array[i]['sort'];
+                    }
+
+                    //var downcount = "0"
+                    var rlsound = "0"
+                    if (exist_array[i]['rlsound'] != null && exist_array[i]['rlsound'] != 'undefined') {
+                        rlsound = exist_array[i]['rlsound'];
+                    }
+
+                    //var versionName = ""
+                    var rlsound2 = ""
+                    if (exist_array[i]['rlsound2'] != null && exist_array[i]['rlsound2'] != 'undefined') {
+                        rlsound2 = exist_array[i]['rlsound2'];
+                    }
+
+                    var ch = ""
+                    if (exist_array[i]['ch'] != null && exist_array[i]['ch'] != 'undefined') {
+                        ch = exist_array[i]['ch'];
+                    }
+
+                    var add_no = ""
+                    if (exist_array[i]['add_no'] != null && exist_array[i]['add_no'] != 'undefined') {
+                        add_no = exist_array[i]['add_no'];
+                    }
+
+                    var light = ""
+                    if (exist_array[i]['light'] != null && exist_array[i]['light'] != 'undefined') {
+                        light = exist_array[i]['light'];
+                    }
+
+                    var newer = ""
+                    if (exist_array[i]['newer'] != null && exist_array[i]['newer'] != 'undefined') {
+                        newer = exist_array[i]['newer'];
+                    }
+
+                    var son1 = ""
+                    if (exist_array[i]['son1'] != null && exist_array[i]['son1'] != 'undefined') {
+                        son1 = exist_array[i]['son1'];
+                    }
+
+                    var son2 = ""
+                    if (exist_array[i]['son2'] != null && exist_array[i]['son2'] != 'undefined') {
+                        son2 = exist_array[i]['son2'];
+                    }
+
+                    var son3 = ""
+                    if (exist_array[i]['son3'] != null && exist_array[i]['son3'] != 'undefined') {
+                        son3 = exist_array[i]['son3'];
+                    }
+
+                    var ok = ""
+                    if (exist_array[i]['ok'] != null && exist_array[i]['ok'] != 'undefined') {
+                        ok = exist_array[i]['ok'];
+                    }
+
+                    var machine = ""
+                    if (exist_array[i]['machine'] != null && exist_array[i]['machine'] != 'undefined') {
+                        machine = exist_array[i]['machine'].toLowerCase();
+                    }
+
+                    var video_length = ""
+                    if (exist_array[i]['video_length'] != null && exist_array[i]['video_length'] != 'undefined') {
+                        video_length = exist_array[i]['video_length'];
+                    }
+
+                    var tv = "0"
+                    if (exist_array[i]['tv'] != null && exist_array[i]['tv'] != 'undefined') {
+                        tv = exist_array[i]['tv'];
+                    }
+
+                    var activity_tag2 = ""
+                    if (exist_array[i]['activity_tag2'] != null && exist_array[i]['activity_tag2'] != 'undefined') {
+                        activity_tag2 = exist_array[i]['activity_tag2'];
+                    }
+
+                    var activity_tag3 = ""
+                    if (exist_array[i]['activity_tag3'] != null && exist_array[i]['activity_tag3'] != 'undefined') {
+                        activity_tag3 = exist_array[i]['activity_tag3'];
+                    }
+
+                    var version = ""
+                    if (exist_array[i]['version'] != null && exist_array[i]['version'] != 'undefined') {
+                        version = exist_array[i]['version'];
+                    }
+
+                    var version_name = ""
+                    if (exist_array[i]['version_name'] != null && exist_array[i]['version_name'] != 'undefined') {
+                        version_name = exist_array[i]['version_name'];
+                    }
+
+                    //original
                     if (exist_array[i]['SongNum'] != null && exist_array[i]['SongNum'] != 'undefined') {
-                        songnum = exist_array[i]['SongNum'];
+                        id = exist_array[i]['SongNum'];
                     }
 
-                    var name = "";
                     if (exist_array[i]['Name'] != null && exist_array[i]['Name'] != 'undefined') {
-                        name = exist_array[i]['Name'];
+                        title = exist_array[i]['Name'];
                     }
 
-                    var singername = "";
                     if (exist_array[i]['SingerName'] != null && exist_array[i]['SingerName'] != 'undefined') {
-                        singername = exist_array[i]['SingerName'];
+                        singer = exist_array[i]['SingerName'];
                     }
 
                     var singerid = "0";
@@ -141,14 +453,14 @@ router.post('/', function(request, response, next) {
                         singerid = exist_array[i]['SingerId'];
                     }
 
-                    var songlanguageid = "";
+                    var songlanguageid = "2";
                     if (exist_array[i]['SongLanguageId'] != null && exist_array[i]['SongLanguageId'] != 'undefined') {
                         songlanguageid = exist_array[i]['SongLanguageId'];
                     }
 
                     var songtypeid = "";
                     if (exist_array[i]['SongTypeId'] != null && exist_array[i]['SongTypeId'] != 'undefined') {
-                        songtypeid = exist_array[i]['SongLanguageId'];
+                        songtypeid = exist_array[i]['SongTypeId'];
                     }
 
                     var track = "";
@@ -156,29 +468,61 @@ router.post('/', function(request, response, next) {
                         track = exist_array[i]['Track'];
                     }
 
-                    var format = "";
-                    if (exist_array[i]['Format'] != null && exist_array[i]['Format'] != 'undefined') {
-                        format = exist_array[i]['Format'];
-                    }
-
-                    var serverstate = "1";
-                    if (exist_array[i]['ServerState'] != null && exist_array[i]['ServerState'] != 'undefined') {
-                        serverstate = exist_array[i]['ServerState'];
-                    }
-
-                    var firstspell = "";
                     if (exist_array[i]['FirstSpell'] != null && exist_array[i]['FirstSpell'] != 'undefined') {
-                        firstspell = exist_array[i]['FirstSpell'];
+                        title_pinyin_first_char = exist_array[i]['FirstSpell'].toLowerCase();
                     }
 
                     var allspell = "";
                     if (exist_array[i]['AllSpell'] != null && exist_array[i]['AllSpell'] != 'undefined') {
-                        allspell = exist_array[i]['AllSpell'];
+                        allspell = exist_array[i]['AllSpell'].toLowerCase();
                     }
 
-                    var namelength = "0";
                     if (exist_array[i]['NameLength'] != null && exist_array[i]['NameLength'] != 'undefined') {
-                        namelength = exist_array[i]['NameLength'];
+                        title_word_count = exist_array[i]['NameLength'];
+                    } else {
+                        var left_brackets = title.indexOf("(");
+                        var left_brackets_c = title.indexOf("（");
+                        if (left_brackets >= 0) { //found left brackets
+                            //console.log("found left brackets: "+title);
+                            if (left_brackets == 0) { //the title start with left brackets
+
+                            } else {
+                                var split_array = title.split("(");
+                                //test if all letters and numbers
+                                if (split_array[0].match(/^[A-Za-z0-9'\s]*$/)) {
+                                    //console.log("all letters and numbers:"+ title);
+                                    var spite_letters_nums = split_array[0].split(" ");
+                                    title_word_count = spite_letters_nums.length
+                                } else {
+                                    title_word_count = split_array[0].trim().length
+                                }
+                            }
+                        } else if (left_brackets_c >= 0) { //found left chinese brackets
+                            //console.log("found left chinese brackets: "+title);
+                            if (left_brackets_c ==0) { //the title start with left brackets
+
+                            } else {
+                                var split_array = title.split("（");
+                                //test if all letters and numbers
+                                if (split_array[0].match(/^[A-Za-z0-9'\s]*$/)) {
+                                    //console.log("all letters and numbers:"+ title);
+                                    var spite_letters_nums = split_array[0].split(" ");
+                                    title_word_count = spite_letters_nums.length
+                                } else {
+                                    title_word_count = split_array[0].trim().length
+                                }
+                            }
+                        } else { //not found "("
+                            //console.log("brackets not found: "+title);
+                            if (title.match(/^[A-Za-z0-9'\s]*$/)) {
+                                //console.log("all letters and numbers:"+ title);
+                                var spite_letters_nums = title.split(" ");
+                                title_word_count = spite_letters_nums.length
+                            } else {
+                                title_word_count = title.trim().length;
+                            }
+                            
+                        }
                     }
 
                     var hits = "0";
@@ -186,92 +530,145 @@ router.post('/', function(request, response, next) {
                         hits = exist_array[i]['Hits'];
                     }
 
-                    var version = "";
-                    if (exist_array[i]['Version'] != null && exist_array[i]['Version'] != 'undefined') {
-                        version = exist_array[i]['Version'];
+                    if (exist_array[i]['Format'] != null && exist_array[i]['Format'] != 'undefined') {
+                        antiphonal = exist_array[i]['Format'];
                     }
+
+                    var serverstate = "1";
+                    if (exist_array[i]['ServerState'] != null && exist_array[i]['ServerState'] != 'undefined') {
+                        serverstate = exist_array[i]['ServerState'];
+                    }
+
                     var image = ""
                     if (exist_array[i]['Image'] != null && exist_array[i]['Image'] != 'undefined') {
                         image = exist_array[i]['Image'];
                     }
-                    var fileMd5 = ""
-                    if (exist_array[i]['FileMd5'] != null && exist_array[i]['FileMd5'] != 'undefined') {
-                        fileMd5 = exist_array[i]['FileMd5'];
-                    }
+
                     var savePath = ""
                     if (exist_array[i]['SavePath'] != null && exist_array[i]['SavePath'] != 'undefined') {
                         savePath = exist_array[i]['SavePath'];
                     }
+
                     var downPath = ""
                     if (exist_array[i]['DownPath'] != null && exist_array[i]['DownPath'] != 'undefined') {
                         downPath = exist_array[i]['DownPath'];
                     }
+
                     var downUrl1 = ""
                     if (exist_array[i]['DownUrl1'] != null && exist_array[i]['DownUrl1'] != 'undefined') {
                         downUrl1 = exist_array[i]['DownUrl1'];
                     }
+
                     var downUrl2 = ""
                     if (exist_array[i]['DownUrl2'] != null && exist_array[i]['DownUrl2'] != 'undefined') {
                         downUrl2 = exist_array[i]['DownUrl2'];
                     }
+
                     var downUrl3 = ""
                     if (exist_array[i]['DownUrl3'] != null && exist_array[i]['DownUrl3'] != 'undefined') {
                         downUrl3 = exist_array[i]['DownUrl3'];
                     }
+
                     var backDownUrl = ""
                     if (exist_array[i]['BackDownUrl'] != null && exist_array[i]['BackDownUrl'] != 'undefined') {
                         backDownUrl = exist_array[i]['BackDownUrl'];
+                    }
+
+                    var fileMd5 = ""
+                    if (exist_array[i]['FileMd5'] != null && exist_array[i]['FileMd5'] != 'undefined') {
+                        fileMd5 = exist_array[i]['FileMd5'];
                     }
 
                     var showhidden = "1"
                     if (exist_array[i]['ShowHidden'] != null && exist_array[i]['ShowHidden'] != 'undefined') {
                         showhidden = exist_array[i]['ShowHidden'];
                     }
-                    var sort = "1"
+
                     if (exist_array[i]['Sort'] != null && exist_array[i]['Sort'] != 'undefined') {
                         sort = exist_array[i]['Sort'];
                     }
-                    var addtime = ""
+
                     if (exist_array[i]['AddTime'] != null && exist_array[i]['AddTime'] != 'undefined') {
-                        addtime = exist_array[i]['AddTime'];
+                        add_date = exist_array[i]['AddTime'];
                     }
+
                     var updatetime = ""
                     if (exist_array[i]['UpdateTime'] != null && exist_array[i]['UpdateTime'] != 'undefined') {
                         updatetime = exist_array[i]['UpdateTime'];
                     }
-                    var downcount = "0"
+
                     if (exist_array[i]['DownCount'] != null && exist_array[i]['DownCount'] != 'undefined') {
-                        downcount = exist_array[i]['DownCount'];
+                        request_count = exist_array[i]['DownCount'];
                     }
-
-                    var versionName = ""
-                    if (exist_array[i]['VersionName'] != null && exist_array[i]['VersionName'] != 'undefined') {
-                        versionName = exist_array[i]['VersionName'];
-                    }
-
                     //for 239 plus
-                    if (exist_array[i]['编号'] != null && exist_array[i]['编号'] != 'undefined') {
-                        id = exist_array[i]['编号'];
-                    }
-
+                    //if (exist_array[i]['编号'] != null && exist_array[i]['编号'] != 'undefined') {
+                    //    id = exist_array[i]['编号'];
+                    //}
+                    
                     if (exist_array[i]['*歌曲编号'] != null && exist_array[i]['*歌曲编号'] != 'undefined') {
-                        songnum = exist_array[i]['*歌曲编号'];
+                        id = exist_array[i]['*歌曲编号'];
                     }
 
                     if (exist_array[i]['*歌曲名称'] != null && exist_array[i]['*歌曲名称'] != 'undefined') {
-                        name = exist_array[i]['*歌曲名称'];
+                        title = exist_array[i]['*歌曲名称'];
+                        //find out if title has "("
+                        var left_brackets = title.indexOf("(");
+                        var left_brackets_c = title.indexOf("（");
+                        if (left_brackets >= 0) { //found left brackets
+                            //console.log("found left brackets: "+title);
+                            if (left_brackets == 0) { //the title start with left brackets
+
+                            } else {
+                                var split_array = title.split("(");
+                                //test if all letters and numbers
+                                if (split_array[0].match(/^[A-Za-z0-9'\s]*$/)) {
+                                    //console.log("all letters and numbers:"+ title);
+                                    var spite_letters_nums = split_array[0].split(" ");
+                                    title_word_count = spite_letters_nums.length
+                                } else {
+                                    title_word_count = split_array[0].trim().length
+                                }
+                            }
+                        } else if (left_brackets_c >= 0) { //found left chinese brackets
+                            //console.log("found left chinese brackets: "+title);
+                            if (left_brackets_c ==0) { //the title start with left brackets
+
+                            } else {
+                                var split_array = title.split("（");
+                                //test if all letters and numbers
+                                if (split_array[0].match(/^[A-Za-z0-9'\s]*$/)) {
+                                    //console.log("all letters and numbers:"+ title);
+                                    var spite_letters_nums = split_array[0].split(" ");
+                                    title_word_count = spite_letters_nums.length
+                                } else {
+                                    title_word_count = split_array[0].trim().length
+                                }
+                            }
+                        } else { //not found "("
+                            //console.log("brackets not found: "+title);
+                            if (title.match(/^[A-Za-z0-9'\s]*$/)) {
+                                //console.log("all letters and numbers:"+ title);
+                                var spite_letters_nums = title.split(" ");
+                                title_word_count = spite_letters_nums.length
+                            } else {
+                                title_word_count = title.trim().length;
+                            }
+                            
+                        }
                     }
 
+                    /*
                     if (exist_array[i]['NameLength'] == 'undefined') {
-                        namelength = exist_array[i]['*歌曲名称'].length;
+                        title_word_count = exist_array[i]['*歌曲名称'].length;
                     }
+                    */
 
                     if (exist_array[i]['*歌星名称'] != null && exist_array[i]['*歌星名称'] != 'undefined') {
-                        singername = exist_array[i]['*歌星名称'];
+                        singer = exist_array[i]['*歌星名称'];
                     }
 
                     if (exist_array[i]['歌名首拼'] != null && exist_array[i]['歌名首拼'] != 'undefined') {
-                        firstspell = exist_array[i]['歌名首拼'];
+                        title_pinyin_first_char = exist_array[i]['歌名首拼'];
                     }
 
                     if (exist_array[i]['歌名全拼'] != null && exist_array[i]['歌名全拼'] != 'undefined') {
@@ -321,66 +718,25 @@ router.post('/', function(request, response, next) {
                     if (exist_array[i]['备用下载地址'] != null && exist_array[i]['备用下载地址'] != 'undefined') {
                         backDownUrl = exist_array[i]['备用下载地址'];
                     }
+                    
+                    
 
+                    /*
                     value = [id, songnum, name, singername, singerid, songlanguageid, 
                     songtypeid, track, firstspell, allspell, namelength, 
                     hits, format, serverstate, image, savePath, downPath, 
                     version, downUrl1, downUrl2, downUrl3, backDownUrl, fileMd5,
                     showhidden, sort, addtime, updatetime, downcount, versionName];
-
-
-
-
-                    /*
-
-                    
-                    var version = "";
-                    if (exist_array[i]['Version'] != null && exist_array[i]['Version'] != 'undefined') {
-                        version = exist_array[i]['Version']
-                    }
-                    var image = ""
-                    if (exist_array[i]['Image'] != null && exist_array[i]['Image'] != 'undefined') {
-                        image = exist_array[i]['Image']
-                    }
-                    var fileMd5 = ""
-                    if (exist_array[i]['FileMd5'] != null && exist_array[i]['FileMd5'] != 'undefined') {
-                        fileMd5 = exist_array[i]['FileMd5']
-                    }
-                    var savePath = ""
-                    if (exist_array[i]['SavePath'] != null && exist_array[i]['SavePath'] != 'undefined') {
-                        savePath = exist_array[i]['SavePath']
-                    }
-                    var downPath = ""
-                    if (exist_array[i]['DownPath'] != null && exist_array[i]['DownPath'] != 'undefined') {
-                        downPath = exist_array[i]['DownPath']
-                    }
-                    var downUrl1 = ""
-                    if (exist_array[i]['DownUrl1'] != null && exist_array[i]['DownUrl1'] != 'undefined') {
-                        downUrl1 = exist_array[i]['DownUrl1']
-                    }
-                    var downUrl2 = ""
-                    if (exist_array[i]['DownUrl2'] != null && exist_array[i]['DownUrl2'] != 'undefined') {
-                        downUrl2 = exist_array[i]['DownUrl2']
-                    }
-                    var downUrl3 = ""
-                    if (exist_array[i]['DownUrl3'] != null && exist_array[i]['DownUrl3'] != 'undefined') {
-                        downUrl3 = exist_array[i]['DownUrl3']
-                    }
-                    var backDownUrl = ""
-                    if (exist_array[i]['BackDownUrl'] != null && exist_array[i]['BackDownUrl'] != 'undefined') {
-                        backDownUrl = exist_array[i]['BackDownUrl']
-                    }
-                    var versionName = ""
-                    if (exist_array[i]['VersionName'] != null && exist_array[i]['VersionName'] != 'undefined') {
-                        versionName = exist_array[i]['VersionName']
-                    }
-        
-                    value = [exist_array[i]['Id'], exist_array[i]['SongNum'], exist_array[i]['Name'], exist_array[i]['SingerName'], exist_array[i]['SingerId'], exist_array[i]['SongLanguageId'], 
-                    exist_array[i]['SongTypeId'], exist_array[i]['Track'], exist_array[i]['FirstSpell'], exist_array[i]['AllSpell'], exist_array[i]['NameLength'], 
-                    exist_array[i]['Hits'], exist_array[i]['Format'], exist_array[i]['ServerState'], image, savePath, downPath, 
-                    version, downUrl1, downUrl2, downUrl3, backDownUrl, fileMd5,
-                    exist_array[i]['ShowHidden'], exist_array[i]['Sort'], exist_array[i]['AddTime'], exist_array[i]['UpdateTime'], exist_array[i]['DownCount'], versionName];
                     */
+                    value = [id, video_file, title, title_word_count, singer, language, 
+                        area, genre, mood, last_name_strokes, singer_zhuyin_first_char, 
+                        singer_pinyin_first_char, title_zhuyin_first_char, title_pinyin_first_char, sex, featuring, antiphonal, 
+                        vendor, request_count, is_new, vocal, add_date, activity_tag1,
+                        volume, description, file_cd, sort, rlsound, rlsound2,
+                        ch, add_no, light, newer, son1, son2, son3, ok, machine, video_length, tv,
+                        activity_tag2, activity_tag3, version, version_name, 
+                        singerid, songlanguageid, songtypeid, track, allspell, hits, serverstate, image, savePath, downPath, downUrl1, downUrl2, downUrl3, backDownUrl, fileMd5, showhidden, updatetime];
+
                     values_array.push(value);             
                 }
 
@@ -390,23 +746,316 @@ router.post('/', function(request, response, next) {
                 for (var i=0; i<modified_formatData.length; i++) {
                     
                     var id = "0";
-                    if (modified_formatData[i]['Id'] != null && modified_formatData[i]['Id'] != 'undefined') {
-                        id = modified_formatData[i]['Id'];
+                    if (modified_formatData[i]['id'] != null && modified_formatData[i]['id'] != 'undefined') {
+                        id = modified_formatData[i]['id'];
                     }
 
-                    var songnum = "";
+                    //var songnum = "";
+                    var video_file = "";
+                    if (modified_formatData[i]['video_file'] != null && modified_formatData[i]['video_file'] != 'undefined') {
+                        video_file = modified_formatData[i]['video_file'];
+                    } else {
+                        video_file += ""+id+""
+                        video_file += ".mp4"
+                    }
+
+                    //var name = "";
+                    var title = "";
+                    if (modified_formatData[i]['title'] != null && modified_formatData[i]['title'] != 'undefined') {
+                        title = modified_formatData[i]['title'];
+                    }
+
+                    //var singername = "";
+                    var title_word_count = "0";
+                    if (modified_formatData[i]['title_word_count'] != null && modified_formatData[i]['title_word_count'] != 'undefined') {
+                        title_word_count = modified_formatData[i]['title_word_count'];
+                    } else {
+                        //title_word_count = title.length;
+                        //find out if title has "("
+                        var left_brackets = title.indexOf("(");
+                        var left_brackets_c = title.indexOf("（");
+                        if (left_brackets >= 0) { //found left brackets
+                            //console.log("found left brackets: "+title);
+                            if (left_brackets == 0) { //the title start with left brackets
+
+                            } else {
+                                var split_array = title.split("(");
+                                //test if all letters and numbers
+                                if (split_array[0].match(/^[A-Za-z0-9'\s]*$/)) {
+                                    //console.log("all letters and numbers:"+ title);
+                                    var spite_letters_nums = split_array[0].split(" ");
+                                    title_word_count = spite_letters_nums.length
+                                } else {
+                                    title_word_count = split_array[0].trim().length
+                                }
+                            }
+                        } else if (left_brackets_c >= 0) { //found left chinese brackets
+                            //console.log("found left chinese brackets: "+title);
+                            if (left_brackets_c ==0) { //the title start with left brackets
+
+                            } else {
+                                var split_array = title.split("（");
+                                //test if all letters and numbers
+                                if (split_array[0].match(/^[A-Za-z0-9'\s]*$/)) {
+                                    //console.log("all letters and numbers:"+ title);
+                                    var spite_letters_nums = split_array[0].split(" ");
+                                    title_word_count = spite_letters_nums.length
+                                } else {
+                                    title_word_count = split_array[0].trim().length
+                                }
+                            }
+                        } else { //not found "("
+                            //console.log("brackets not found: "+title);
+                            if (title.match(/^[A-Za-z0-9'\s]*$/)) {
+                                //console.log("all letters and numbers:"+ title);
+                                var spite_letters_nums = title.split(" ");
+                                title_word_count = spite_letters_nums.length
+                            } else {
+                                title_word_count = title.trim().length;
+                            }
+                            
+                        }
+                    }
+
+                    //var singerid = "0";
+                    var singer = "";
+                    if (modified_formatData[i]['singer'] != null && modified_formatData[i]['singer'] != 'undefined') {
+                        singer = modified_formatData[i]['singer'];
+                    }
+
+                    //var songlanguageid = "";
+                    var language = "";
+                    if (modified_formatData[i]['language'] != null && modified_formatData[i]['language'] != 'undefined') {
+                        language = modified_formatData[i]['language'];
+                    }
+
+                    //var songtypeid = "";
+                    var area = "";
+                    if (modified_formatData[i]['area'] != null && modified_formatData[i]['area'] != 'undefined') {
+                        area = modified_formatData[i]['area'];
+                    }
+
+                    //var track = "";
+                    var genre = "";
+                    if (modified_formatData[i]['genre'] != null && modified_formatData[i]['genre'] != 'undefined') {
+                        genre = modified_formatData[i]['genre'];
+                    }
+
+                    //var format = "";
+                    var mood = "";
+                    if (modified_formatData[i]['mood'] != null && modified_formatData[i]['mood'] != 'undefined') {
+                        mood = modified_formatData[i]['mood'];
+                    }
+
+                    //var serverstate = "1";
+                    var last_name_strokes = "0";
+                    if (modified_formatData[i]['last_name_strokes'] != null && modified_formatData[i]['last_name_strokes'] != 'undefined') {
+                        last_name_strokes = modified_formatData[i]['last_name_strokes'];
+                    }
+
+                    //var firstspell = "";
+                    var singer_zhuyin_first_char = "";
+                    if (modified_formatData[i]['singer_zhuyin_first_char'] != null && modified_formatData[i]['singer_zhuyin_first_char'] != 'undefined') {
+                        singer_zhuyin_first_char = modified_formatData[i]['singer_zhuyin_first_char'];
+                    }
+
+                    //var allspell = "";
+                    var singer_pinyin_first_char = "";
+                    if (modified_formatData[i]['singer_pinyin_first_char'] != null && modified_formatData[i]['singer_pinyin_first_char'] != 'undefined') {
+                        singer_pinyin_first_char = modified_formatData[i]['singer_pinyin_first_char'].toLowerCase();
+                    }
+
+                    //var namelength = "0";
+                    var title_zhuyin_first_char = "";
+                    if (modified_formatData[i]['title_zhuyin_first_char'] != null && modified_formatData[i]['title_zhuyin_first_char'] != 'undefined') {
+                        title_zhuyin_first_char = modified_formatData[i]['title_zhuyin_first_char'];
+                    }
+
+                    //var hits = "0";
+                    var title_pinyin_first_char = "";
+                    if (modified_formatData[i]['title_pinyin_first_char'] != null && modified_formatData[i]['title_pinyin_first_char'] != 'undefined') {
+                        title_pinyin_first_char = modified_formatData[i]['title_pinyin_first_char'].toLowerCase();
+                    }
+
+                    //var version = "";
+                    var sex = "";
+                    if (modified_formatData[i]['sex'] != null && modified_formatData[i]['sex'] != 'undefined') {
+                        sex = modified_formatData[i]['sex'];
+                    }
+
+                    //var image = ""
+                    var featuring = ""
+                    if (modified_formatData[i]['featuring'] != null && modified_formatData[i]['featuring'] != 'undefined') {
+                        featuring = modified_formatData[i]['featuring'];
+                    }
+                    
+                    //var fileMd5 = ""
+                    var antiphonal = ""
+                    if (modified_formatData[i]['antiphonal'] != null && modified_formatData[i]['antiphonal'] != 'undefined') {
+                        antiphonal = modified_formatData[i]['antiphonal'];
+                    }
+
+                    //var savePath = ""
+                    var vendor = ""
+                    if (modified_formatData[i]['vendor'] != null && modified_formatData[i]['vendor'] != 'undefined') {
+                        vendor = modified_formatData[i]['vendor'];
+                    }
+
+                    //var downPath = ""
+                    var request_count = "0"
+                    if (modified_formatData[i]['request_count'] != null && modified_formatData[i]['request_count'] != 'undefined') {
+                        request_count = modified_formatData[i]['request_count'];
+                    }
+
+                    //var downUrl1 = ""
+                    var is_new = ""
+                    if (modified_formatData[i]['is_new'] != null && modified_formatData[i]['is_new'] != 'undefined') {
+                        is_new = modified_formatData[i]['is_new'];
+                    }
+
+                    //var downUrl2 = ""
+                    var vocal = ""
+                    if (modified_formatData[i]['vocal'] != null && modified_formatData[i]['vocal'] != 'undefined') {
+                        vocal = modified_formatData[i]['vocal'];
+                    }
+
+                    //var downUrl3 = ""
+                    var add_date = ""
+                    if (modified_formatData[i]['add_date'] != null && modified_formatData[i]['add_date'] != 'undefined') {
+                        add_date = modified_formatData[i]['add_date'];
+                    }
+
+                    //var backDownUrl = ""
+                    var activity_tag1 = ""
+                    if (modified_formatData[i]['activity_tag1'] != null && modified_formatData[i]['activity_tag1'] != 'undefined') {
+                        activity_tag1 = modified_formatData[i]['activity_tag1'];
+                    }
+
+                    //var showhidden = "1"
+                    var volume = "10000"
+                    if (modified_formatData[i]['volume'] != null && modified_formatData[i]['volume'] != 'undefined') {
+                        volume = modified_formatData[i]['volume'];
+                    }
+
+                    //var sort = "1"
+                    var description = "1"
+                    if (modified_formatData[i]['description'] != null && modified_formatData[i]['description'] != 'undefined') {
+                        description = modified_formatData[i]['description'];
+                    }
+
+                    //var addtime = ""
+                    var file_cd = ""
+                    if (modified_formatData[i]['file_cd'] != null && modified_formatData[i]['file_cd'] != 'undefined') {
+                        file_cd = modified_formatData[i]['file_cd'];
+                    }
+
+                    //var updatetime = ""
+                    var sort = ""
+                    if (modified_formatData[i]['sort'] != null && modified_formatData[i]['sort'] != 'undefined') {
+                        sort = modified_formatData[i]['sort'];
+                    }
+
+                    //var downcount = "0"
+                    var rlsound = "0"
+                    if (modified_formatData[i]['rlsound'] != null && modified_formatData[i]['rlsound'] != 'undefined') {
+                        rlsound = modified_formatData[i]['rlsound'];
+                    }
+
+                    //var versionName = ""
+                    var rlsound2 = ""
+                    if (modified_formatData[i]['rlsound2'] != null && modified_formatData[i]['rlsound2'] != 'undefined') {
+                        rlsound2 = modified_formatData[i]['rlsound2'];
+                    }
+
+                    var ch = ""
+                    if (modified_formatData[i]['ch'] != null && modified_formatData[i]['ch'] != 'undefined') {
+                        ch = modified_formatData[i]['ch'];
+                    }
+
+                    var add_no = ""
+                    if (modified_formatData[i]['add_no'] != null && modified_formatData[i]['add_no'] != 'undefined') {
+                        add_no = modified_formatData[i]['add_no'];
+                    }
+
+                    var light = ""
+                    if (modified_formatData[i]['light'] != null && modified_formatData[i]['light'] != 'undefined') {
+                        light = modified_formatData[i]['light'];
+                    }
+
+                    var newer = ""
+                    if (modified_formatData[i]['newer'] != null && modified_formatData[i]['newer'] != 'undefined') {
+                        newer = modified_formatData[i]['newer'];
+                    }
+
+                    var son1 = ""
+                    if (modified_formatData[i]['son1'] != null && modified_formatData[i]['son1'] != 'undefined') {
+                        son1 = modified_formatData[i]['son1'];
+                    }
+
+                    var son2 = ""
+                    if (modified_formatData[i]['son2'] != null && modified_formatData[i]['son2'] != 'undefined') {
+                        son2 = modified_formatData[i]['son2'];
+                    }
+
+                    var son3 = ""
+                    if (modified_formatData[i]['son3'] != null && modified_formatData[i]['son3'] != 'undefined') {
+                        son3 = modified_formatData[i]['son3'];
+                    }
+
+                    var ok = ""
+                    if (modified_formatData[i]['ok'] != null && modified_formatData[i]['ok'] != 'undefined') {
+                        ok = modified_formatData[i]['ok'];
+                    }
+
+                    var machine = ""
+                    if (modified_formatData[i]['machine'] != null && modified_formatData[i]['machine'] != 'undefined') {
+                        machine = modified_formatData[i]['machine'].toLowerCase();
+                    }
+
+                    var video_length = ""
+                    if (modified_formatData[i]['video_length'] != null && modified_formatData[i]['video_length'] != 'undefined') {
+                        video_length = modified_formatData[i]['video_length'];
+                    }
+
+                    var tv = "0"
+                    if (modified_formatData[i]['tv'] != null && modified_formatData[i]['tv'] != 'undefined') {
+                        tv = modified_formatData[i]['tv'];
+                    }
+
+                    var activity_tag2 = ""
+                    if (modified_formatData[i]['activity_tag2'] != null && modified_formatData[i]['activity_tag2'] != 'undefined') {
+                        activity_tag2 = modified_formatData[i]['activity_tag2'];
+                    }
+
+                    var activity_tag3 = ""
+                    if (modified_formatData[i]['activity_tag3'] != null && modified_formatData[i]['activity_tag3'] != 'undefined') {
+                        activity_tag3 = modified_formatData[i]['activity_tag3'];
+                    }
+
+                    var version = ""
+                    if (modified_formatData[i]['version'] != null && modified_formatData[i]['version'] != 'undefined') {
+                        version = modified_formatData[i]['version'];
+                    }
+
+                    var version_name = ""
+                    if (modified_formatData[i]['version_name'] != null && modified_formatData[i]['version_name'] != 'undefined') {
+                        version_name = modified_formatData[i]['version_name'];
+                    }
+
+                    //original
                     if (modified_formatData[i]['SongNum'] != null && modified_formatData[i]['SongNum'] != 'undefined') {
-                        songnum = modified_formatData[i]['SongNum'];
+                        id = modified_formatData[i]['SongNum'];
+
+                        video_file = ""+id+""
+                        video_file += ".mp4"
                     }
 
-                    var name = "";
                     if (modified_formatData[i]['Name'] != null && modified_formatData[i]['Name'] != 'undefined') {
-                        name = modified_formatData[i]['Name'];
+                        title = modified_formatData[i]['Name'];
                     }
 
-                    var singername = "";
                     if (modified_formatData[i]['SingerName'] != null && modified_formatData[i]['SingerName'] != 'undefined') {
-                        singername = modified_formatData[i]['SingerName'];
+                        singer = modified_formatData[i]['SingerName'];
                     }
 
                     var singerid = "0";
@@ -414,14 +1063,14 @@ router.post('/', function(request, response, next) {
                         singerid = modified_formatData[i]['SingerId'];
                     }
 
-                    var songlanguageid = "";
+                    var songlanguageid = "2";
                     if (modified_formatData[i]['SongLanguageId'] != null && modified_formatData[i]['SongLanguageId'] != 'undefined') {
                         songlanguageid = modified_formatData[i]['SongLanguageId'];
                     }
 
                     var songtypeid = "";
                     if (modified_formatData[i]['SongTypeId'] != null && modified_formatData[i]['SongTypeId'] != 'undefined') {
-                        songtypeid = modified_formatData[i]['SongLanguageId'];
+                        songtypeid = modified_formatData[i]['SongTypeId'];
                     }
 
                     var track = "";
@@ -429,29 +1078,17 @@ router.post('/', function(request, response, next) {
                         track = modified_formatData[i]['Track'];
                     }
 
-                    var format = "";
-                    if (modified_formatData[i]['Format'] != null && modified_formatData[i]['Format'] != 'undefined') {
-                        format = modified_formatData[i]['Format'];
-                    }
-
-                    var serverstate = "1";
-                    if (modified_formatData[i]['ServerState'] != null && modified_formatData[i]['ServerState'] != 'undefined') {
-                        serverstate = modified_formatData[i]['ServerState'];
-                    }
-
-                    var firstspell = "";
                     if (modified_formatData[i]['FirstSpell'] != null && modified_formatData[i]['FirstSpell'] != 'undefined') {
-                        firstspell = modified_formatData[i]['FirstSpell'];
+                        title_pinyin_first_char = modified_formatData[i]['FirstSpell'].toLowerCase();
                     }
 
                     var allspell = "";
                     if (modified_formatData[i]['AllSpell'] != null && modified_formatData[i]['AllSpell'] != 'undefined') {
-                        allspell = modified_formatData[i]['AllSpell'];
+                        allspell = modified_formatData[i]['AllSpell'].toLowerCase();
                     }
 
-                    var namelength = "0";
                     if (modified_formatData[i]['NameLength'] != null && modified_formatData[i]['NameLength'] != 'undefined') {
-                        namelength = modified_formatData[i]['NameLength'];
+                        title_word_count = modified_formatData[i]['NameLength'];
                     }
 
                     var hits = "0";
@@ -459,92 +1096,148 @@ router.post('/', function(request, response, next) {
                         hits = modified_formatData[i]['Hits'];
                     }
 
-                    var version = "";
-                    if (modified_formatData[i]['Version'] != null && modified_formatData[i]['Version'] != 'undefined') {
-                        version = modified_formatData[i]['Version'];
+                    if (modified_formatData[i]['Format'] != null && modified_formatData[i]['Format'] != 'undefined') {
+                        antiphonal = modified_formatData[i]['Format'];
                     }
+
+                    var serverstate = "1";
+                    if (modified_formatData[i]['ServerState'] != null && modified_formatData[i]['ServerState'] != 'undefined') {
+                        serverstate = modified_formatData[i]['ServerState'];
+                    }
+
                     var image = ""
                     if (modified_formatData[i]['Image'] != null && modified_formatData[i]['Image'] != 'undefined') {
                         image = modified_formatData[i]['Image'];
                     }
-                    var fileMd5 = ""
-                    if (modified_formatData[i]['FileMd5'] != null && modified_formatData[i]['FileMd5'] != 'undefined') {
-                        fileMd5 = modified_formatData[i]['FileMd5'];
-                    }
+
                     var savePath = ""
                     if (modified_formatData[i]['SavePath'] != null && modified_formatData[i]['SavePath'] != 'undefined') {
                         savePath = modified_formatData[i]['SavePath'];
                     }
+
                     var downPath = ""
                     if (modified_formatData[i]['DownPath'] != null && modified_formatData[i]['DownPath'] != 'undefined') {
                         downPath = modified_formatData[i]['DownPath'];
                     }
+
                     var downUrl1 = ""
                     if (modified_formatData[i]['DownUrl1'] != null && modified_formatData[i]['DownUrl1'] != 'undefined') {
                         downUrl1 = modified_formatData[i]['DownUrl1'];
                     }
+
                     var downUrl2 = ""
                     if (modified_formatData[i]['DownUrl2'] != null && modified_formatData[i]['DownUrl2'] != 'undefined') {
                         downUrl2 = modified_formatData[i]['DownUrl2'];
                     }
+
                     var downUrl3 = ""
                     if (modified_formatData[i]['DownUrl3'] != null && modified_formatData[i]['DownUrl3'] != 'undefined') {
                         downUrl3 = modified_formatData[i]['DownUrl3'];
                     }
+
                     var backDownUrl = ""
                     if (modified_formatData[i]['BackDownUrl'] != null && modified_formatData[i]['BackDownUrl'] != 'undefined') {
                         backDownUrl = modified_formatData[i]['BackDownUrl'];
+                    }
+
+                    var fileMd5 = ""
+                    if (modified_formatData[i]['FileMd5'] != null && modified_formatData[i]['FileMd5'] != 'undefined') {
+                        fileMd5 = modified_formatData[i]['FileMd5'];
                     }
 
                     var showhidden = "1"
                     if (modified_formatData[i]['ShowHidden'] != null && modified_formatData[i]['ShowHidden'] != 'undefined') {
                         showhidden = modified_formatData[i]['ShowHidden'];
                     }
-                    var sort = "1"
+
                     if (modified_formatData[i]['Sort'] != null && modified_formatData[i]['Sort'] != 'undefined') {
                         sort = modified_formatData[i]['Sort'];
                     }
-                    var addtime = ""
+
                     if (modified_formatData[i]['AddTime'] != null && modified_formatData[i]['AddTime'] != 'undefined') {
-                        addtime = modified_formatData[i]['AddTime'];
+                        add_date = modified_formatData[i]['AddTime'];
                     }
+
                     var updatetime = ""
                     if (modified_formatData[i]['UpdateTime'] != null && modified_formatData[i]['UpdateTime'] != 'undefined') {
                         updatetime = modified_formatData[i]['UpdateTime'];
                     }
-                    var downcount = "0"
-                    if (modified_formatData[i]['DownCount'] != null && modified_formatData[i]['DownCount'] != 'undefined') {
-                        downcount = modified_formatData[i]['DownCount'];
-                    }
 
-                    var versionName = ""
-                    if (modified_formatData[i]['VersionName'] != null && modified_formatData[i]['VersionName'] != 'undefined') {
-                        versionName = modified_formatData[i]['VersionName'];
+                    if (modified_formatData[i]['DownCount'] != null && modified_formatData[i]['DownCount'] != 'undefined') {
+                        request_count = modified_formatData[i]['DownCount'];
                     }
 
                     //for 239 plus
-                    if (modified_formatData[i]['编号'] != null && modified_formatData[i]['编号'] != 'undefined') {
-                        id = modified_formatData[i]['编号'];
-                    }
-
+                    //if (exist_array[i]['编号'] != null && exist_array[i]['编号'] != 'undefined') {
+                    //    id = exist_array[i]['编号'];
+                    //}
+                    
                     if (modified_formatData[i]['*歌曲编号'] != null && modified_formatData[i]['*歌曲编号'] != 'undefined') {
-                        songnum = modified_formatData[i]['*歌曲编号'];
+                        id = modified_formatData[i]['*歌曲编号'];
+
+                        video_file = ""+id+""
+                        video_file += ".mp4"
                     }
 
                     if (modified_formatData[i]['*歌曲名称'] != null && modified_formatData[i]['*歌曲名称'] != 'undefined') {
-                        name = modified_formatData[i]['*歌曲名称'];
+                        title = modified_formatData[i]['*歌曲名称'];
+
+                        //find out if title has "("
+                        var left_brackets = title.indexOf("(");
+                        var left_brackets_c = title.indexOf("（");
+                        if (left_brackets >= 0) { //found left brackets
+                            //console.log("found left brackets: "+title);
+                            if (left_brackets == 0) { //the title start with left brackets
+
+                            } else {
+                                var split_array = title.split("(");
+                                //test if all letters and numbers
+                                if (split_array[0].match(/^[A-Za-z0-9'\s]*$/)) {
+                                    //console.log("all letters and numbers:"+ title);
+                                    var spite_letters_nums = split_array[0].split(" ");
+                                    title_word_count = spite_letters_nums.length
+                                } else {
+                                    title_word_count = split_array[0].trim().length
+                                }
+                            }
+                        } else if (left_brackets_c >= 0) { //found left chinese brackets
+                            //console.log("found left chinese brackets: "+title);
+                            if (left_brackets_c ==0) { //the title start with left brackets
+
+                            } else {
+                                var split_array = title.split("（");
+                                //test if all letters and numbers
+                                if (split_array[0].match(/^[A-Za-z0-9'\s]*$/)) {
+                                    //console.log("all letters and numbers:"+ title);
+                                    var spite_letters_nums = split_array[0].split(" ");
+                                    title_word_count = spite_letters_nums.length
+                                } else {
+                                    title_word_count = split_array[0].trim().length
+                                }
+                            }
+                        } else { //not found "("
+                            //console.log("brackets not found: "+title);
+                            if (title.match(/^[A-Za-z0-9'\s]*$/)) {
+                                //console.log("all letters and numbers:"+ title);
+                                var spite_letters_nums = title.split(" ");
+                                title_word_count = spite_letters_nums.length
+                            } else {
+                                title_word_count = title.trim().length;
+                            }
+                            
+                        }
                     }
 
-                    if (modified_formatData[i]['NameLength'] == 'undefined') {
-                        namelength = modified_formatData[i]['*歌曲名称'].length;
-                    }
+                    /*if (modified_formatData[i]['NameLength'] == 'undefined') {
+                        title_word_count = modified_formatData[i]['*歌曲名称'].length;
+                    }*/
 
                     if (modified_formatData[i]['*歌星名称'] != null && modified_formatData[i]['*歌星名称'] != 'undefined') {
-                        singername = modified_formatData[i]['*歌星名称'];
+                        singer = modified_formatData[i]['*歌星名称'];
                     }
 
                     if (modified_formatData[i]['歌名首拼'] != null && modified_formatData[i]['歌名首拼'] != 'undefined') {
-                        firstspell = modified_formatData[i]['歌名首拼'];
+                        title_pinyin_first_char = modified_formatData[i]['歌名首拼'];
                     }
 
                     if (modified_formatData[i]['歌名全拼'] != null && modified_formatData[i]['歌名全拼'] != 'undefined') {
@@ -595,67 +1288,19 @@ router.post('/', function(request, response, next) {
                         backDownUrl = modified_formatData[i]['备用下载地址'];
                     }
 
-                    value = [id, songnum, name, singername, singerid, songlanguageid, 
-                        songtypeid, track, firstspell, allspell, namelength, 
-                        hits, format, serverstate, image, savePath, downPath, 
-                        version, downUrl1, downUrl2, downUrl3, backDownUrl, fileMd5,
-                        showhidden, sort, addtime, updatetime, downcount, versionName];
+                    value = [id, video_file, title, title_word_count, singer, language, 
+                        area, genre, mood, last_name_strokes, singer_zhuyin_first_char, 
+                        singer_pinyin_first_char, title_zhuyin_first_char, title_pinyin_first_char, sex, featuring, antiphonal, 
+                        vendor, request_count, is_new, vocal, add_date, activity_tag1,
+                        volume, description, file_cd, sort, rlsound, rlsound2,
+                        ch, add_no, light, newer, son1, son2, son3, ok, machine, video_length, tv,
+                        activity_tag2, activity_tag3, version, version_name,
+                        singerid, songlanguageid, songtypeid, track, allspell, hits, serverstate, image, savePath, downPath, downUrl1, downUrl2, downUrl3, backDownUrl, fileMd5, showhidden, updatetime];
 
-
-                    /*
-                    var version = "";
-                    if (modified_formatData[i]['Version'] != null && modified_formatData[i]['Version'] != 'undefined') {
-                        version = modified_formatData[i]['Version']
-                    }
-                    var image = ""
-                    if (modified_formatData[i]['Image'] != null && modified_formatData[i]['Image'] != 'undefined') {
-                        image = modified_formatData[i]['Image']
-                    }
-                    var fileMd5 = ""
-                    if (modified_formatData[i]['FileMd5'] != null && modified_formatData[i]['FileMd5'] != 'undefined') {
-                        fileMd5 = modified_formatData[i]['FileMd5']
-                    }
-                    var savePath = ""
-                    if (modified_formatData[i]['SavePath'] != null && modified_formatData[i]['SavePath'] != 'undefined') {
-                        savePath = modified_formatData[i]['SavePath']
-                    }
-                    var downPath = ""
-                    if (modified_formatData[i]['DownPath'] != null && modified_formatData[i]['DownPath'] != 'undefined') {
-                        downPath = modified_formatData[i]['DownPath']
-                    }
-                    var downUrl1 = ""
-                    if (modified_formatData[i]['DownUrl1'] != null && modified_formatData[i]['DownUrl1'] != 'undefined') {
-                        downUrl1 = modified_formatData[i]['DownUrl1']
-                    }
-                    var downUrl2 = ""
-                    if (modified_formatData[i]['DownUrl2'] != null && modified_formatData[i]['DownUrl2'] != 'undefined') {
-                        downUrl2 = modified_formatData[i]['DownUrl2']
-                    }
-                    var downUrl3 = ""
-                    if (modified_formatData[i]['DownUrl3'] != null && modified_formatData[i]['DownUrl3'] != 'undefined') {
-                        downUrl3 = modified_formatData[i]['DownUrl3']
-                    }
-                    var backDownUrl = ""
-                    if (modified_formatData[i]['BackDownUrl'] != null && modified_formatData[i]['BackDownUrl'] != 'undefined') {
-                        backDownUrl = modified_formatData[i]['BackDownUrl']
-                    }
-                    var versionName = ""
-                    if (modified_formatData[i]['VersionName'] != null && modified_formatData[i]['VersionName'] != 'undefined') {
-                        versionName = modified_formatData[i]['VersionName']
-                    }
-        
-        
-                    value = [modified_formatData[i]['Id'], modified_formatData[i]['SongNum'], modified_formatData[i]['Name'], modified_formatData[i]['SingerName'], modified_formatData[i]['SingerId'], modified_formatData[i]['SongLanguageId'], 
-                    modified_formatData[i]['SongTypeId'], modified_formatData[i]['Track'], modified_formatData[i]['FirstSpell'], modified_formatData[i]['AllSpell'], modified_formatData[i]['NameLength'], 
-                    modified_formatData[i]['Hits'], modified_formatData[i]['Format'], modified_formatData[i]['ServerState'], image, savePath, downPath, 
-                    version, downUrl1, downUrl2, downUrl3, backDownUrl, fileMd5,
-                    modified_formatData[i]['ShowHidden'], modified_formatData[i]['Sort'], modified_formatData[i]['AddTime'], modified_formatData[i]['UpdateTime'], modified_formatData[i]['DownCount'], versionName];
-                    */
                     
-                    //if (i==0) {
                     values_array.push(value);
                     //console.log("value = "+value);
-                    //} 
+                    
                 }
         
                 //console.log("values_array = "+values_array);
@@ -674,29 +1319,320 @@ router.post('/', function(request, response, next) {
             }
             else { //just insert all songs
                 console.log("start to insert...");
-                var sql = "INSERT INTO tb_song (Id, SongNum, Name, SingerName, SingerId, SongLanguageId, SongTypeId, Track, FirstSpell, AllSpell, NameLength, Hits, Format, ServerState, Image, SavePath, DownPath, Version, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, Sort, AddTime, UpdateTime, DownCount, VersionName) VALUES ?";
-        
+                //var sql = "INSERT INTO tb_song (Id, SongNum, Name, SingerName, SingerId, SongLanguageId, SongTypeId, Track, FirstSpell, AllSpell, NameLength, Hits, Format, ServerState, Image, SavePath, DownPath, Version, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, Sort, AddTime, UpdateTime, DownCount, VersionName) VALUES ?";
+                var sql = "INSERT INTO tb_song_original (id, video_file, title, title_word_count, singer, language, area, genre, mood, last_name_strokes, singer_zhuyin_first_char, singer_pinyin_first_char, title_zhuyin_first_char, title_pinyin_first_char, sex, featuring, antiphonal, vendor, request_count, is_new, vocal, add_date, activity_tag1, volume, description, file_cd, sort, rlsound, rlsound2, ch, add_no, light, newer, son1, son2, son3, ok, machine, video_length, tv, activity_tag2, activity_tag3, version, version_name, singerid, songlanguageid, songtypeid, track, allspell, hits, serverstate, image, savePath, downPath, downUrl1, downUrl2, downUrl3, backDownUrl, fileMd5, showhidden, updatetime) VALUES ?";
                 var values_array = [];
                 for (var i=0; i<dataSize; i++) {
                     
                     var id = "0";
-                    if (formatData[i]['Id'] != null && formatData[i]['Id'] != 'undefined') {
-                        id = formatData[i]['Id'];
+                    if (formatData[i]['id'] != null && formatData[i]['id'] != 'undefined') {
+                        id = formatData[i]['id'];
                     }
 
-                    var songnum = "";
+                    //var songnum = "";
+                    var video_file = "";
+                    if (formatData[i]['video_file'] != null && formatData[i]['video_file'] != 'undefined') {
+                        video_file = formatData[i]['video_file'];
+                    }
+
+                    //var name = "";
+                    var title = "";
+                    if (formatData[i]['title'] != null && formatData[i]['title'] != 'undefined') {
+                        title = formatData[i]['title'];
+                    }
+
+                    //var singername = "";
+                    var title_word_count = "0";
+                    if (formatData[i]['title_word_count'] != null && formatData[i]['title_word_count'] != 'undefined') {
+                        title_word_count = formatData[i]['title_word_count'];
+                    } else {
+                        //title_word_count = title.length;
+                        //find out if title has "("
+                        var left_brackets = title.indexOf("(");
+                        var left_brackets_c = title.indexOf("（");
+                        if (left_brackets >= 0) { //found left brackets
+                            //console.log("found left brackets: "+title);
+                            if (left_brackets == 0) { //the title start with left brackets
+
+                            } else {
+                                var split_array = title.split("(");
+                                //test if all letters and numbers
+                                if (split_array[0].match(/^[A-Za-z0-9'\s]*$/)) {
+                                    //console.log("all letters and numbers:"+ title);
+                                    var spite_letters_nums = split_array[0].split(" ");
+                                    title_word_count = spite_letters_nums.length
+                                } else {
+                                    title_word_count = split_array[0].trim().length
+                                }
+                            }
+                        } else if (left_brackets_c >= 0) { //found left chinese brackets
+                            //console.log("found left chinese brackets: "+title);
+                            if (left_brackets_c ==0) { //the title start with left brackets
+
+                            } else {
+                                var split_array = title.split("（");
+                                //test if all letters and numbers
+                                if (split_array[0].match(/^[A-Za-z0-9'\s]*$/)) {
+                                    //console.log("all letters and numbers:"+ title);
+                                    var spite_letters_nums = split_array[0].split(" ");
+                                    title_word_count = spite_letters_nums.length
+                                } else {
+                                    //console.log("title:"+ title);
+                                    title_word_count = split_array[0].trim().length
+                                }
+                            }
+                        } else { //not found "("
+                            //console.log("brackets not found: "+title);
+                            if (title.match(/^[A-Za-z0-9'\s]*$/)) {
+                                //console.log("all letters and numbers:"+ title);
+                                var spite_letters_nums = title.split(" ");
+                                title_word_count = spite_letters_nums.length
+                            } else {
+                                title_word_count = title.trim().length;
+                            }
+                            
+                        }
+                    }
+
+                    //var singerid = "0";
+                    var singer = "";
+                    if (formatData[i]['singer'] != null && formatData[i]['singer'] != 'undefined') {
+                        singer = formatData[i]['singer'];
+                    }
+
+                    //var songlanguageid = "";
+                    var language = "";
+                    if (formatData[i]['language'] != null && formatData[i]['language'] != 'undefined') {
+                        language = formatData[i]['language'];
+                    }
+
+                    //var songtypeid = "";
+                    var area = "";
+                    if (formatData[i]['area'] != null && formatData[i]['area'] != 'undefined') {
+                        area = formatData[i]['area'];
+                    }
+
+                    //var track = "";
+                    var genre = "";
+                    if (formatData[i]['genre'] != null && formatData[i]['genre'] != 'undefined') {
+                        genre = formatData[i]['genre'];
+                    }
+
+                    //var format = "";
+                    var mood = "";
+                    if (formatData[i]['mood'] != null && formatData[i]['mood'] != 'undefined') {
+                        mood = formatData[i]['mood'];
+                    }
+
+                    //var serverstate = "1";
+                    var last_name_strokes = "0";
+                    if (formatData[i]['last_name_strokes'] != null && formatData[i]['last_name_strokes'] != 'undefined') {
+                        last_name_strokes = formatData[i]['last_name_strokes'];
+                    }
+
+                    //var firstspell = "";
+                    var singer_zhuyin_first_char = "";
+                    if (formatData[i]['singer_zhuyin_first_char'] != null && formatData[i]['singer_zhuyin_first_char'] != 'undefined') {
+                        singer_zhuyin_first_char = formatData[i]['singer_zhuyin_first_char'];
+                    }
+
+                    //var allspell = "";
+                    var singer_pinyin_first_char = "";
+                    if (formatData[i]['singer_pinyin_first_char'] != null && formatData[i]['singer_pinyin_first_char'] != 'undefined') {
+                        singer_pinyin_first_char = formatData[i]['singer_pinyin_first_char'].toLowerCase();
+                    }
+
+                    //var namelength = "0";
+                    var title_zhuyin_first_char = "";
+                    if (formatData[i]['title_zhuyin_first_char'] != null && formatData[i]['title_zhuyin_first_char'] != 'undefined') {
+                        title_zhuyin_first_char = formatData[i]['title_zhuyin_first_char'];
+                    }
+
+                    //var hits = "0";
+                    var title_pinyin_first_char = "";
+                    if (formatData[i]['title_pinyin_first_char'] != null && formatData[i]['title_pinyin_first_char'] != 'undefined') {
+                        title_pinyin_first_char = formatData[i]['title_pinyin_first_char'].toLowerCase();
+                    }
+
+                    //var version = "";
+                    var sex = "";
+                    if (formatData[i]['sex'] != null && formatData[i]['sex'] != 'undefined') {
+                        sex = formatData[i]['sex'];
+                    }
+
+                    //var image = ""
+                    var featuring = ""
+                    if (formatData[i]['featuring'] != null && formatData[i]['featuring'] != 'undefined') {
+                        featuring = formatData[i]['featuring'];
+                    }
+                    
+                    //var fileMd5 = ""
+                    var antiphonal = ""
+                    if (formatData[i]['antiphonal'] != null && formatData[i]['antiphonal'] != 'undefined') {
+                        antiphonal = formatData[i]['antiphonal'];
+                    }
+
+                    //var savePath = ""
+                    var vendor = ""
+                    if (formatData[i]['vendor'] != null && formatData[i]['vendor'] != 'undefined') {
+                        vendor = formatData[i]['vendor'];
+                    }
+
+                    //var downPath = ""
+                    var request_count = "0"
+                    if (formatData[i]['request_count'] != null && formatData[i]['request_count'] != 'undefined') {
+                        request_count = formatData[i]['request_count'];
+                    }
+
+                    //var downUrl1 = ""
+                    var is_new = ""
+                    if (formatData[i]['is_new'] != null && formatData[i]['is_new'] != 'undefined') {
+                        is_new = formatData[i]['is_new'];
+                    }
+
+                    //var downUrl2 = ""
+                    var vocal = ""
+                    if (formatData[i]['vocal'] != null && formatData[i]['vocal'] != 'undefined') {
+                        vocal = formatData[i]['vocal'];
+                    }
+
+                    //var downUrl3 = ""
+                    var add_date = ""
+                    if (formatData[i]['add_date'] != null && formatData[i]['add_date'] != 'undefined') {
+                        add_date = formatData[i]['add_date'];
+                    }
+
+                    //var backDownUrl = ""
+                    var activity_tag1 = ""
+                    if (formatData[i]['activity_tag1'] != null && formatData[i]['activity_tag1'] != 'undefined') {
+                        activity_tag1 = formatData[i]['activity_tag1'];
+                    }
+
+                    //var showhidden = "1"
+                    var volume = "10000"
+                    if (formatData[i]['volume'] != null && formatData[i]['volume'] != 'undefined') {
+                        volume = formatData[i]['volume'];
+                    }
+
+                    //var sort = "1"
+                    var description = "1"
+                    if (formatData[i]['description'] != null && formatData[i]['description'] != 'undefined') {
+                        description = formatData[i]['description'];
+                    }
+
+                    //var addtime = ""
+                    var file_cd = ""
+                    if (formatData[i]['file_cd'] != null && formatData[i]['file_cd'] != 'undefined') {
+                        file_cd = formatData[i]['file_cd'];
+                    }
+
+                    //var updatetime = ""
+                    var sort = ""
+                    if (formatData[i]['sort'] != null && formatData[i]['sort'] != 'undefined') {
+                        sort = formatData[i]['sort'];
+                    }
+
+                    //var downcount = "0"
+                    var rlsound = "0"
+                    if (formatData[i]['rlsound'] != null && formatData[i]['rlsound'] != 'undefined') {
+                        rlsound = formatData[i]['rlsound'];
+                    }
+
+                    //var versionName = ""
+                    var rlsound2 = ""
+                    if (formatData[i]['rlsound2'] != null && formatData[i]['rlsound2'] != 'undefined') {
+                        rlsound2 = formatData[i]['rlsound2'];
+                    }
+
+                    var ch = ""
+                    if (formatData[i]['ch'] != null && formatData[i]['ch'] != 'undefined') {
+                        ch = formatData[i]['ch'];
+                    }
+
+                    var add_no = ""
+                    if (formatData[i]['add_no'] != null && formatData[i]['add_no'] != 'undefined') {
+                        add_no = formatData[i]['add_no'];
+                    }
+
+                    var light = ""
+                    if (formatData[i]['light'] != null && formatData[i]['light'] != 'undefined') {
+                        light = formatData[i]['light'];
+                    }
+
+                    var newer = ""
+                    if (formatData[i]['newer'] != null && formatData[i]['newer'] != 'undefined') {
+                        newer = formatData[i]['newer'];
+                    }
+
+                    var son1 = ""
+                    if (formatData[i]['son1'] != null && formatData[i]['son1'] != 'undefined') {
+                        son1 = formatData[i]['son1'];
+                    }
+
+                    var son2 = ""
+                    if (formatData[i]['son2'] != null && formatData[i]['son2'] != 'undefined') {
+                        son2 = formatData[i]['son2'];
+                    }
+
+                    var son3 = ""
+                    if (formatData[i]['son3'] != null && formatData[i]['son3'] != 'undefined') {
+                        son3 = formatData[i]['son3'];
+                    }
+
+                    var ok = ""
+                    if (formatData[i]['ok'] != null && formatData[i]['ok'] != 'undefined') {
+                        ok = formatData[i]['ok'];
+                    }
+
+                    var machine = ""
+                    if (formatData[i]['machine'] != null && formatData[i]['machine'] != 'undefined') {
+                        machine = formatData[i]['machine'].toLowerCase();
+                    }
+
+                    var video_length = ""
+                    if (formatData[i]['video_length'] != null && formatData[i]['video_length'] != 'undefined') {
+                        video_length = formatData[i]['video_length'];
+                    }
+
+                    var tv = "0"
+                    if (formatData[i]['tv'] != null && formatData[i]['tv'] != 'undefined') {
+                        tv = formatData[i]['tv'];
+                    }
+
+                    var activity_tag2 = ""
+                    if (formatData[i]['activity_tag2'] != null && formatData[i]['activity_tag2'] != 'undefined') {
+                        activity_tag2 = formatData[i]['activity_tag2'];
+                    }
+
+                    var activity_tag3 = ""
+                    if (formatData[i]['activity_tag3'] != null && formatData[i]['activity_tag3'] != 'undefined') {
+                        activity_tag3 = formatData[i]['activity_tag3'];
+                    }
+
+                    var version = ""
+                    if (formatData[i]['version'] != null && formatData[i]['version'] != 'undefined') {
+                        version = formatData[i]['version'];
+                    }
+
+                    var version_name = ""
+                    if (formatData[i]['version_name'] != null && formatData[i]['version_name'] != 'undefined') {
+                        version_name = formatData[i]['version_name'];
+                    }
+
+                    //original
                     if (formatData[i]['SongNum'] != null && formatData[i]['SongNum'] != 'undefined') {
-                        songnum = formatData[i]['SongNum'];
+                        id = formatData[i]['SongNum'];
+
+                        video_file = ""+id+""
+                        video_file += ".mp4"
                     }
 
-                    var name = "";
                     if (formatData[i]['Name'] != null && formatData[i]['Name'] != 'undefined') {
-                        name = formatData[i]['Name'];
+                        title = formatData[i]['Name'];
                     }
 
-                    var singername = "";
                     if (formatData[i]['SingerName'] != null && formatData[i]['SingerName'] != 'undefined') {
-                        singername = formatData[i]['SingerName'];
+                        singer = formatData[i]['SingerName'];
                     }
 
                     var singerid = "0";
@@ -704,14 +1640,14 @@ router.post('/', function(request, response, next) {
                         singerid = formatData[i]['SingerId'];
                     }
 
-                    var songlanguageid = "";
+                    var songlanguageid = "2";
                     if (formatData[i]['SongLanguageId'] != null && formatData[i]['SongLanguageId'] != 'undefined') {
                         songlanguageid = formatData[i]['SongLanguageId'];
                     }
 
                     var songtypeid = "";
                     if (formatData[i]['SongTypeId'] != null && formatData[i]['SongTypeId'] != 'undefined') {
-                        songtypeid = formatData[i]['SongLanguageId'];
+                        songtypeid = formatData[i]['SongTypeId'];
                     }
 
                     var track = "";
@@ -719,29 +1655,64 @@ router.post('/', function(request, response, next) {
                         track = formatData[i]['Track'];
                     }
 
-                    var format = "";
-                    if (formatData[i]['Format'] != null && formatData[i]['Format'] != 'undefined') {
-                        format = formatData[i]['Format'];
-                    }
-
-                    var serverstate = "1";
-                    if (formatData[i]['ServerState'] != null && formatData[i]['ServerState'] != 'undefined') {
-                        serverstate = formatData[i]['ServerState'];
-                    }
-
-                    var firstspell = "";
                     if (formatData[i]['FirstSpell'] != null && formatData[i]['FirstSpell'] != 'undefined') {
-                        firstspell = formatData[i]['FirstSpell'];
+                        title_pinyin_first_char = formatData[i]['FirstSpell'].toLowerCase();
                     }
 
                     var allspell = "";
                     if (formatData[i]['AllSpell'] != null && formatData[i]['AllSpell'] != 'undefined') {
-                        allspell = formatData[i]['AllSpell'];
+                        allspell = formatData[i]['AllSpell'].toLowerCase();
                     }
 
-                    var namelength = "0";
                     if (formatData[i]['NameLength'] != null && formatData[i]['NameLength'] != 'undefined') {
-                        namelength = formatData[i]['NameLength'];
+                        //title_word_count = formatData[i]['NameLength'];
+
+                        //find out if title has "("
+                        var left_brackets = title.indexOf("(");
+                        var left_brackets_c = title.indexOf("（");
+                        if (left_brackets >= 0) { //found left brackets
+                            //console.log("found left brackets: "+title);
+                            if (left_brackets == 0) { //the title start with left brackets
+
+                            } else {
+                                var split_array = title.split("(");
+                                //test if all letters and numbers
+                                if (split_array[0].match(/^[A-Za-z0-9'\s]*$/)) {
+                                    //console.log("all letters and numbers:"+ title);
+                                    var spite_letters_nums = split_array[0].split(" ");
+                                    title_word_count = spite_letters_nums.length
+                                } else {
+                                    title_word_count = split_array[0].trim().length
+                                }
+                            }
+                        } else if (left_brackets_c >= 0) { //found left chinese brackets
+                            //console.log("found left chinese brackets: "+title);
+                            if (left_brackets_c ==0) { //the title start with left brackets
+
+                            } else {
+                                var split_array = title.split("（");
+                                //test if all letters and numbers
+                                if (split_array[0].match(/^[A-Za-z0-9'\s]*$/)) {
+                                    //console.log("all letters and numbers:"+ title);
+                                    var spite_letters_nums = split_array[0].split(" ");
+                                    title_word_count = spite_letters_nums.length
+                                } else {
+                                    title_word_count = split_array[0].trim().length
+                                }
+                            }
+                        } else { //not found "("
+                            //console.log("brackets not found: "+title);
+                            if (title.match(/^[A-Za-z0-9'\s]*$/)) {
+                                //console.log("all letters and numbers:"+ title);
+                                var spite_letters_nums = title.split(" ");
+                                title_word_count = spite_letters_nums.length
+                            } else {
+                                title_word_count = title.trim().length;
+                            }
+                            
+                        }
+
+                        
                     }
 
                     var hits = "0";
@@ -749,92 +1720,143 @@ router.post('/', function(request, response, next) {
                         hits = formatData[i]['Hits'];
                     }
 
-                    var version = "";
-                    if (formatData[i]['Version'] != null && formatData[i]['Version'] != 'undefined') {
-                        version = formatData[i]['Version'];
+                    if (formatData[i]['Format'] != null && formatData[i]['Format'] != 'undefined') {
+                        antiphonal = formatData[i]['Format'];
                     }
+
+                    var serverstate = "1";
+                    if (formatData[i]['ServerState'] != null && formatData[i]['ServerState'] != 'undefined') {
+                        serverstate = formatData[i]['ServerState'];
+                    }
+
                     var image = ""
                     if (formatData[i]['Image'] != null && formatData[i]['Image'] != 'undefined') {
                         image = formatData[i]['Image'];
                     }
-                    var fileMd5 = ""
-                    if (formatData[i]['FileMd5'] != null && formatData[i]['FileMd5'] != 'undefined') {
-                        fileMd5 = formatData[i]['FileMd5'];
-                    }
+
                     var savePath = ""
                     if (formatData[i]['SavePath'] != null && formatData[i]['SavePath'] != 'undefined') {
                         savePath = formatData[i]['SavePath'];
                     }
+
                     var downPath = ""
                     if (formatData[i]['DownPath'] != null && formatData[i]['DownPath'] != 'undefined') {
                         downPath = formatData[i]['DownPath'];
                     }
+
                     var downUrl1 = ""
                     if (formatData[i]['DownUrl1'] != null && formatData[i]['DownUrl1'] != 'undefined') {
                         downUrl1 = formatData[i]['DownUrl1'];
                     }
+
                     var downUrl2 = ""
                     if (formatData[i]['DownUrl2'] != null && formatData[i]['DownUrl2'] != 'undefined') {
                         downUrl2 = formatData[i]['DownUrl2'];
                     }
+
                     var downUrl3 = ""
                     if (formatData[i]['DownUrl3'] != null && formatData[i]['DownUrl3'] != 'undefined') {
                         downUrl3 = formatData[i]['DownUrl3'];
                     }
+
                     var backDownUrl = ""
                     if (formatData[i]['BackDownUrl'] != null && formatData[i]['BackDownUrl'] != 'undefined') {
                         backDownUrl = formatData[i]['BackDownUrl'];
+                    }
+
+                    var fileMd5 = ""
+                    if (formatData[i]['FileMd5'] != null && formatData[i]['FileMd5'] != 'undefined') {
+                        fileMd5 = formatData[i]['FileMd5'];
                     }
 
                     var showhidden = "1"
                     if (formatData[i]['ShowHidden'] != null && formatData[i]['ShowHidden'] != 'undefined') {
                         showhidden = formatData[i]['ShowHidden'];
                     }
-                    var sort = "1"
+
                     if (formatData[i]['Sort'] != null && formatData[i]['Sort'] != 'undefined') {
                         sort = formatData[i]['Sort'];
                     }
-                    var addtime = ""
+
                     if (formatData[i]['AddTime'] != null && formatData[i]['AddTime'] != 'undefined') {
-                        addtime = formatData[i]['AddTime'];
+                        add_date = formatData[i]['AddTime'];
                     }
+
                     var updatetime = ""
                     if (formatData[i]['UpdateTime'] != null && formatData[i]['UpdateTime'] != 'undefined') {
                         updatetime = formatData[i]['UpdateTime'];
                     }
-                    var downcount = "0"
-                    if (formatData[i]['DownCount'] != null && formatData[i]['DownCount'] != 'undefined') {
-                        downcount = formatData[i]['DownCount'];
-                    }
 
-                    var versionName = ""
-                    if (formatData[i]['VersionName'] != null && formatData[i]['VersionName'] != 'undefined') {
-                        versionName = formatData[i]['VersionName'];
+                    if (formatData[i]['DownCount'] != null && formatData[i]['DownCount'] != 'undefined') {
+                        request_count = formatData[i]['DownCount'];
                     }
 
                     //for 239 plus
-                    if (formatData[i]['编号'] != null && formatData[i]['编号'] != 'undefined') {
-                        id = formatData[i]['编号'];
-                    }
-
+                    //if (exist_array[i]['编号'] != null && exist_array[i]['编号'] != 'undefined') {
+                    //    id = exist_array[i]['编号'];
+                    //}
+                    
                     if (formatData[i]['*歌曲编号'] != null && formatData[i]['*歌曲编号'] != 'undefined') {
-                        songnum = formatData[i]['*歌曲编号'];
+                        id = formatData[i]['*歌曲编号'];
+
+                        video_file = ""+id+""
+                        video_file += ".mp4"
                     }
 
                     if (formatData[i]['*歌曲名称'] != null && formatData[i]['*歌曲名称'] != 'undefined') {
-                        name = formatData[i]['*歌曲名称'];
-                    }
+                        title = formatData[i]['*歌曲名称'];
+                        //find out if title has "("
+                        var left_brackets = title.indexOf("(");
+                        var left_brackets_c = title.indexOf("（");
+                        if (left_brackets >= 0) { //found left brackets
+                            //console.log("found left brackets: "+title);
+                            if (left_brackets == 0) { //the title start with left brackets
 
-                    if (formatData[i]['NameLength'] == 'undefined') {
-                        namelength = formatData[i]['*歌曲名称'].length;
+                            } else {
+                                var split_array = title.split("(");
+                                //test if all letters and numbers
+                                if (split_array[0].match(/^[A-Za-z0-9'\s]*$/)) {
+                                    //console.log("all letters and numbers:"+ title);
+                                    var spite_letters_nums = split_array[0].split(" ");
+                                    title_word_count = spite_letters_nums.length
+                                } else {
+                                    title_word_count = split_array[0].trim().length
+                                }
+                            }
+                        } else if (left_brackets_c >= 0) { //found left chinese brackets
+                            //console.log("found left chinese brackets: "+title);
+                            if (left_brackets_c ==0) { //the title start with left brackets
+
+                            } else {
+                                var split_array = title.split("（");
+                                //test if all letters and numbers
+                                if (split_array[0].match(/^[A-Za-z0-9'\s]*$/)) {
+                                    //console.log("all letters and numbers:"+ title);
+                                    var spite_letters_nums = split_array[0].split(" ");
+                                    title_word_count = spite_letters_nums.length
+                                } else {
+                                    title_word_count = split_array[0].trim().length
+                                }
+                            }
+                        } else { //not found "("
+                            //console.log("brackets not found: "+title);
+                            if (title.match(/^[A-Za-z0-9'\s]*$/)) {
+                                //console.log("all letters and numbers:"+ title);
+                                var spite_letters_nums = title.split(" ");
+                                title_word_count = spite_letters_nums.length
+                            } else {
+                                title_word_count = title.trim().length;
+                            }
+                            
+                        }
                     }
 
                     if (formatData[i]['*歌星名称'] != null && formatData[i]['*歌星名称'] != 'undefined') {
-                        singername = formatData[i]['*歌星名称'];
+                        singer = formatData[i]['*歌星名称'];
                     }
 
                     if (formatData[i]['歌名首拼'] != null && formatData[i]['歌名首拼'] != 'undefined') {
-                        firstspell = formatData[i]['歌名首拼'];
+                        title_pinyin_first_char = formatData[i]['歌名首拼'];
                     }
 
                     if (formatData[i]['歌名全拼'] != null && formatData[i]['歌名全拼'] != 'undefined') {
@@ -885,11 +1907,14 @@ router.post('/', function(request, response, next) {
                         backDownUrl = formatData[i]['备用下载地址'];
                     }
 
-                    value = [id, songnum, name, singername, singerid, songlanguageid, 
-                    songtypeid, track, firstspell, allspell, namelength, 
-                    hits, format, serverstate, image, savePath, downPath, 
-                    version, downUrl1, downUrl2, downUrl3, backDownUrl, fileMd5,
-                    showhidden, sort, addtime, updatetime, downcount, versionName];
+                    value = [id, video_file, title, title_word_count, singer, language, 
+                        area, genre, mood, last_name_strokes, singer_zhuyin_first_char, 
+                        singer_pinyin_first_char, title_zhuyin_first_char, title_pinyin_first_char, sex, featuring, antiphonal, 
+                        vendor, request_count, is_new, vocal, add_date, activity_tag1,
+                        volume, description, file_cd, sort, rlsound, rlsound2,
+                        ch, add_no, light, newer, son1, son2, son3, ok, machine, video_length, tv,
+                        activity_tag2, activity_tag3, version, version_name,
+                        singerid, songlanguageid, songtypeid, track, allspell, hits, serverstate, image, savePath, downPath, downUrl1, downUrl2, downUrl3, backDownUrl, fileMd5, showhidden, updatetime];
                     
                     
                     //if (i==0) {

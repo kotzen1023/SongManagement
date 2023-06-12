@@ -11,10 +11,19 @@ const connection = mysql.createConnection({
 
 /* GET editsong listing. */
 router.get('/', function(req, res, next) {
-    console.log("editsong get:"+req.query.SongNum);
+    //console.log("editsong get:"+req.query.SongNum);
+    console.log("editsong get:"+req.query.id);
+    console.log("editsong get lang:"+req.query.lang);
+    console.log("editsong get area1:"+req.query.area1);
+    console.log("editsong get mood1:"+req.query.mood1);
+    console.log("editsong get sex1:"+req.query.sex1);
+    console.log("editsong get antiphonal1:"+req.query.antiphonal1);
+    console.log("editsong get vendor1:"+req.query.vendor1);
+    console.log("editsong get machine1:"+req.query.machine1);
     
-    if (req.query.SongNum != undefined) {
-        var sql_str = "SELECT Id, SongNum, Name, SingerName, SingerId, SongLanguageId, SongTypeId, Track, FirstSpell, AllSpell, NameLength, Hits, Format, ServerState, Image, SavePath, DownPath, Version, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, Sort, AddTime, UpdateTime, DownCount, VersionName FROM tb_song WHERE SongNum = "+ req.query.SongNum +";";
+    if (req.query.id != undefined) {
+        //var sql_str = "SELECT Id, SongNum, Name, SingerName, SingerId, SongLanguageId, SongTypeId, Track, FirstSpell, AllSpell, NameLength, Hits, Format, ServerState, Image, SavePath, DownPath, Version, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, Sort, AddTime, UpdateTime, DownCount, VersionName FROM tb_song WHERE SongNum = "+ req.query.SongNum +";";
+        var sql_str = "SELECT id, video_file, title, title_word_count, singer, language, area, genre, mood, last_name_strokes, singer_zhuyin_first_char, singer_pinyin_first_char, title_zhuyin_first_char, title_pinyin_first_char, sex, featuring, antiphonal, vendor, request_count, is_new, vocal, add_date, activity_tag1, volume, description, file_cd, sort, rlsound, rlsound2, ch, add_no, light, newer, son1, son2, son3, ok, machine, video_length, tv, activity_tag2, activity_tag3, version, version_name FROM tb_song_original WHERE id = "+ req.query.id +";";
 
         console.log("sql_str = "+sql_str);
 
@@ -26,35 +35,57 @@ router.get('/', function(req, res, next) {
 
             //res.send(JSON.stringify(results));
             res.render('editsong', {
-                Id: results[0].Id,
-                SongNum: results[0].SongNum,
-                Name: results[0].Name,
-                SingerName: results[0].SingerName,
-                SingerId: results[0].SingerId,
-                SongLanguageId: results[0].SongLanguageId,
-                SongTypeId: results[0].SongTypeId,
-                Track: results[0].Track,
-                FirstSpell: results[0].FirstSpell,
-                AllSpell: results[0].AllSpell,
-                NameLength: results[0].NameLength,
-                Hits: results[0].Hits,
-                Format: results[0].Format,
-                ServerState: results[0].ServerState,
-                Image: results[0].Image,
-                SavePath: results[0].SavePath,
-                DownPath: results[0].DownPath,
-                Version: results[0].Version,
-                DownUrl1: results[0].DownUrl1,
-                DownUrl2: results[0].DownUrl2,
-                DownUrl3: results[0].DownUrl3,
-                BackDownUrl: results[0].BackDownUrl,
-                FileMd5: results[0].FileMd5,
-                ShowHidden: results[0].ShowHidden,
-                Sort: results[0].Sort,
-                AddTime: results[0].AddTime,
-                UpdateTime: results[0].UpdateTime,
-                DownCount: results[0].DownCount,
-                VersionName: results[0].VersionName,
+                id: results[0].id,
+                video_file: results[0].video_file,
+                title: results[0].title,
+                title_word_count: results[0].title_word_count,
+                singer: results[0].singer,
+                language: results[0].language,
+                area: results[0].area,
+                genre: results[0].genre,
+                mood: results[0].mood,
+                last_name_strokes: results[0].last_name_strokes,
+                singer_zhuyin_first_char: results[0].singer_zhuyin_first_char,
+                singer_pinyin_first_char: results[0].singer_pinyin_first_char,
+                title_zhuyin_first_char: results[0].title_zhuyin_first_char,
+                title_pinyin_first_char: results[0].title_pinyin_first_char,
+                sex: results[0].sex,
+                featuring: results[0].featuring,
+                antiphonal: results[0].antiphonal,
+                vendor: results[0].vendor,
+                request_count: results[0].request_count,
+                is_new: results[0].is_new,
+                vocal: results[0].vocal,
+                add_date: results[0].add_date,
+                activity_tag1: results[0].activity_tag1,
+                volume: results[0].volume,
+                description: results[0].description,
+                file_cd: results[0].file_cd,
+                sort: results[0].sort,
+                rlsound: results[0].rlsound,
+                rlsound2: results[0].rlsound2,
+                ch: results[0].ch,
+                add_no: results[0].add_no,
+                light: results[0].light,
+                newer: results[0].newer,
+                son1: results[0].son1,
+                son2: results[0].son2,
+                son3: results[0].son3,
+                ok: results[0].ok,
+                machine: results[0].machine,
+                video_length: results[0].video_length,
+                tv: results[0].tv,
+                activity_tag2: results[0].activity_tag2,
+                activity_tag3: results[0].activity_tag3,
+                version: results[0].version,
+                version_name: results[0].version_name, 
+                lang: req.query.lang,
+                area1: req.query.area1,
+                mood1: req.query.mood1,
+                sex1: req.query.sex1,
+                antiphonal1: req.query.antiphonal1,
+                vendor1: req.query.vendor1,
+                machine1: req.query.machine1,
             });
             res.end();
         });
@@ -67,72 +98,103 @@ router.get('/', function(req, res, next) {
 
 router.post('/change', function(request, response, next) {
     
-    let Id = request.body.inputId;
-    let SongNum = request.body.inputSongNum;
-	let Name = request.body.inputName;
-    let SingerName = request.body.inputSingerName;
-    let SingerId = request.body.inputSingerId;
-    let SongLanguageId = request.body.inputSongLanguageId;
-    let SongTypeId = request.body.inputSongTypeId;
-    let Track = request.body.inputTrack;
-    let FirstSpell = request.body.inputFirstSpell;
-    let AllSpell = request.body.inputAllSpell;
-    let NameLength = request.body.inputNameLength;
-    let Hits = request.body.inputHits;
-    let Format = request.body.inputFormat;
-    let ServerState = request.body.inputServerState;
-    let Image = request.body.inputImage;
-    let SavePath = request.body.inputSavePath;
-    let DownPath = request.body.inputDownPath;
-    let Version = request.body.inputVersion;
-    let DownUrl1 = request.body.inputDownUrl1;
-    let DownUrl2 = request.body.inputDownUrl2;
-    let DownUrl3 = request.body.inputDownUrl3;
-    let BackDownUrl = request.body.inputBackDownUrl;
-    let FileMd5 = request.body.inputFileMd5;
-    let ShowHidden = request.body.inputShowHidden;
-    let Sort = request.body.inputSort;
-    let AddTime = request.body.inputAddTime;
-    let UpdateTime = request.body.inputUpdateTime;
-    let DownCount = request.body.inputDownCount;
-    let VersionName = request.body.inputVersionName;
+    let id = request.body.id;
+    let video_file = request.body.video_file;
+	let title = request.body.title;
+    let title_word_count = request.body.title_word_count;
+    let singer = request.body.singer;
+    let language = request.body.language;
+    let area = request.body.area;
+    let genre = request.body.genre;
+    let mood = request.body.mood;
+    let last_name_strokes = request.body.last_name_strokes;
+    let singer_zhuyin_first_char = request.body.singer_zhuyin_first_char;
+    let singer_pinyin_first_char = request.body.singer_pinyin_first_char;
+    let title_zhuyin_first_char = request.body.title_zhuyin_first_char;
+    let title_pinyin_first_char = request.body.title_pinyin_first_char;
+    let sex = request.body.sex;
+    let featuring = request.body.featuring;
+    let antiphonal = request.body.antiphonal;
+    let vendor = request.body.vendor;
+    let request_count = request.body.request_count;
+    let is_new = request.body.is_new;
+    let vocal = request.body.vocal;
+    let add_date = request.body.add_date;
+    let activity_tag1 = request.body.activity_tag1;
+    let volume = request.body.volume;
+    let description = request.body.description;
+    let file_cd = request.body.file_cd;
+    let sort = request.body.sort;
+    let rlsound = request.body.rlsound;
+    let rlsound2 = request.body.rlsound2;
+    let ch = request.body.ch;
+    let add_no = request.body.add_no;
+    let light = request.body.light;
+    let newer = request.body.newer;
+    let son1 = request.body.son1;
+    let son2 = request.body.son2;
+    let son3 = request.body.son3;
+    let ok = request.body.ok;
+    let machine = request.body.machine;
+    let video_length = request.body.video_length;
+    let tv = request.body.tv;
+    let activity_tag2 = request.body.activity_tag2;
+    let activity_tag3 = request.body.activity_tag3;
+    let version = request.body.version;
+    let version_name = request.body.version_name;
 
-    console.log("Id = "+Id);
-    console.log("SongNum = "+SongNum);
-    console.log("Name = "+Name);
-    console.log("SingerName = "+SingerName);
-    console.log("SingerId = "+SingerId);
-    console.log("SongLanguageId = "+SongLanguageId);
-    console.log("SongTypeId = "+SongTypeId);
-    console.log("Track = "+Track);
-    console.log("FirstSpell = "+FirstSpell);
-    console.log("AllSpell = "+AllSpell);
-    console.log("NameLength = "+NameLength);
-    console.log("Hits = "+Hits);
-    console.log("Format = "+Format);
-    console.log("ServerState = "+ServerState);
-    console.log("Image = "+Image);
-    console.log("SavePath = "+SavePath);
-    console.log("DownPath = "+DownPath);
-    console.log("Version = "+Version);
-    console.log("DownUrl1 = "+DownUrl1);
-    console.log("DownUrl2 = "+DownUrl2);
-    console.log("DownUrl3 = "+DownUrl3);
-    console.log("BackDownUrl = "+BackDownUrl);
-    console.log("FileMd5 = "+FileMd5);
-    console.log("ShowHidden = "+ShowHidden);
-    console.log("Sort = "+Sort);
-    console.log("AddTime = "+AddTime);
-    console.log("UpdateTime = "+UpdateTime);
-    console.log("DownCount = "+DownCount);
-    console.log("VersionName = "+VersionName);
+
+    console.log("id = "+id);
+    console.log("video_file = "+video_file);
+    console.log("title = "+title);
+    console.log("title_word_count = "+title_word_count);
+    console.log("singer = "+singer);
+    console.log("language = "+language);
+    console.log("area = "+area);
+    console.log("genre = "+genre);
+    console.log("mood = "+mood);
+    console.log("last_name_strokes = "+last_name_strokes);
+    console.log("singer_zhuyin_first_char = "+singer_zhuyin_first_char);
+    console.log("singer_pinyin_first_char = "+singer_pinyin_first_char);
+    console.log("title_zhuyin_first_char = "+title_zhuyin_first_char);
+    console.log("title_pinyin_first_char = "+title_pinyin_first_char);
+    console.log("sex = "+sex);
+    console.log("featuring = "+featuring);
+    console.log("antiphonal = "+antiphonal);
+    console.log("vendor = "+vendor);
+    console.log("request_count = "+request_count);
+    console.log("is_new = "+is_new);
+    console.log("vocal = "+vocal);
+    console.log("add_date = "+add_date);
+    console.log("activity_tag1 = "+activity_tag1);
+    console.log("volume = "+volume);
+    console.log("description = "+description);
+    console.log("file_cd = "+file_cd);
+    console.log("sort = "+sort);
+    console.log("rlsound = "+rlsound);
+    console.log("rlsound2 = "+rlsound2);
+    console.log("ch = "+ch);
+    console.log("add_no = "+add_no);
+    console.log("light = "+light);
+    console.log("newer = "+newer);
+    console.log("son1 = "+son1);
+    console.log("son2 = "+son2);
+    console.log("son3 = "+son3);
+    console.log("ok = "+ok);
+    console.log("machine = "+machine);
+    console.log("video_length = "+video_length);
+    console.log("tv = "+tv);
+    console.log("activity_tag2 = "+activity_tag2);
+    console.log("activity_tag3 = "+activity_tag3);
+    console.log("version = "+version);
+    console.log("version_name = "+version_name);
     
     //let formatData = request.body;
 
     //console.log("SongNum = "+formatData['SongNum']);
     
-    var sql_str = "Update tb_song SET SongNum = '"+SongNum+"', Name = '"+Name+"', SingerName = '"+SingerName+"', SingerId = '"+SingerId+"', SongLanguageId = '"+SongLanguageId+"', SongTypeId = '"+SongTypeId+"', Track = '"+Track+"', FirstSpell = '"+FirstSpell+"', AllSpell = '"+AllSpell+"', NameLength = '"+NameLength+"', Hits = '"+Hits+"', Format = '"+Format+"', ServerState = '"+ServerState+"', Image = '"+Image+"', SavePath = '"+SavePath+"', DownPath = '"+DownPath+"', Version = '"+Version+"', DownUrl1 = '"+DownUrl1+"', DownUrl2 = '"+DownUrl2+"', DownUrl3 = '"+DownUrl3+"', BackDownUrl = '"+BackDownUrl+"', FileMd5 = '"+FileMd5+"', ShowHidden = '"+ShowHidden+"', Sort = '"+Sort+"', AddTime = '"+AddTime+"', UpdateTime = '"+UpdateTime+"', DownCount = '"+DownCount+"', VersionName = '"+VersionName+"' WHERE Id = "+ Id +";";
-
+    //var sql_str = "Update tb_song SET SongNum = '"+SongNum+"', Name = '"+Name+"', SingerName = '"+SingerName+"', SingerId = '"+SingerId+"', SongLanguageId = '"+SongLanguageId+"', SongTypeId = '"+SongTypeId+"', Track = '"+Track+"', FirstSpell = '"+FirstSpell+"', AllSpell = '"+AllSpell+"', NameLength = '"+NameLength+"', Hits = '"+Hits+"', Format = '"+Format+"', ServerState = '"+ServerState+"', Image = '"+Image+"', SavePath = '"+SavePath+"', DownPath = '"+DownPath+"', Version = '"+Version+"', DownUrl1 = '"+DownUrl1+"', DownUrl2 = '"+DownUrl2+"', DownUrl3 = '"+DownUrl3+"', BackDownUrl = '"+BackDownUrl+"', FileMd5 = '"+FileMd5+"', ShowHidden = '"+ShowHidden+"', Sort = '"+Sort+"', AddTime = '"+AddTime+"', UpdateTime = '"+UpdateTime+"', DownCount = '"+DownCount+"', VersionName = '"+VersionName+"' WHERE Id = "+ Id +";";
+    var sql_str = "Update tb_song_original SET video_file = '"+video_file+"', title = '"+title+"', title_word_count = '"+title_word_count+"', singer = '"+singer+"', language = '"+language+"', area = '"+area+"', genre = '"+genre+"', mood = '"+mood+"', last_name_strokes = '"+last_name_strokes+"', singer_zhuyin_first_char = '"+singer_zhuyin_first_char+"', singer_pinyin_first_char = '"+singer_pinyin_first_char+"', title_zhuyin_first_char = '"+title_zhuyin_first_char+"', title_pinyin_first_char = '"+title_pinyin_first_char+"', sex = '"+sex+"', featuring = '"+featuring+"', antiphonal = '"+antiphonal+"', vendor = '"+vendor+"', request_count = '"+request_count+"', is_new = '"+is_new+"', vocal = '"+vocal+"', activity_tag1 = '"+activity_tag1+"', volume = '"+volume+"', description = '"+description+"', file_cd = '"+file_cd+"', sort = '"+sort+"', rlsound = '"+rlsound+"', rlsound2 = '"+rlsound2+"', ch = '"+ch+"', add_no = '"+add_no+"', light = '"+light+"', newer = '"+newer+"', son1 = '"+son1+"', son2 = '"+son2+"', son3 = '"+son3+"', ok = '"+ok+"', machine = '"+machine+"', video_length = '"+video_length+"', tv = '"+tv+"', activity_tag2 = '"+activity_tag2+"', activity_tag3 = '"+activity_tag3+"', version = '"+version+"', version_name = '"+version_name+"' WHERE id = "+ id +";";
     console.log("sql_str = "+sql_str);
 
     connection.query(sql_str, function(error, results, fields) {

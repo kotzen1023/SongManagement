@@ -11,10 +11,11 @@ const connection = mysql.createConnection({
 
 /* GET editsong listing. */
 router.get('/', function(req, res, next) {
-    console.log("deletesong get:"+req.query.SongNum);
+    console.log("deletesong get:"+req.query.id);
     
-    if (req.query.SongNum != undefined) {
-        var sql_str = "SELECT Id, SongNum, Name, SingerName, SingerId, SongLanguageId, SongTypeId, Track, FirstSpell, AllSpell, NameLength, Hits, Format, ServerState, Image, SavePath, DownPath, Version, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, Sort, AddTime, UpdateTime, DownCount, VersionName FROM tb_song WHERE SongNum = "+ req.query.SongNum +";";
+    if (req.query.id != undefined) {
+        //var sql_str = "SELECT Id, SongNum, Name, SingerName, SingerId, SongLanguageId, SongTypeId, Track, FirstSpell, AllSpell, NameLength, Hits, Format, ServerState, Image, SavePath, DownPath, Version, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, Sort, AddTime, UpdateTime, DownCount, VersionName FROM tb_song WHERE SongNum = "+ req.query.SongNum +";";
+        var sql_str = "SELECT id, video_file, title, title_word_count, singer, language, area, genre, mood, last_name_strokes, singer_zhuyin_first_char, singer_pinyin_first_char, title_zhuyin_first_char, title_pinyin_first_char, sex, featuring, antiphonal, vendor, request_count, is_new, vocal, add_date, activity_tag1, volume, description, file_cd, sort, rlsound, rlsound2, ch, add_no, light, newer, son1, son2, son3, ok, machine, video_length, tv, activity_tag2, activity_tag3, version, version_name FROM tb_song_original WHERE id = "+ req.query.id +";";
 
         console.log("sql_str = "+sql_str);
 
@@ -26,35 +27,50 @@ router.get('/', function(req, res, next) {
 
             //res.send(JSON.stringify(results));
             res.render('deletesong', {
-                Id: results[0].Id,
-                SongNum: results[0].SongNum,
-                Name: results[0].Name,
-                SingerName: results[0].SingerName,
-                SingerId: results[0].SingerId,
-                SongLanguageId: results[0].SongLanguageId,
-                SongTypeId: results[0].SongTypeId,
-                Track: results[0].Track,
-                FirstSpell: results[0].FirstSpell,
-                AllSpell: results[0].AllSpell,
-                NameLength: results[0].NameLength,
-                Hits: results[0].Hits,
-                Format: results[0].Format,
-                ServerState: results[0].ServerState,
-                Image: results[0].Image,
-                SavePath: results[0].SavePath,
-                DownPath: results[0].DownPath,
-                Version: results[0].Version,
-                DownUrl1: results[0].DownUrl1,
-                DownUrl2: results[0].DownUrl2,
-                DownUrl3: results[0].DownUrl3,
-                BackDownUrl: results[0].BackDownUrl,
-                FileMd5: results[0].FileMd5,
-                ShowHidden: results[0].ShowHidden,
-                Sort: results[0].Sort,
-                AddTime: results[0].AddTime,
-                UpdateTime: results[0].UpdateTime,
-                DownCount: results[0].DownCount,
-                VersionName: results[0].VersionName,
+                id: results[0].id,
+                video_file: results[0].video_file,
+                title: results[0].title,
+                title_word_count: results[0].title_word_count,
+                singer: results[0].singer,
+                language: results[0].language,
+                area: results[0].area,
+                genre: results[0].genre,
+                mood: results[0].mood,
+                last_name_strokes: results[0].last_name_strokes,
+                singer_zhuyin_first_char: results[0].singer_zhuyin_first_char,
+                singer_pinyin_first_char: results[0].singer_pinyin_first_char,
+                title_zhuyin_first_char: results[0].title_zhuyin_first_char,
+                title_pinyin_first_char: results[0].title_pinyin_first_char,
+                sex: results[0].sex,
+                featuring: results[0].featuring,
+                antiphonal: results[0].antiphonal,
+                vendor: results[0].vendor,
+                request_count: results[0].request_count,
+                is_new: results[0].is_new,
+                vocal: results[0].vocal,
+                add_date: results[0].add_date,
+                activity_tag1: results[0].activity_tag1,
+                volume: results[0].volume,
+                description: results[0].description,
+                file_cd: results[0].file_cd,
+                sort: results[0].sort,
+                rlsound: results[0].rlsound,
+                rlsound2: results[0].rlsound2,
+                ch: results[0].ch,
+                add_no: results[0].add_no,
+                light: results[0].light,
+                newer: results[0].newer,
+                son1: results[0].son1,
+                son2: results[0].son2,
+                son3: results[0].son3,
+                ok: results[0].ok,
+                machine: results[0].machine,
+                video_length: results[0].video_length,
+                tv: results[0].tv,
+                activity_tag2: results[0].activity_tag2,
+                activity_tag3: results[0].activity_tag3,
+                version: results[0].version,
+                version_name: results[0].version_name
             });
             res.end();
         });
@@ -98,7 +114,7 @@ router.post('/delete', function(request, response, next) {
     let VersionName = request.body.inputVersionName;
     */
 
-    let SongNum = request.body.inputSongNum;
+    let id = request.body.id;
     /*
     console.log("Id = "+Id);
     console.log("SongNum = "+SongNum);
@@ -130,12 +146,12 @@ router.post('/delete', function(request, response, next) {
     console.log("DownCount = "+DownCount);
     console.log("VersionName = "+VersionName);
     */
-    console.log("SongNum = "+SongNum);
+    console.log("id = "+id);
     //let formatData = request.body;
 
     //console.log("SongNum = "+formatData['SongNum']);
     
-    var sql_str = "DELETE FROM tb_song WHERE SongNum = '"+ SongNum +"';";
+    var sql_str = "DELETE FROM tb_song_original WHERE id = '"+ id +"';";
 
     console.log("sql_str = "+sql_str);
 

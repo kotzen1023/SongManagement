@@ -17,6 +17,14 @@ head
   //script(src='/javascripts/jhxlsx.js')
   script(type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.1/xlsx.full.min.js')
   script.
+    var language_option_array = [];
+    var area_option_array = [];
+    var mood_option_array = [];
+    var sex_option_array = [];
+    var antiphonal_option_array = [];
+    var vendor_option_array = [];
+    var machine_option_array = [];
+
     var songObj = null;
     var songObj_by_version = [];
     var file_name_version = "";
@@ -40,7 +48,8 @@ head
               var new_obj = XL_row_object[i];
               //console.log("new_obj["+i+"] = "+new_obj['Idx']);
               //remove column 'Idx'
-              new_obj.VersionName = file_name_version; 
+              //new_obj.VersionName = file_name_version;
+              new_obj.version_name = file_name_version; 
               //console.log("obj = "+obj['Idx']);
               upload_song_obj.push(new_obj);
             }
@@ -125,7 +134,8 @@ head
           //console.log("new_obj["+i+"] = "+new_obj['Idx']);
           //remove column 'Idx'
           delete new_obj.Idx;
-          delete new_obj.VersionName;
+          //delete new_obj.VersionName;
+          delete new_obj.version_name;
 
           if (machine == 1) {// for 239 plus
             new_obj["编号"] = new_obj.Id;
@@ -177,6 +187,24 @@ head
 
             new_song_obj.push(new_obj);
           } else {
+            delete new_obj.SingerId;
+            delete new_obj.SongLanguageId;
+            delete new_obj.SongTypeId;
+            delete new_obj.Track;
+            delete new_obj.AllSpell;
+            delete new_obj.Hits;
+            delete new_obj.ServerState;
+            delete new_obj.Image;
+            delete new_obj.SavePath;
+            delete new_obj.DownPath;
+            delete new_obj.DownUrl1;
+            delete new_obj.DownUrl2;
+            delete new_obj.DownUrl3;
+            delete new_obj.BackDownUrl;
+            delete new_obj.FileMd5;
+            delete new_obj.ShowHidden;
+            delete new_obj.UpdateTime;
+
             new_song_obj.push(new_obj);
           }
         }
@@ -189,7 +217,8 @@ head
           //console.log("new_obj["+i+"] = "+new_obj['Idx']);
           //remove column 'Idx'
           delete new_obj.Idx;
-          delete new_obj.VersionName;
+          //delete new_obj.VersionName;
+          delete new_obj.version_name;
           //console.log("obj = "+obj['Idx']);
           if (machine == 1) {// for 239 plus
             new_obj["编号"] = new_obj.Id;
@@ -241,6 +270,24 @@ head
 
             new_song_obj.push(new_obj);
           } else {
+            delete new_obj.SingerId;
+            delete new_obj.SongLanguageId;
+            delete new_obj.SongTypeId;
+            delete new_obj.Track;
+            delete new_obj.AllSpell;
+            delete new_obj.Hits;
+            delete new_obj.ServerState;
+            delete new_obj.Image;
+            delete new_obj.SavePath;
+            delete new_obj.DownPath;
+            delete new_obj.DownUrl1;
+            delete new_obj.DownUrl2;
+            delete new_obj.DownUrl3;
+            delete new_obj.BackDownUrl;
+            delete new_obj.FileMd5;
+            delete new_obj.ShowHidden;
+            delete new_obj.UpdateTime;
+            
             new_song_obj.push(new_obj);
           }
         }
@@ -283,8 +330,8 @@ head
         for (var i=0; i<obj_size; i++) {
 
           for (var j=0;j<value_array.length; j++) {
-            if (songObj[i]['VersionName'].includes(value_array[j]))
-            //if (value.includes(songObj[i]['VersionName']))
+            if (songObj[i]['version_name'].includes(value_array[j]))
+            //if (value.includes(songObj[i]['version_name']))
             {
               songObj_by_version.push(songObj[i]);
               break;
@@ -339,8 +386,375 @@ head
     function addNew() {
       var currentLocation = window.location;
       var url = currentLocation+"addsong";
+      url = url+"?lang="+language_option_array+"&area1="+area_option_array+"&mood1="+mood_option_array+"&sex1="+sex_option_array+"&antiphonal1="+antiphonal_option_array+"&vendor1="+vendor_option_array+"&machine1="+machine_option_array;
       
       location.replace(url);
+    }
+
+    function onLanguageChange(selectObject) {
+
+      document.getElementById('txt_loading').style.visibility = 'visible';
+      
+      var languageValue = selectObject.value;
+      var areaValue = $('#areaSelect option:selected').val();
+      var moodValue = $('#moodSelect option:selected').val();
+      var sexValue = $('#sexSelect option:selected').val();
+      var antiphonalValue = $('#antiphonalSelect option:selected').val();
+      var vendorValue = $('#vendorSelect option:selected').val();
+
+      console.log("languageValue = "+languageValue);
+      console.log("areaValue = "+areaValue);
+      console.log("moodValue = "+moodValue);
+      console.log("sexValue = "+sexValue);
+      console.log("antiphonalValue = "+antiphonalValue);
+      console.log("vendorValue = "+vendorValue);
+
+      $('#tableArray').dataTable().fnClearTable();
+      songObj_by_filter = songObj.slice();
+
+      if (languageValue == "" &&　areaValue == "" && moodValue == "" && sexValue == "" && antiphonalValue == "" && vendorValue == "") {
+        $('#tableArray').dataTable().fnAddData(songObj);
+      } else {
+        //language
+        if (languageValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['language'] == languageValue)
+          console.log("language filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //area
+        if (areaValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['area'] == areaValue)
+          console.log("area filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //mood
+        if (moodValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['mood'] == moodValue)
+          console.log("mood filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //sex
+        if (sexValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['sex'] == sexValue)
+          console.log("mood filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //antiphonal
+        if (antiphonalValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['antiphonal'] == antiphonalValue)
+          console.log("antiphonal filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        } 
+        //vendor
+        if (vendorValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['vendor'] == vendorValue)
+          console.log("antiphonal filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        
+       
+        $('#tableArray').dataTable().fnAddData(songObj_by_filter);
+      }
+      document.getElementById('txt_loading').style.visibility = "hidden";
+    }
+
+    function onAreaChange(selectObject) {
+
+      document.getElementById('txt_loading').style.visibility = 'visible';
+      
+      var languageValue = $('#languageSelect option:selected').val();
+      var areaValue = selectObject.value;
+      var moodValue = $('#moodSelect option:selected').val();
+      var sexValue = $('#sexSelect option:selected').val();
+      var antiphonalValue = $('#antiphonalSelect option:selected').val();
+      var vendorValue = $('#vendorSelect option:selected').val();
+
+      console.log("languageValue = "+languageValue);
+      console.log("areaValue = "+areaValue);
+      console.log("moodValue = "+moodValue);
+      console.log("sexValue = "+sexValue);
+      console.log("antiphonalValue = "+antiphonalValue);
+      console.log("vendorValue = "+vendorValue);
+
+      $('#tableArray').dataTable().fnClearTable();
+      songObj_by_filter = songObj.slice();
+
+      if (languageValue == "" &&　areaValue == "" && moodValue == "" && sexValue == "" && antiphonalValue == "" && vendorValue == "") {
+        $('#tableArray').dataTable().fnAddData(songObj);
+      } else {
+        //language
+        if (languageValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['language'] == languageValue)
+          console.log("language filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //area
+        if (areaValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['area'] == areaValue)
+          console.log("area filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //mood
+        if (moodValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['mood'] == moodValue)
+          console.log("mood filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //sex
+        if (sexValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['sex'] == sexValue)
+          console.log("mood filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //antiphonal
+        if (antiphonalValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['antiphonal'] == antiphonalValue)
+          console.log("antiphonal filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        } 
+        //vendor
+        if (vendorValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['vendor'] == vendorValue)
+          console.log("antiphonal filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        
+       
+        $('#tableArray').dataTable().fnAddData(songObj_by_filter);
+      }
+      document.getElementById('txt_loading').style.visibility = "hidden";
+    }
+
+    function onMoodChange(selectObject) {
+
+      document.getElementById('txt_loading').style.visibility = 'visible';
+      
+      var languageValue = $('#languageSelect option:selected').val();
+      var areaValue = $('#areaSelect option:selected').val();
+      var moodValue = selectObject.value;
+      var sexValue = $('#sexSelect option:selected').val();
+      var antiphonalValue = $('#antiphonalSelect option:selected').val();
+      var vendorValue = $('#vendorSelect option:selected').val();
+
+      console.log("languageValue = "+languageValue);
+      console.log("areaValue = "+areaValue);
+      console.log("moodValue = "+moodValue);
+      console.log("sexValue = "+sexValue);
+      console.log("antiphonalValue = "+antiphonalValue);
+      console.log("vendorValue = "+vendorValue);
+
+      $('#tableArray').dataTable().fnClearTable();
+      songObj_by_filter = songObj.slice();
+
+      if (languageValue == "" &&　areaValue == "" && moodValue == "" && sexValue == "" && antiphonalValue == "" && vendorValue == "") {
+        $('#tableArray').dataTable().fnAddData(songObj);
+      } else {
+        //language
+        if (languageValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['language'] == languageValue)
+          console.log("language filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //area
+        if (areaValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['area'] == areaValue)
+          console.log("area filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //mood
+        if (moodValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['mood'] == moodValue)
+          console.log("mood filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //sex
+        if (sexValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['sex'] == sexValue)
+          console.log("mood filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //antiphonal
+        if (antiphonalValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['antiphonal'] == antiphonalValue)
+          console.log("antiphonal filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        } 
+        //vendor
+        if (vendorValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['vendor'] == vendorValue)
+          console.log("antiphonal filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        
+       
+        $('#tableArray').dataTable().fnAddData(songObj_by_filter);
+      }
+      document.getElementById('txt_loading').style.visibility = "hidden";
+    }
+
+    function onSexChange(selectObject) {
+
+      document.getElementById('txt_loading').style.visibility = 'visible';
+      
+      var languageValue = $('#languageSelect option:selected').val();
+      var areaValue = $('#areaSelect option:selected').val();
+      var moodValue = $('#moodSelect option:selected').val();
+      var sexValue = selectObject.value;
+      var antiphonalValue = $('#antiphonalSelect option:selected').val();
+      var vendorValue = $('#vendorSelect option:selected').val();
+
+      console.log("languageValue = "+languageValue);
+      console.log("areaValue = "+areaValue);
+      console.log("moodValue = "+moodValue);
+      console.log("sexValue = "+sexValue);
+      console.log("antiphonalValue = "+antiphonalValue);
+      console.log("vendorValue = "+vendorValue);
+
+      $('#tableArray').dataTable().fnClearTable();
+      songObj_by_filter = songObj.slice();
+
+      if (languageValue == "" &&　areaValue == "" && moodValue == "" && sexValue == "" && antiphonalValue == "" && vendorValue == "") {
+        $('#tableArray').dataTable().fnAddData(songObj);
+      } else {
+        //language
+        if (languageValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['language'] == languageValue)
+          console.log("language filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //area
+        if (areaValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['area'] == areaValue)
+          console.log("area filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //mood
+        if (moodValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['mood'] == moodValue)
+          console.log("mood filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //sex
+        if (sexValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['sex'] == sexValue)
+          console.log("mood filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //antiphonal
+        if (antiphonalValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['antiphonal'] == antiphonalValue)
+          console.log("antiphonal filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        } 
+        //vendor
+        if (vendorValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['vendor'] == vendorValue)
+          console.log("antiphonal filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        
+       
+        $('#tableArray').dataTable().fnAddData(songObj_by_filter);
+      }
+      document.getElementById('txt_loading').style.visibility = "hidden";
+    }
+
+    function onAntiphonalChange(selectObject) {
+
+      document.getElementById('txt_loading').style.visibility = 'visible';
+      
+      var languageValue = $('#languageSelect option:selected').val();
+      var areaValue = $('#areaSelect option:selected').val();
+      var moodValue = $('#moodSelect option:selected').val();
+      var sexValue = $('#sexSelect option:selected').val();
+      var antiphonalValue = selectObject.value;
+      var vendorValue = $('#vendorSelect option:selected').val();
+
+      console.log("languageValue = "+languageValue);
+      console.log("areaValue = "+areaValue);
+      console.log("moodValue = "+moodValue);
+      console.log("sexValue = "+sexValue);
+      console.log("antiphonalValue = "+antiphonalValue);
+      console.log("vendorValue = "+vendorValue);
+
+      $('#tableArray').dataTable().fnClearTable();
+      songObj_by_filter = songObj.slice();
+
+      if (languageValue == "" &&　areaValue == "" && moodValue == "" && sexValue == "" && antiphonalValue == "" && vendorValue == "") {
+        $('#tableArray').dataTable().fnAddData(songObj);
+      } else {
+        //language
+        if (languageValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['language'] == languageValue)
+          console.log("language filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //area
+        if (areaValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['area'] == areaValue)
+          console.log("area filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //mood
+        if (moodValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['mood'] == moodValue)
+          console.log("mood filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //sex
+        if (sexValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['sex'] == sexValue)
+          console.log("mood filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //antiphonal
+        if (antiphonalValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['antiphonal'] == antiphonalValue)
+          console.log("antiphonal filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        } 
+        //vendor
+        if (vendorValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['vendor'] == vendorValue)
+          console.log("antiphonal filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        
+       
+        $('#tableArray').dataTable().fnAddData(songObj_by_filter);
+      }
+      document.getElementById('txt_loading').style.visibility = "hidden";
+    }
+
+    function onVendorChange(selectObject) {
+
+      document.getElementById('txt_loading').style.visibility = 'visible';
+      
+      var languageValue = $('#languageSelect option:selected').val();
+      var areaValue = $('#areaSelect option:selected').val();
+      var moodValue = $('#moodSelect option:selected').val();
+      var sexValue = $('#sexSelect option:selected').val();
+      var antiphonalValue = $('#antiphonalSelect option:selected').val();
+      var vendorValue = selectObject.value;
+
+      console.log("languageValue = "+languageValue);
+      console.log("areaValue = "+areaValue);
+      console.log("moodValue = "+moodValue);
+      console.log("sexValue = "+sexValue);
+      console.log("antiphonalValue = "+antiphonalValue);
+      console.log("vendorValue = "+vendorValue);
+
+      $('#tableArray').dataTable().fnClearTable();
+      songObj_by_filter = songObj.slice();
+
+      if (languageValue == "" &&　areaValue == "" && moodValue == "" && sexValue == "" && antiphonalValue == "" && vendorValue == "") {
+        $('#tableArray').dataTable().fnAddData(songObj);
+      } else {
+        //language
+        if (languageValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['language'] == languageValue)
+          console.log("language filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //area
+        if (areaValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['area'] == areaValue)
+          console.log("area filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //mood
+        if (moodValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['mood'] == moodValue)
+          console.log("mood filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //sex
+        if (sexValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['sex'] == sexValue)
+          console.log("mood filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        //antiphonal
+        if (antiphonalValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['antiphonal'] == antiphonalValue)
+          console.log("antiphonal filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        } 
+        //vendor
+        if (vendorValue != "") {
+          songObj_by_filter = songObj_by_filter.filter(item => item['vendor'] == vendorValue)
+          console.log("antiphonal filter: songObj_by_filter.length = "+songObj_by_filter.length);
+        }
+        
+       
+        $('#tableArray').dataTable().fnAddData(songObj_by_filter);
+      }
+      document.getElementById('txt_loading').style.visibility = "hidden";
     }
   
 bodyngObj
@@ -375,9 +789,20 @@ script.
   document.getElementById('upload').addEventListener('change', handleFileSelect, false);
 hr
 
-p#firstSpellZero
-p#allSpellZero
-
+span#firstSpellZero
+span#allSpellZero
+span language: 
+span#languageSelect
+span area: 
+span#areaSelect
+span mood: 
+span#moodSelect
+span sex: 
+span#sexSelect
+span antiphonal: 
+span#antiphonalSelect
+span vendor: 
+span#vendorSelect
 hr
 
 p#goods(align='center')
@@ -398,6 +823,14 @@ script.
     //var songObj;
     var dt;
     var select_option_array = [];
+    /*var language_option_array = [];
+    var area_option_array = [];
+    var mood_option_array = [];
+    var sex_option_array = [];
+    var antiphonal_option_array = [];
+    var vendor_option_array = [];
+    var machine_option_array = [];
+    */
     getdata();
     function getdata() {
       const getSongs = async () => {
@@ -418,32 +851,32 @@ script.
         for (var i=0; i<count; i++) {
           if (select_option_array.length == 0) {
             console.log("select_option_array.length = "+select_option_array.length);
-            //select_option_array.push(songObj[i]['VersionName']);
+            //select_option_array.push(songObj[i]['version_name']);
 
             //check if contain ","
-            if (songObj[i]['VersionName'].includes(",")) {
-              var option_array = songObj[i]['VersionName'].split(",");
+            if (songObj[i]['version_name'].includes(",")) {
+              var option_array = songObj[i]['version_name'].split(",");
               for (j=0;j<option_array.length; j++) {
                 select_option_array.push(option_array[j]);
               }
             } else {
-              select_option_array.push(songObj[i]['VersionName']);
+              select_option_array.push(songObj[i]['version_name']);
             }
 
           } else {
             var found = false;
             for (j=0;j<select_option_array.length; j++) {
-              if (select_option_array[j] == songObj[i]['VersionName']) {
+              if (select_option_array[j] == songObj[i]['version_name']) {
                 found = true;
                 break;
               } 
             }
 
             if (!found) {
-              //select_option_array.push(songObj[i]['VersionName']);
+              //select_option_array.push(songObj[i]['version_name']);
 
-              if (songObj[i]['VersionName'].includes(",")) {
-                var option_array = songObj[i]['VersionName'].split(",");
+              if (songObj[i]['version_name'].includes(",")) {
+                var option_array = songObj[i]['version_name'].split(",");
                 
                 for (var k=0;k<option_array.length; k++) {
                   var found_option = false;
@@ -461,20 +894,133 @@ script.
                 
                 }
               } else {
-                select_option_array.push(songObj[i]['VersionName']);
+                select_option_array.push(songObj[i]['version_name']);
               }
             }
           }
+          //language
+          if (language_option_array.length == 0) {
+            language_option_array.push(songObj[i]['language']);
+          } else {
+            var found = false;
+            for (j=0;j<language_option_array.length; j++) {
+              if (language_option_array[j] == songObj[i]['language']) {
+                found = true;
+                break;
+              } 
+            }
 
+            if (!found) {
+              language_option_array.push(songObj[i]['language']);
+            }
+          }
+          //area
+          if (area_option_array.length == 0) {
+            area_option_array.push(songObj[i]['area']);
+          } else {
+            var found = false;
+            for (j=0;j<area_option_array.length; j++) {
+              if (area_option_array[j] == songObj[i]['area']) {
+                found = true;
+                break;
+              } 
+            }
+
+            if (!found) {
+              area_option_array.push(songObj[i]['area']);
+            }
+          }
+          //mood
+          if (mood_option_array.length == 0) {
+            mood_option_array.push(songObj[i]['mood']);
+          } else {
+            var found = false;
+            for (j=0;j<mood_option_array.length; j++) {
+              if (mood_option_array[j] == songObj[i]['mood']) {
+                found = true;
+                break;
+              } 
+            }
+
+            if (!found) {
+              mood_option_array.push(songObj[i]['mood']);
+            }
+          }
+          //sex
+          if (sex_option_array.length == 0) {
+            sex_option_array.push(songObj[i]['sex']);
+          } else {
+            var found = false;
+            for (j=0;j<sex_option_array.length; j++) {
+              if (sex_option_array[j] == songObj[i]['sex']) {
+                found = true;
+                break;
+              } 
+            }
+
+            if (!found) {
+              sex_option_array.push(songObj[i]['sex']);
+            }
+          }
+          //antiphonal
+          if (antiphonal_option_array.length == 0) {
+            antiphonal_option_array.push(songObj[i]['antiphonal']);
+          } else {
+            var found = false;
+            for (j=0;j<antiphonal_option_array.length; j++) {
+              if (antiphonal_option_array[j] == songObj[i]['antiphonal']) {
+                found = true;
+                break;
+              } 
+            }
+
+            if (!found) {
+              antiphonal_option_array.push(songObj[i]['antiphonal']);
+            }
+          }
+          //vendor
+          if (vendor_option_array.length == 0) {
+            vendor_option_array.push(songObj[i]['vendor']);
+          } else {
+            var found = false;
+            for (j=0;j<vendor_option_array.length; j++) {
+              if (vendor_option_array[j] == songObj[i]['vendor']) {
+                found = true;
+                break;
+              } 
+            }
+
+            if (!found) {
+              vendor_option_array.push(songObj[i]['vendor']);
+            }
+          }
+          //machine
+          if (machine_option_array.length == 0) {
+            machine_option_array.push(songObj[i]['machine']);
+          } else {
+            var found = false;
+            for (j=0;j<machine_option_array.length; j++) {
+              if (machine_option_array[j] == songObj[i]['machine']) {
+                found = true;
+                break;
+              } 
+            }
+
+            if (!found) {
+              machine_option_array.push(songObj[i]['machine']);
+            }
+          }
+          /*
           if (songObj[i]['FirstSpell'] == "") {
             firstSpellZeroCount += 1;
           }
 
           if (songObj[i]['AllSpell'] == "") {
             allSpellZeroCount += 1;
-          } 
+          }*/
         }
         
+        /*
         if (firstSpellZeroCount > 0) {
           var firstSpellZeroObj = document.getElementById('firstSpellZero');
           firstSpellZeroObj.innerHTML = "FirstSpell 空白數量: ";
@@ -485,7 +1031,7 @@ script.
           var allSpellZeroObj = document.getElementById('allSpellZero');
           allSpellZeroObj.innerHTML = "AllSpell 空白數量: ";
           allSpellZeroObj.innerHTML += allSpellZeroCount
-        }
+        }*/
         
         //sort
 
@@ -506,6 +1052,13 @@ script.
         
 
         console.log("select_option_array = "+select_option_array);
+        console.log("language_option_array = "+language_option_array);
+        console.log("area_option_array = "+area_option_array);
+        console.log("mood_option_array = "+mood_option_array);
+        console.log("sex_option_array = "+sex_option_array);
+        console.log("antiphonal_option_array = "+antiphonal_option_array);
+        console.log("vendor_option_array = "+vendor_option_array);
+        console.log("machine_option_array = "+machine_option_array);
 
         var span_version_select = document.getElementById('span_version_select');
         var innerHtmlString = "<select id='version_select' onchange='onVersionChange(this)'>";
@@ -525,6 +1078,78 @@ script.
         innerString += "</select>";
         span_machine_select.innerHTML = innerString;
 
+        //language
+        if (language_option_array.length > 0) {
+          var languageSelect = document.getElementById('languageSelect');
+
+          var innerHtmlString = "<select id='languageSelect' onchange='onLanguageChange(this)'>";
+          for (var k=0; k<language_option_array.length; k++) {
+            innerHtmlString += "<option value='"+language_option_array[k]+"'>"+language_option_array[k]+"</option>";
+          }
+          innerHtmlString += "</select>";
+          languageSelect.innerHTML = innerHtmlString; 
+        }
+
+        //area
+        if (area_option_array.length > 0) {
+          var areaSelect = document.getElementById('areaSelect');
+
+          var innerHtmlString = "<select id='areaSelect' onchange='onAreaChange(this)'>";
+          for (var k=0; k<area_option_array.length; k++) {
+            innerHtmlString += "<option value='"+area_option_array[k]+"'>"+area_option_array[k]+"</option>";
+          }
+          innerHtmlString += "</select>";
+          areaSelect.innerHTML = innerHtmlString; 
+        }
+
+        //mood
+        if (mood_option_array.length > 0) {
+          var moodSelect = document.getElementById('moodSelect');
+
+          var innerHtmlString = "<select id='moodSelect' onchange='onMoodChange(this)'>";
+          for (var k=0; k<mood_option_array.length; k++) {
+            innerHtmlString += "<option value='"+mood_option_array[k]+"'>"+mood_option_array[k]+"</option>";
+          }
+          innerHtmlString += "</select>";
+          moodSelect.innerHTML = innerHtmlString; 
+        }
+
+        //sex
+        if (sex_option_array.length > 0) {
+          var sexSelect = document.getElementById('sexSelect');
+
+          var innerHtmlString = "<select id='sexSelect' onchange='onSexChange(this)'>";
+          for (var k=0; k<sex_option_array.length; k++) {
+            innerHtmlString += "<option value='"+sex_option_array[k]+"'>"+sex_option_array[k]+"</option>";
+          }
+          innerHtmlString += "</select>";
+          sexSelect.innerHTML = innerHtmlString; 
+        }
+
+        //antiphonal
+        if (antiphonal_option_array.length > 0) {
+          var antiphonalSelect = document.getElementById('antiphonalSelect');
+
+          var innerHtmlString = "<select id='antiphonalSelect' onchange='onAntiphonalChange(this)'>";
+          for (var k=0; k<antiphonal_option_array.length; k++) {
+            innerHtmlString += "<option value='"+antiphonal_option_array[k]+"'>"+antiphonal_option_array[k]+"</option>";
+          }
+          innerHtmlString += "</select>";
+          antiphonalSelect.innerHTML = innerHtmlString; 
+        }
+
+        //vendor
+        if (vendor_option_array.length > 0) {
+          var vendorSelect = document.getElementById('vendorSelect');
+
+          var innerHtmlString = "<select id='vendorSelect' onchange='onVendorChange(this)'>";
+          for (var k=0; k<vendor_option_array.length; k++) {
+            innerHtmlString += "<option value='"+vendor_option_array[k]+"'>"+vendor_option_array[k]+"</option>";
+          }
+          innerHtmlString += "</select>";
+          vendorSelect.innerHTML = innerHtmlString; 
+        }
+
         initialiseTable();
         return jsondata;
       };
@@ -542,6 +1167,53 @@ script.
                       '<button type="button" class="btn btn-danger btn-sm">刪除</button>'
               } 
           },
+          { data: 'Idx', title: "Idx" },
+          { data: 'id', title: "id" },
+          { data: 'video_file', title: "video_file" },
+          { data: 'title', title: "title" },
+          { data: 'title_word_count', title: "title_word_count" },
+          { data: 'singer', title: "singer" },
+          { data: 'language', title: "language" },
+          { data: 'area', title: "area" },
+          { data: 'genre', title: "genre" },
+          { data: 'mood', title: "mood" },
+          //{ data: 'last_name_strokes', title: "last_name_strokes" },
+          { data: 'singer_zhuyin_first_char', title: "singer_zhuyin_first_char" },
+          { data: 'singer_pinyin_first_char', title: "singer_pinyin_first_char" },
+          { data: 'title_zhuyin_first_char', title: "title_zhuyin_first_char" },
+          { data: 'title_pinyin_first_char', title: "title_pinyin_first_char" },
+          { data: 'sex', title: "sex" },
+          { data: 'featuring', title: "featuring" },
+          { data: 'antiphonal', title: "antiphonal" },
+          { data: 'vendor', title: "vendor" },
+          { data: 'request_count', title: "request_count" },
+          //{ data: 'is_new', title: "is_new" },
+          //{ data: 'vocal', title: "vocal" },
+          //{ data: 'add_date', title: "add_date" },
+          { data: 'activity_tag1', title: "activity_tag1" },
+          //{ data: 'volume', title: "volume" },
+          //{ data: 'description', title: "description" },
+          //{ data: 'file_cd', title: "file_cd" },
+          //{ data: 'sort', title: "sort" },
+          //{ data: 'rlsound', title: "rlsound" },
+          //{ data: 'rlsound2', title: "rlsound2" },
+          //{ data: 'ch', title: "ch" },
+          //{ data: 'add_no', title: "add_no" },
+          //{ data: 'light', title: "light" },
+          //{ data: 'newer', title: "newer" },
+          //{ data: 'son1', title: "son1" },
+          //{ data: 'son2', title: "son2" },
+          //{ data: 'son3', title: "son3" },
+          //{ data: 'ok', title: "ok" },
+          { data: 'machine', title: "machine" },
+          //{ data: 'video_length', title: "video_length" },
+          //{ data: 'tv', title: "tv" },
+          { data: 'activity_tag2', title: "activity_tag2" },
+          { data: 'activity_tag3', title: "activity_tag3" },
+          { data: 'version', title: "version" },
+          { data: 'version_name', title: "version_name" },
+
+          /*
           { data: 'Idx', title: "Idx" },
           { data: 'Id', title: "Id" },
           { data: 'SongNum', title: "SongNum" },
@@ -596,6 +1268,7 @@ script.
           { data: 'UpdateTime', title: "UpdateTime" },
           { data: 'DownCount', title: "DownCount" },
           { data: 'VersionName', title: "VersionName" },
+          */
         ],
         language: {
           "lengthMenu": "顯示 _MENU_ 筆資料",
@@ -632,32 +1305,32 @@ script.
       //on edit button click
       $('#tableArray tbody').on( 'click', 'button.btn-warning', function () {
         var tr = $(this).closest('tr');
-        var value = $(tr).find('td').eq(2)[0].innerHTML;
+        var value = $(tr).find('td').eq(1)[0].innerHTML;
         //alert(value);
 
         var currentLocation = window.location;
         var url = currentLocation+"editsong";
         var xhr = new XMLHttpRequest();
 
-        var json_object = `{ "SongNum": "`+value+`" }`;
+        var json_object = `{ "id": "`+value+`" }`;
         
-        let new_url = url+"?SongNum="+value;
+        let new_url = url+"?id="+value+"&lang="+language_option_array+"&area1="+area_option_array+"&mood1="+mood_option_array+"&sex1="+sex_option_array+"&antiphonal1="+antiphonal_option_array+"&vendor1="+vendor_option_array+"&machine1="+machine_option_array;
         location.replace(new_url);
 
       });
       //on delete button click
       $('#tableArray tbody').on( 'click', 'button.btn-danger', function () {
         var tr = $(this).closest('tr');
-        var value = $(tr).find('td').eq(2)[0].innerHTML;
+        var value = $(tr).find('td').eq(1)[0].innerHTML;
         //alert(value);
 
         var currentLocation = window.location;
         var url = currentLocation+"deletesong";
         var xhr = new XMLHttpRequest();
 
-        var json_object = `{ "SongNum": "`+value+`" }`;
+        var json_object = `{ "id": "`+value+`" }`;
         
-        let new_url = url+"?SongNum="+value;
+        let new_url = url+"?id="+value;
         location.replace(new_url);
       });
 

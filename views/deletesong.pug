@@ -18,128 +18,171 @@ form(action='/deletesong/delete' method='post')
 
     table(align='center')
         tr
-            td Id
-            td 
-                span #{Id}
-                //input(id='inputId' name='inputId' type='hidden' value=`${Id}`)
+            td id
+            td #{id}
+                input(id='id' name='id' type='hidden' value=`${id}`)
         tr
-            td SongNum
-            td #{SongNum}
-                input(id='inputSongNum' name='inputSongNum' type='hidden' value=`${SongNum}`)
+            td video_file
+            td #{video_file}
         tr
-            td Name
-            td #{Name}
+            td title
+            td #{title}
                 //textarea(id='inputName' name='inputName' cols='64' rows='4') #{Name}
         tr
-            td SingerName
-            td #{SingerName}
+            td title_word_count
+            td #{title_word_count}
                 //input(id='inputSingerName' name='inputSingerName' type='text' size='64' value=`${SingerName}`)
         tr
-            td SingerId
-            td #{SingerId}
+            td singer
+            td #{singer}
                 //input(id='inputSingerId' name='inputSingerId' type='text' value=`${SingerId}`)
         tr
-            td SongLanguageId
-            td #{SongLanguageId}
+            td language
+            td #{language}
                 //input(id='inputSongLanguageId' name='inputSongLanguageId' type='text' value=`${SongLanguageId}`)
         tr
-            td SongTypeId
-            td #{SongTypeId}
+            td area
+            td #{area}
                 //input(id='inputSongTypeId' name='inputSongTypeId' type='text' value=`${SongTypeId}`)
         tr
-            td Track
-            td #{Track}
+            td genre
+            td #{genre}
                 //input(id='inputTrack' name='inputTrack' type='text' value=`${Track}`)
         tr
-            td FirstSpell
-            td #{FirstSpell}
+            td mood
+            td #{mood}
                 //input(type='text' value=`${FirstSpell}`)
                 //textarea(id='inputFirstSpell' name='inputFirstSpell' cols='64' rows='4') #{FirstSpell}
         tr
-            td AllSpell
-            td #{AllSpell}
+            td last_name_strokes
+            td #{last_name_strokes}
                 //input(type='text' value=`${AllSpell}`)
                 //textarea(id='inputAllSpell' name='inputAllSpell' cols='64' rows='4') #{AllSpell}
         tr
-            td NameLength
-            td #{NameLength}
+            td singer_zhuyin_first_char
+            td #{singer_zhuyin_first_char}
                 //input(id='inputNameLength' name='inputNameLength' type='text' value=`${NameLength}`)
         tr
-            td Hits
-            td #{Hits}
+            td singer_pinyin_first_char
+            td #{singer_pinyin_first_char}
                 //input(id='inputHits' name='inputHits' type='text' value=`${Hits}`)
         tr
-            td Format
-            td #{Format}
+            td title_zhuyin_first_char
+            td #{title_zhuyin_first_char}
                 //input(id='inputFormat' name='inputFormat' type='text' value=`${Format}`)
         tr
-            td ServerState
-            td #{ServerState}
+            td title_pinyin_first_char
+            td #{title_pinyin_first_char}
                 //input(id='inputServerState' name='inputServerState' type='text' value=`${ServerState}`)
         tr
-            td Image	
-            td #{Image}
+            td sex	
+            td #{sex}
                 //input(id='inputImage' name='inputImage' type='text' value=`${Image}`)
         tr
-            td SavePath	
-            td #{SavePath}
+            td featuring	
+            td #{featuring}
                 //input(id='inputSavePath' name='inputSavePath' type='text' value=`${SavePath}`)
         tr
-            td DownPath	
-            td #{DownPath}
+            td antiphonal	
+            td #{antiphonal}
                 //input(id='inputDownPath' name='inputDownPath' type='text' value=`${DownPath}`)
         tr
-            td Version	
-            td #{Version}
+            td vendor	
+            td #{vendor}
                 //input(id='inputVersion' name='inputVersion' type='text' value=`${Version}`)
         tr
-            td DownUrl1	
-            td #{DownUrl1}
+            td request_count	
+            td #{request_count}
                 //input(type='text' value=`${DownUrl1}`)
                 //textarea(id='inputDownUrl1' name='inputDownUrl1' cols='64' rows='4') #{DownUrl1}
         tr
-            td DownUrl2		
-            td #{DownUrl2}
+            td is_new		
+            td #{is_new}
                 //input(type='text' value=`${DownUrl2}`)
                 //textarea(id='inputDownUrl2' name='inputDownUrl2' cols='64' rows='4') #{DownUrl2}
         tr
-            td DownUrl3		
-            td #{DownUrl3}
+            td vocal		
+            td #{vocal}
                 //input(type='text' value=`${DownUrl3}`)
                 //textarea(id='inputDownUrl3' name='inputDownUrl3' cols='64'  rows='4') #{DownUrl3}
         tr
-            td BackDownUrl		
-            td #{BackDownUrl}
+            td add_date		
+            td #{add_date}
                 //input(type='text' value=`${BackDownUrl}`)
                 //textarea(id='inputBackDownUrl' name='inputBackDownUrl' cols='64' rows='4') #{BackDownUrl}
         tr
-            td FileMd5		
-            td #{FileMd5}
+            td activity_tag1		
+            td #{activity_tag1}
                 //input(id='inputFileMd5' name='inputFileMd5' type='text' value=`${FileMd5}`)
         tr
-            td ShowHidden		
-            td #{ShowHidden}
+            td volume		
+            td #{volume}
                 //input(id='inputShowHidden' name='inputShowHidden' type='text' value=`${ShowHidden}`)
         tr
-            td Sort		
-            td #{Sort}
+            td description		
+            td #{description}
                 //input(id='inputSort' name='inputSort' type='text' value=`${Sort}`)
         tr
-            td AddTime		
-            td #{AddTime}
+            td file_cd		
+            td #{file_cd}
                 //input(id='inputAddTime' name='inputAddTime' type='text' value=`${AddTime}`)
         tr
-            td UpdateTime		
-            td #{UpdateTime}
+            td sort		
+            td #{sort}
                 //input(id='inputUpdateTime' name='inputUpdateTime' type='text' value=`${UpdateTime}`)
         tr
-            td DownCount		
-            td #{DownCount}
+            td rlsound		
+            td #{rlsound}
                 //input(id='inputDownCount' name='inputDownCount' type='text' value=`${DownCount}`)
         tr
-            td VersionName		
-            td #{VersionName}
+            td rlsound2		
+            td #{rlsound2}
                 //textarea(id='inputVersionName' name='inputVersionName' cols='64' rows='4') #{VersionName}
+        tr
+            td ch		
+            td #{ch}
+        tr
+            td add_no		
+            td #{add_no}
+        tr
+            td light		
+            td #{light}
+        tr
+            td newer		
+            td #{newer}
+        tr
+            td son1		
+            td #{son1}
+        tr
+            td son2		
+            td #{son2}
+        tr
+            td son3		
+            td #{son3}
+        tr
+            td ok		
+            td #{ok}
+        tr
+            td machine		
+            td #{machine}
+        tr
+            td video_length		
+            td #{video_length}
+        tr
+            td tv		
+            td #{tv}
+        tr
+            td activity_tag2		
+            td #{activity_tag2}
+        tr
+            td activity_tag3		
+            td #{activity_tag3}
+        tr
+            td version		
+            td #{version}
+        tr
+            td version_name		
+            td #{version_name}
 
     span
         div(align='center')
