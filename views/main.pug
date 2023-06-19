@@ -788,21 +788,21 @@ form(align='center' enctype='multipart/form-data')
 script.
   document.getElementById('upload').addEventListener('change', handleFileSelect, false);
 hr
-
-span#firstSpellZero
-span#allSpellZero
-span language: 
-span#languageSelect
-span area: 
-span#areaSelect
-span mood: 
-span#moodSelect
-span sex: 
-span#sexSelect
-span antiphonal: 
-span#antiphonalSelect
-span vendor: 
-span#vendorSelect
+div 欄位過濾 : 
+  span#firstSpellZero
+  span#allSpellZero
+  span language: 
+  span#languageSelect
+  span area: 
+  span#areaSelect
+  span mood: 
+  span#moodSelect
+  span sex: 
+  span#sexSelect
+  span antiphonal: 
+  span#antiphonalSelect
+  span vendor: 
+  span#vendorSelect
 hr
 
 p#goods(align='center')
@@ -900,7 +900,8 @@ script.
           }
           //language
           if (language_option_array.length == 0) {
-            language_option_array.push(songObj[i]['language']);
+            //language_option_array.push(songObj[i]['language']);
+            language_option_array.push("");
           } else {
             var found = false;
             for (j=0;j<language_option_array.length; j++) {
@@ -916,7 +917,8 @@ script.
           }
           //area
           if (area_option_array.length == 0) {
-            area_option_array.push(songObj[i]['area']);
+            //area_option_array.push(songObj[i]['area']);
+            area_option_array.push("");
           } else {
             var found = false;
             for (j=0;j<area_option_array.length; j++) {
@@ -932,7 +934,8 @@ script.
           }
           //mood
           if (mood_option_array.length == 0) {
-            mood_option_array.push(songObj[i]['mood']);
+            //mood_option_array.push(songObj[i]['mood']);
+            mood_option_array.push("");
           } else {
             var found = false;
             for (j=0;j<mood_option_array.length; j++) {
@@ -948,7 +951,8 @@ script.
           }
           //sex
           if (sex_option_array.length == 0) {
-            sex_option_array.push(songObj[i]['sex']);
+            //sex_option_array.push(songObj[i]['sex']);
+            sex_option_array.push("");
           } else {
             var found = false;
             for (j=0;j<sex_option_array.length; j++) {
@@ -964,7 +968,8 @@ script.
           }
           //antiphonal
           if (antiphonal_option_array.length == 0) {
-            antiphonal_option_array.push(songObj[i]['antiphonal']);
+            //antiphonal_option_array.push(songObj[i]['antiphonal']);
+            antiphonal_option_array.push("");
           } else {
             var found = false;
             for (j=0;j<antiphonal_option_array.length; j++) {
@@ -980,7 +985,8 @@ script.
           }
           //vendor
           if (vendor_option_array.length == 0) {
-            vendor_option_array.push(songObj[i]['vendor']);
+            //vendor_option_array.push(songObj[i]['vendor']);
+            vendor_option_array.push("");
           } else {
             var found = false;
             for (j=0;j<vendor_option_array.length; j++) {
@@ -1233,13 +1239,14 @@ script.
           { data: 'SavePath', title: "SavePath" },
           { data: 'DownPath', title: "DownPath" },
           { data: 'Version', title: "Version" },
-          { data: 'DownUrl1', title: "DownUrl1", render: function (data, type, row, meta) {
+          */
+          { data: 'downUrl1', title: "downUrl1", render: function (data, type, row, meta) {
               if (type === "display") {
                   data = '<a href="' + data + '" target="_blank">' + data + '</a>';
               }
               return data;
             } 
-          },
+          },/*
           { data: 'DownUrl2', title: "DownUrl2", render: function (data, type, row, meta) {
               if (type === "display") {
                   data = '<a href="' + data + '" target="_blank">' + data + '</a>';

@@ -42,7 +42,7 @@ router.post('/', function(request, response, next) {
         // If there is an issue with the query, output the error
             if (error) throw error;
             var exist_array = [];
-            
+            var same_count = 0;
             if (results_songNum.length > 0) {
                 
                 console.log("results size = "+results_songNum.length);
@@ -64,7 +64,7 @@ router.post('/', function(request, response, next) {
                         //if (parseInt(formatData[i]['SongNum']) == parseInt(exist_array[j]['SongNum'])) {
                         if (parseInt(formatData[i]['id']) == parseInt(exist_array[j]['id']) || parseInt(formatData[i]['SongNum']) == parseInt(exist_array[j]['id'])) {
                             found = true;
-
+                            same_count += 1;
                             /*
                             if (exist_array[j]['VersionName'].includes(",")) {
                                 var ver_arry = exist_array[j]['VersionName'].split(',');
@@ -122,6 +122,7 @@ router.post('/', function(request, response, next) {
                         modified_formatData.push(formatData[i]);
                     }
                 }
+                console.log("same_count = "+same_count);
                 console.log("modified_formatData size = "+modified_formatData.length);
                 //clear before insert 
                 
