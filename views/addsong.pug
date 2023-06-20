@@ -216,7 +216,13 @@ head
             machine_select.innerHTML += "<option value='"+option_array[i]+"'>"+option_array[i]+"</option>"
         }
         machine_select.innerHTML += "</select>";
-    }  
+    }
+
+    func onTitleChange() {
+        var titleInput = document.getElementById("title");
+        var titleCountInput = document.getElementById("title_word_count");
+        titleCountInput.value = titleInput.value.length;      
+    }
 
 bodyngObj
 h1(align='center') 新增歌曲
@@ -239,6 +245,11 @@ form(action='/addsong/add' method='post' onsubmit="return addCheck(this)")
             td title
             td
                 textarea(id='title' name='title' cols='64' rows='4')
+                script.
+                    var titleInput = document.getElementById("title");
+                    titleInput.addEventListener("keyup", function(){
+                        onTitleChange()
+                    });
         tr
             td title_word_count
             td
