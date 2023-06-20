@@ -218,10 +218,9 @@ head
         machine_select.innerHTML += "</select>";
     }
 
-    func onTitleChange() {
-        var titleInput = document.getElementById("title");
+    function onTitleChange(value) {
         var titleCountInput = document.getElementById("title_word_count");
-        titleCountInput.value = titleInput.value.length;      
+        titleCountInput.value = value.length;
     }
 
 bodyngObj
@@ -247,8 +246,10 @@ form(action='/addsong/add' method='post' onsubmit="return addCheck(this)")
                 textarea(id='title' name='title' cols='64' rows='4')
                 script.
                     var titleInput = document.getElementById("title");
+                    
                     titleInput.addEventListener("keyup", function(){
-                        onTitleChange()
+                        console.log(this.value);
+                        onTitleChange(this.value)
                     });
         tr
             td title_word_count
