@@ -23,6 +23,7 @@ head
     var sex_option_array = [];
     var antiphonal_option_array = [];
     var vendor_option_array = [];
+    var error_option_array = [];
     var machine_option_array = [];
 
     var songObj = null;
@@ -756,6 +757,83 @@ head
       }
       document.getElementById('txt_loading').style.visibility = "hidden";
     }
+
+    function onErrorChange(selectObject) {
+
+      document.getElementById('txt_loading').style.visibility = 'visible';
+      
+      var errorValue = selectObject.value;
+
+      
+      console.log("errorValue = "+errorValue);
+
+      $('#tableArray').dataTable().fnClearTable();
+      songObj_by_filter = [];
+      
+
+
+      /*
+      error_option_array.push("");
+          error_option_array.push("全部");
+          error_option_array.push("歌手注音首拚");
+          error_option_array.push("歌手拚音首拚");
+          error_option_array.push("歌名注音首拚");
+          error_option_array.push("歌名拚音首拚");
+          error_option_array.push("歌名拚音全拚");
+          error_option_array.push("下載網址錯誤");
+      */
+      if (errorValue == "全部") {
+        songObj_by_filter = songObj.slice();
+        songObj_by_filter = songObj_by_filter.filter(item => item['singer_zhuyin_first_char'] == "" || item['singer_pinyin_first_char'] == "" || item['title_zhuyin_first_char'] == "" || item['title_pinyin_first_char'] == "" || item['allspell'] == "" || item['DownUrl1'] == "")
+        
+        
+        console.log("error filter: songObj_by_filter.length = "+songObj_by_filter.length);
+
+        $('#tableArray').dataTable().fnAddData(songObj_by_filter);
+      } else if (errorValue == "歌手注音首拚") {
+        songObj_by_filter = songObj.slice();
+        songObj_by_filter = songObj_by_filter.filter(item => item['singer_zhuyin_first_char'] == "")
+        console.log("language filter: songObj_by_filter.length = "+songObj_by_filter.length);
+
+        $('#tableArray').dataTable().fnAddData(songObj_by_filter);
+      } else if (errorValue == "歌手拚音首拚") {
+        songObj_by_filter = songObj.slice();
+        songObj_by_filter = songObj_by_filter.filter(item => item['singer_pinyin_first_char'] == "")
+        console.log("language filter: songObj_by_filter.length = "+songObj_by_filter.length);
+
+        $('#tableArray').dataTable().fnAddData(songObj_by_filter);
+      } else if (errorValue == "歌名注音首拚") {
+        songObj_by_filter = songObj.slice();
+        songObj_by_filter = songObj_by_filter.filter(item => item['title_zhuyin_first_char'] == "")
+        console.log("language filter: songObj_by_filter.length = "+songObj_by_filter.length);
+
+        $('#tableArray').dataTable().fnAddData(songObj_by_filter);
+      } else if (errorValue == "歌名拚音首拚") {
+        songObj_by_filter = songObj.slice();
+        songObj_by_filter = songObj_by_filter.filter(item => item['title_pinyin_first_char'] == "")
+        console.log("language filter: songObj_by_filter.length = "+songObj_by_filter.length);
+
+        $('#tableArray').dataTable().fnAddData(songObj_by_filter);
+      } else if (errorValue == "歌名拚音全拚") {
+        songObj_by_filter = songObj.slice();
+        songObj_by_filter = songObj_by_filter.filter(item => item['allspell'] == "")
+        console.log("language filter: songObj_by_filter.length = "+songObj_by_filter.length);
+
+        $('#tableArray').dataTable().fnAddData(songObj_by_filter);
+      } else if (errorValue == "下載網址錯誤") {
+        songObj_by_filter = songObj.slice();
+        songObj_by_filter = songObj_by_filter.filter(item => item['DownUrl1'] == "")
+        console.log("language filter: songObj_by_filter.length = "+songObj_by_filter.length);
+
+        $('#tableArray').dataTable().fnAddData(songObj_by_filter);
+      } else {
+        
+        $('#tableArray').dataTable().fnAddData(songObj);
+      }
+
+      
+      document.getElementById('txt_loading').style.visibility = "hidden";
+    }
   
 bodyngObj
 h1(align='center') 全部歌曲
@@ -803,6 +881,8 @@ div 欄位過濾 :
   span#antiphonalSelect
   span vendor: 
   span#vendorSelect
+div 欄位空白或錯誤 : 
+  span#errorSelect
 hr
 
 p#goods(align='center')
@@ -1000,6 +1080,7 @@ script.
               vendor_option_array.push(songObj[i]['vendor']);
             }
           }
+
           //machine
           if (machine_option_array.length == 0) {
             machine_option_array.push(songObj[i]['machine']);
@@ -1025,6 +1106,16 @@ script.
             allSpellZeroCount += 1;
           }*/
         }
+
+        //error
+        error_option_array.push("");
+        error_option_array.push("全部");
+        error_option_array.push("歌手注音首拚");
+        error_option_array.push("歌手拚音首拚");
+        error_option_array.push("歌名注音首拚");
+        error_option_array.push("歌名拚音首拚");
+        error_option_array.push("歌名拚音全拚");
+        error_option_array.push("下載網址錯誤");
         
         /*
         if (firstSpellZeroCount > 0) {
@@ -1156,6 +1247,18 @@ script.
           vendorSelect.innerHTML = innerHtmlString; 
         }
 
+        //error
+        if (error_option_array.length > 0) {
+          var errorSelect = document.getElementById('errorSelect');
+
+          var innerHtmlString = "<select id='errorSelect' onchange='onErrorChange(this)'>";
+          for (var k=0; k<error_option_array.length; k++) {
+            innerHtmlString += "<option value='"+error_option_array[k]+"'>"+error_option_array[k]+"</option>";
+          }
+          innerHtmlString += "</select>";
+          errorSelect.innerHTML = innerHtmlString; 
+        }
+
         initialiseTable();
         return jsondata;
       };
@@ -1188,6 +1291,7 @@ script.
           { data: 'singer_pinyin_first_char', title: "singer_pinyin_first_char" },
           { data: 'title_zhuyin_first_char', title: "title_zhuyin_first_char" },
           { data: 'title_pinyin_first_char', title: "title_pinyin_first_char" },
+          { data: 'AllSpell', title: "AllSpell" },
           { data: 'sex', title: "sex" },
           { data: 'featuring', title: "featuring" },
           { data: 'antiphonal', title: "antiphonal" },
@@ -1240,7 +1344,7 @@ script.
           { data: 'DownPath', title: "DownPath" },
           { data: 'Version', title: "Version" },
           */
-          { data: 'downUrl1', title: "downUrl1", render: function (data, type, row, meta) {
+          { data: 'DownUrl1', title: "DownUrl1", render: function (data, type, row, meta) {
               if (type === "display") {
                   data = '<a href="' + data + '" target="_blank">' + data + '</a>';
               }

@@ -86,6 +86,221 @@ router.post('/', function(request, response, next) {
                                 exist_array[j]['VersionName'] = exist_array[j]['VersionName'].concat(concat_str);
                             }
                             */
+                            if (exist_array[j]['language'] == "") {
+                                exist_array[j]['language'] = formatData[i]['language'];
+                            }
+
+                            if (exist_array[j]['area'] == "") {
+                                exist_array[j]['area'] = formatData[i]['area'];
+                            }
+
+                            if (exist_array[j]['genre'] == "") {
+                                exist_array[j]['genre'] = formatData[i]['genre'];
+                            }
+
+                            if (exist_array[j]['mood'] == "") {
+                                exist_array[j]['mood'] = formatData[i]['mood'];
+                            }
+
+                            if (exist_array[j]['last_name_strokes'] == "") {
+                                exist_array[j]['last_name_strokes'] = formatData[i]['last_name_strokes'];
+                            }
+
+                            if (exist_array[j]['singer_zhuyin_first_char'] == "") {
+                                exist_array[j]['singer_zhuyin_first_char'] = formatData[i]['singer_zhuyin_first_char'];
+                            }
+
+                            if (exist_array[j]['singer_pinyin_first_char'] == "") {
+                                exist_array[j]['singer_pinyin_first_char'] = formatData[i]['singer_pinyin_first_char'];
+                            }
+
+                            if (exist_array[j]['title_zhuyin_first_char'] == "") {
+                                exist_array[j]['title_zhuyin_first_char'] = formatData[i]['title_zhuyin_first_char'];
+                            }
+
+                            if (exist_array[j]['title_pinyin_first_char'] == "") {
+                                exist_array[j]['title_pinyin_first_char'] = formatData[i]['title_pinyin_first_char'];
+                            }
+
+                            if (exist_array[j]['sex'] == "") {
+                                exist_array[j]['sex'] = formatData[i]['sex'];
+                            }
+
+                            if (exist_array[j]['featuring'] == "") {
+                                exist_array[j]['featuring'] = formatData[i]['featuring'];
+                            }
+
+                            if (exist_array[j]['antiphonal'] == "") {
+                                exist_array[j]['antiphonal'] = formatData[i]['antiphonal'];
+                            }
+
+                            if (exist_array[j]['vendor'] == "") {
+                                exist_array[j]['vendor'] = formatData[i]['vendor'];
+                            }
+
+                            if (exist_array[j]['request_count'] == "") {
+                                exist_array[j]['request_count'] = formatData[i]['request_count'];
+                            }
+
+                            if (exist_array[j]['is_new'] == "") {
+                                exist_array[j]['is_new'] = formatData[i]['is_new'];
+                            }
+
+                            if (exist_array[j]['vocal'] == "") {
+                                exist_array[j]['vocal'] = formatData[i]['vocal'];
+                            }
+
+                            if (exist_array[j]['add_date'] == "") {
+                                exist_array[j]['add_date'] = formatData[i]['add_date'];
+                            }
+
+                            if (exist_array[j]['activity_tag1'] == "") {
+                                exist_array[j]['activity_tag1'] = formatData[i]['activity_tag1'];
+                            }
+
+                            if (exist_array[j]['volume'] == "") {
+                                exist_array[j]['volume'] = formatData[i]['volume'];
+                            }
+
+                            if (exist_array[j]['description'] == "") {
+                                exist_array[j]['description'] = formatData[i]['description'];
+                            }
+
+                            if (exist_array[j]['file_cd'] == "") {
+                                exist_array[j]['file_cd'] = formatData[i]['file_cd'];
+                            }
+
+                            if (exist_array[j]['sort'] == "") {
+                                exist_array[j]['sort'] = formatData[i]['sort'];
+                            }
+
+                            if (exist_array[j]['rlsound'] == "") {
+                                exist_array[j]['rlsound'] = formatData[i]['rlsound'];
+                            }
+
+                            if (exist_array[j]['rlsound2'] == "") {
+                                exist_array[j]['rlsound2'] = formatData[i]['rlsound2'];
+                            }
+
+                            if (exist_array[j]['ch'] == "") {
+                                exist_array[j]['ch'] = formatData[i]['ch'];
+                            }
+
+                            if (exist_array[j]['add_no'] == "") {
+                                exist_array[j]['add_no'] = formatData[i]['add_no'];
+                            }
+
+                            if (exist_array[j]['light'] == "") {
+                                exist_array[j]['light'] = formatData[i]['light'];
+                            }
+
+                            if (exist_array[j]['newer'] == "") {
+                                exist_array[j]['newer'] = formatData[i]['newer'];
+                            }
+
+                            if (exist_array[j]['son1'] == "") {
+                                exist_array[j]['son1'] = formatData[i]['son1'];
+                            }
+
+                            if (exist_array[j]['son2'] == "") {
+                                exist_array[j]['son2'] = formatData[i]['son1'];
+                            }
+
+                            if (exist_array[j]['son3'] == "") {
+                                exist_array[j]['son3'] = formatData[i]['son3'];
+                            }
+
+                            if (exist_array[j]['ok'] == "") {
+                                exist_array[j]['ok'] = formatData[i]['son3'];
+                            }
+
+                            if (exist_array[j]['machine'] == "") {
+                                exist_array[j]['machine'] = formatData[i]['machine'];
+                            }
+
+                            if (exist_array[j]['video_length'] == "") {
+                                exist_array[j]['video_length'] = formatData[i]['video_length'];
+                            }
+
+                            if (exist_array[j]['tv'] == "") {
+                                exist_array[j]['tv'] = formatData[i]['tv'];
+                            }
+
+                            if (exist_array[j]['activity_tag2'] == "") {
+                                exist_array[j]['activity_tag2'] = formatData[i]['activity_tag2'];
+                            }
+
+                            if (exist_array[j]['activity_tag3'] == "") {
+                                exist_array[j]['activity_tag3'] = formatData[i]['activity_tag3'];
+                            }
+
+                            if (exist_array[j]['version'] == "") {
+                                exist_array[j]['version'] = formatData[i]['version'];
+                            }
+
+                            if (exist_array[j]['SingerId'] == "") {
+                                exist_array[j]['SingerId'] = formatData[i]['SingerId'];
+                            }
+
+                            if (exist_array[j]['SongLanguageId'] == "") {
+                                exist_array[j]['SongLanguageId'] = formatData[i]['SongLanguageId'];
+                            }
+
+                            if (exist_array[j]['SongTypeId'] == "") {
+                                exist_array[j]['SongTypeId'] = formatData[i]['SongTypeId'];
+                            }
+
+                            if (exist_array[j]['Track'] == "") {
+                                exist_array[j]['Track'] = formatData[i]['Track'];
+                            }
+
+                            if (exist_array[j]['Hits'] == "") {
+                                exist_array[j]['Hits'] = formatData[i]['Hits'];
+                            }
+
+                            if (exist_array[j]['ServerState'] == "") {
+                                exist_array[j]['ServerState'] = formatData[i]['ServerState'];
+                            }
+
+                            if (exist_array[j]['Image'] == "") {
+                                exist_array[j]['Image'] = formatData[i]['Image'];
+                            }
+
+                            if (exist_array[j]['SavePath'] == "") {
+                                exist_array[j]['SavePath'] = formatData[i]['SavePath'];
+                            }
+
+                            if (exist_array[j]['DownPath'] == "") {
+                                exist_array[j]['DownPath'] = formatData[i]['DownPath'];
+                            }
+
+                            if (exist_array[j]['DownUrl1'] == "") {
+                                exist_array[j]['DownUrl1'] = formatData[i]['DownUrl1'];
+                            }
+
+                            if (exist_array[j]['DownUrl2'] == "") {
+                                exist_array[j]['DownUrl2'] = formatData[i]['DownUrl2'];
+                            }
+
+                            if (exist_array[j]['DownUrl3'] == "") {
+                                exist_array[j]['DownUrl3'] = formatData[i]['DownUrl3'];
+                            }
+
+                            if (exist_array[j]['BackDownUrl'] == "") {
+                                exist_array[j]['BackDownUrl'] = formatData[i]['BackDownUrl'];
+                            }
+
+                            if (exist_array[j]['FileMd5'] == "") {
+                                exist_array[j]['FileMd5'] = formatData[i]['FileMd5'];
+                            }
+
+                            if (exist_array[j]['ShowHidden'] == "") {
+                                exist_array[j]['ShowHidden'] = formatData[i]['ShowHidden'];
+                            }
+
+                            if (exist_array[j]['UpdateTime'] == "") {
+                                exist_array[j]['UpdateTime'] = formatData[i]['UpdateTime'];
+                            }
 
                             if (exist_array[j]['version_name'].includes(",")) {
                                 var ver_arry = exist_array[j]['version_name'].split(',');
@@ -139,7 +354,7 @@ router.post('/', function(request, response, next) {
 
                 var values_array = [];
                 //var sql = "INSERT INTO tb_song (Id, SongNum, Name, SingerName, SingerId, SongLanguageId, SongTypeId, Track, FirstSpell, AllSpell, NameLength, Hits, Format, ServerState, Image, SavePath, DownPath, Version, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, Sort, AddTime, UpdateTime, DownCount, VersionName) VALUES ?";
-                var sql = "INSERT INTO tb_song_original (id, video_file, title, title_word_count, singer, language, area, genre, mood, last_name_strokes, singer_zhuyin_first_char, singer_pinyin_first_char, title_zhuyin_first_char, title_pinyin_first_char, sex, featuring, antiphonal, vendor, request_count, is_new, vocal, add_date, activity_tag1, volume, description, file_cd, sort, rlsound, rlsound2, ch, add_no, light, newer, son1, son2, son3, ok, machine, video_length, tv, activity_tag2, activity_tag3, version, version_name, singerid, songlanguageid, songtypeid, track, allspell, hits, serverstate, image, savePath, downPath, downUrl1, downUrl2, downUrl3, backDownUrl, fileMd5, showhidden, updatetime) VALUES ?";
+                var sql = "INSERT INTO tb_song_original (id, video_file, title, title_word_count, singer, language, area, genre, mood, last_name_strokes, singer_zhuyin_first_char, singer_pinyin_first_char, title_zhuyin_first_char, title_pinyin_first_char, sex, featuring, antiphonal, vendor, request_count, is_new, vocal, add_date, activity_tag1, volume, description, file_cd, sort, rlsound, rlsound2, ch, add_no, light, newer, son1, son2, son3, ok, machine, video_length, tv, activity_tag2, activity_tag3, version, version_name, SingerId, SongLanguageId, SongTypeId, Track, AllSpell, Hits, ServerState, Image, SavePath, DownPath, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, UpdateTime) VALUES ?";
                 //insert exist
                 for (var i=0; i<exist_array.length; i++) {
 
@@ -1321,7 +1536,7 @@ router.post('/', function(request, response, next) {
             else { //just insert all songs
                 console.log("start to insert...");
                 //var sql = "INSERT INTO tb_song (Id, SongNum, Name, SingerName, SingerId, SongLanguageId, SongTypeId, Track, FirstSpell, AllSpell, NameLength, Hits, Format, ServerState, Image, SavePath, DownPath, Version, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, Sort, AddTime, UpdateTime, DownCount, VersionName) VALUES ?";
-                var sql = "INSERT INTO tb_song_original (id, video_file, title, title_word_count, singer, language, area, genre, mood, last_name_strokes, singer_zhuyin_first_char, singer_pinyin_first_char, title_zhuyin_first_char, title_pinyin_first_char, sex, featuring, antiphonal, vendor, request_count, is_new, vocal, add_date, activity_tag1, volume, description, file_cd, sort, rlsound, rlsound2, ch, add_no, light, newer, son1, son2, son3, ok, machine, video_length, tv, activity_tag2, activity_tag3, version, version_name, singerid, songlanguageid, songtypeid, track, allspell, hits, serverstate, image, savePath, downPath, downUrl1, downUrl2, downUrl3, backDownUrl, fileMd5, showhidden, updatetime) VALUES ?";
+                var sql = "INSERT INTO tb_song_original (id, video_file, title, title_word_count, singer, language, area, genre, mood, last_name_strokes, singer_zhuyin_first_char, singer_pinyin_first_char, title_zhuyin_first_char, title_pinyin_first_char, sex, featuring, antiphonal, vendor, request_count, is_new, vocal, add_date, activity_tag1, volume, description, file_cd, sort, rlsound, rlsound2, ch, add_no, light, newer, son1, son2, son3, ok, machine, video_length, tv, activity_tag2, activity_tag3, version, version_name, SingerId, SongLanguageId, SongTypeId, Track, AllSpell, Hits, ServerState, Image, SavePath, DownPath, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, UpdateTime) VALUES ?";
                 var values_array = [];
                 for (var i=0; i<dataSize; i++) {
                     
