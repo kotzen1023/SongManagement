@@ -784,9 +784,10 @@ head
       */
       if (errorValue == "全部") {
         songObj_by_filter = songObj.slice();
-        songObj_by_filter = songObj_by_filter.filter(item => item['singer_zhuyin_first_char'] == "" || item['singer_pinyin_first_char'] == "" || item['title_zhuyin_first_char'] == "" || item['title_pinyin_first_char'] == "" || item['allspell'] == "" || item['DownUrl1'] == "")
+        songObj_by_filter = songObj_by_filter.filter(item => item['singer_zhuyin_first_char'] == "" || item['singer_pinyin_first_char'] == "" || item['title_zhuyin_first_char'] == "" || item['title_pinyin_first_char'] == "" || item['allspell'] == "" || (item['DownUrl1'].indexOf(".mp4") < 0 && item['DownUrl1'].indexOf(".mpg") < 0))  
         
         
+
         console.log("error filter: songObj_by_filter.length = "+songObj_by_filter.length);
 
         $('#tableArray').dataTable().fnAddData(songObj_by_filter);
@@ -822,7 +823,26 @@ head
         $('#tableArray').dataTable().fnAddData(songObj_by_filter);
       } else if (errorValue == "下載網址錯誤") {
         songObj_by_filter = songObj.slice();
-        songObj_by_filter = songObj_by_filter.filter(item => item['DownUrl1'] == "")
+        
+
+        /*var idx = songObj_by_filter.length-1;
+        while(idx > 0) {
+          if (songObj_by_filter[idx]['DownUrl1'] != "") {
+            var url_split_array = songObj_by_filter[idx]['DownUrl1'].split(".");
+            var url_split_array_length = url_split_array.length;
+            if (url_split_array_length > 0) {
+              if (url_split_array[url_split_array_length-1] == "mp4" || url_split_array[url_split_array_length-1] == "mpg")
+              {
+                songObj_by_filter.splice(idx, 1);
+              }
+              
+            }
+          }
+          idx = idx - 1;
+        }*/
+
+        songObj_by_filter = songObj_by_filter.filter(item => item['DownUrl1'].indexOf(".mp4") < 0 && item['DownUrl1'].indexOf(".mpg") < 0)
+
         console.log("language filter: songObj_by_filter.length = "+songObj_by_filter.length);
 
         $('#tableArray').dataTable().fnAddData(songObj_by_filter);

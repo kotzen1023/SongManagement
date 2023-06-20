@@ -115,12 +115,39 @@ router.post('/add', function(request, response, next) {
     let version = request.body.version;
     let version_name = request.body.version_name;
 
+    var SingerId = request.body.SingerId;
+    if (SingerId == "") {
+        SingerId = "0"
+    }
+    var SongLanguageId = request.body.SongLanguageId;
+    if (SongLanguageId == "") {
+        SongLanguageId = "1"
+    }
+    let SongTypeId = request.body.SongTypeId;
+    let Track = request.body.Track;
+    let AllSpell = request.body.AllSpell;
+    let Hits = request.body.Hits;
+    let ServerState = request.body.ServerState;
+    let Image = request.body.Image;
+    let SavePath = request.body.SavePath;
+    let DownPath = request.body.DownPath;
+    let DownUrl1 = request.body.DownUrl1;
+    let DownUrl2 = request.body.DownUrl2;
+    let DownUrl3 = request.body.DownUrl3;
+    let BackDownUrl = request.body.BackDownUrl;
+    let FileMd5 = request.body.FileMd5;
+    var ShowHidden = request.body.ShowHidden;
+    if (ShowHidden == "") {
+        ShowHidden = "1"
+    }
+
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     var yyyy = today.getFullYear();
 
     var add_date = yyyy + '-' + mm + '-' + dd;
+    var UpdateTime = Date().toLocaleString();
 
     console.log("id = "+id);
     console.log("video_file = "+video_file);
@@ -166,16 +193,33 @@ router.post('/add', function(request, response, next) {
     console.log("activity_tag3 = "+activity_tag3);
     console.log("version = "+version);
     console.log("version_name = "+version_name);
+    console.log("SingerId = "+SingerId);
+    console.log("SongLanguageId = "+SongLanguageId);
+    console.log("SongTypeId = "+SongTypeId);
+    console.log("Track = "+Track);
+    console.log("AllSpell = "+AllSpell);
+    console.log("Hits = "+Hits);
+    console.log("ServerState = "+ServerState);
+    console.log("Image = "+Image);
+    console.log("SavePath = "+SavePath);
+    console.log("DownPath = "+DownPath);
+    console.log("DownUrl1 = "+DownUrl1);
+    console.log("DownUrl2 = "+DownUrl2);
+    console.log("DownUrl3 = "+DownUrl3);
+    console.log("BackDownUrl = "+BackDownUrl);
+    console.log("FileMd5 = "+FileMd5);
+    console.log("ShowHidden = "+ShowHidden);
+    console.log("UpdateTime = "+UpdateTime);
     
     //let formatData = request.body;
 
     //console.log("SongNum = "+formatData['SongNum']);
     //var sql_str = "INSERT INTO tb_song (Id, SongNum, Name, SingerName, SingerId, SongLanguageId, SongTypeId, Track, FirstSpell, AllSpell, NameLength, Hits, Format, ServerState, Image, SavePath, DownPath, Version, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, Sort, AddTime, UpdateTime, DownCount, VersionName) VALUES ?";
-    var sql_str = "INSERT INTO tb_song_original (id, video_file, title, title_word_count, singer, language, area, genre, mood, last_name_strokes, singer_zhuyin_first_char, singer_pinyin_first_char, title_zhuyin_first_char, title_pinyin_first_char, sex, featuring, antiphonal, vendor, request_count, is_new, vocal, add_date, activity_tag1, volume, description, file_cd, sort, rlsound, rlsound2, ch, add_no, light, newer, son1, son2, son3, ok, machine, video_length, tv, activity_tag2, activity_tag3, version, version_name) VALUES ?";
+    var sql_str = "INSERT INTO tb_song_original (id, video_file, title, title_word_count, singer, language, area, genre, mood, last_name_strokes, singer_zhuyin_first_char, singer_pinyin_first_char, title_zhuyin_first_char, title_pinyin_first_char, sex, featuring, antiphonal, vendor, request_count, is_new, vocal, add_date, activity_tag1, volume, description, file_cd, sort, rlsound, rlsound2, ch, add_no, light, newer, son1, son2, son3, ok, machine, video_length, tv, activity_tag2, activity_tag3, version, version_name, SingerId, SongLanguageId, SongTypeId, Track, AllSpell, Hits, ServerState, Image, SavePath, DownPath, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, UpdateTime) VALUES ?";
     console.log("sql_str = "+sql_str);
 
     var values_array = [];
-    value = [id, video_file, title, title_word_count, singer, language, area, genre, mood, last_name_strokes, singer_zhuyin_first_char, singer_pinyin_first_char, title_zhuyin_first_char, title_pinyin_first_char, sex, featuring, antiphonal, vendor, request_count, is_new, vocal, add_date, activity_tag1, volume, description, file_cd, sort, rlsound, rlsound2, ch, add_no, light, newer, son1, son2, son3, ok, machine, video_length, tv, activity_tag2, activity_tag3, version, version_name];
+    value = [id, video_file, title, title_word_count, singer, language, area, genre, mood, last_name_strokes, singer_zhuyin_first_char, singer_pinyin_first_char, title_zhuyin_first_char, title_pinyin_first_char, sex, featuring, antiphonal, vendor, request_count, is_new, vocal, add_date, activity_tag1, volume, description, file_cd, sort, rlsound, rlsound2, ch, add_no, light, newer, son1, son2, son3, ok, machine, video_length, tv, activity_tag2, activity_tag3, version, version_name, SingerId, SongLanguageId, SongTypeId, Track, AllSpell, Hits, ServerState, Image, SavePath, DownPath, DownUrl1, DownUrl2, DownUrl3, BackDownUrl, FileMd5, ShowHidden, UpdateTime];
 
     values_array.push(value);
 

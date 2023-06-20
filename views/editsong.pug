@@ -288,7 +288,7 @@ form(action='/editsong/change' method='post')
         tr
             td request_count	
             td #{request_count}
-                //input(id='request_count' name='request_count' type='text' value=`${request_count}`)
+                input(id='request_count' name='request_count' type='hidden' value=`${request_count}`)
         tr
             td is_new		
             td
@@ -393,7 +393,70 @@ form(action='/editsong/change' method='post')
             td version_name		
             td
                 textarea(id='version_name' name='version_name' cols='64' rows='4') #{version_name}
-        
+        tr
+            td SingerId		
+            td
+                input(id='oSingerIdk' name='SingerId' type='text' value=`${SingerId}`)
+        tr
+            td SongLanguageId		
+            td
+                input(id='SongLanguageId' name='SongLanguageId' type='text' size='16' value=`${SongLanguageId}`)
+        tr
+            td SongTypeId		
+            td
+                input(id='SongTypeId' name='SongTypeId' type='text' size='10' value=`${SongTypeId}`)
+        tr
+            td Track		
+            td
+                input(id='Track' name='Track' type='text' size='10' value=`${Track}`)
+        tr
+            td AllSpell
+            td
+                textarea(id='AllSpell' name='AllSpell' cols='64' rows='4') #{AllSpell}
+        tr
+            td Hits		
+            td
+                input(id='Hits' name='Hits' type='text' value=`${Hits}`)
+        tr
+            td ServerState		
+            td
+                input(id='ServerState' name='ServerState' type='text' value=`${ServerState}`)
+        tr
+            td Image		
+            td
+                input(id='Image' name='Image' type='text' value=`${Image}`)
+        tr
+            td SavePath		
+            td
+                input(id='SavePath' name='SavePath' type='text' size='32' value=`${SavePath}`)
+        tr
+            td DownPath		
+            td
+                input(id='DownPath' name='DownPath' type='text' size='32' value=`${DownPath}`)
+        tr
+            td DownUrl1		
+            td
+                textarea(id='DownUrl1' name='DownUrl1' cols='64' rows='4') #{DownUrl1}
+        tr
+            td DownUrl2		
+            td
+                textarea(id='DownUrl2' name='DownUrl2' cols='64' rows='4') #{DownUrl2}
+        tr
+            td DownUrl3		
+            td
+                textarea(id='DownUrl3' name='DownUrl3' cols='64' rows='4') #{DownUrl3}
+        tr
+            td BackDownUrl		
+            td
+                textarea(id='BackDownUrl' name='BackDownUrl' cols='64' rows='4') #{BackDownUrl}
+        tr
+            td FileMd5		
+            td
+                input(id='FileMd5' name='FileMd5' type='text' size='64' value=`${DownPath}`)
+        tr
+            td ShowHidden		
+            td
+                input(id='ShowHidden' name='ShowHidden' type='text' value=`${ShowHidden}`)
     span
         div(align='center')
             input(type='button' value='取消' onclick='back()')

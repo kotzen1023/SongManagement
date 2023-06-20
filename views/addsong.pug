@@ -417,7 +417,70 @@ form(action='/addsong/add' method='post' onsubmit="return addCheck(this)")
             td version_name		
             td
                 textarea(id='version_name' name='version_name' cols='64' rows='4') 
-
+        tr
+            td SingerId		
+            td
+                input(id='oSingerIdk' name='SingerId' type='text')
+        tr
+            td SongLanguageId		
+            td
+                input(id='SongLanguageId' name='SongLanguageId' type='text' size='16' )
+        tr
+            td SongTypeId		
+            td
+                input(id='SongTypeId' name='SongTypeId' type='text' size='10' )
+        tr
+            td Track		
+            td
+                input(id='Track' name='Track' type='text' size='10' )
+        tr
+            td AllSpell
+            td
+                textarea(id='AllSpell' name='AllSpell' cols='64' rows='4')
+        tr
+            td Hits		
+            td
+                input(id='Hits' name='Hits' type='text')
+        tr
+            td ServerState		
+            td
+                input(id='ServerState' name='ServerState' type='text')
+        tr
+            td Image		
+            td
+                input(id='Image' name='Image' type='text' )
+        tr
+            td SavePath		
+            td
+                input(id='SavePath' name='SavePath' type='text' size='32' )
+        tr
+            td DownPath		
+            td
+                input(id='DownPath' name='DownPath' type='text' size='32' )
+        tr
+            td DownUrl1		
+            td
+                textarea(id='DownUrl1' name='DownUrl1' cols='64' rows='4') 
+        tr
+            td DownUrl2		
+            td
+                textarea(id='DownUrl2' name='DownUrl2' cols='64' rows='4') 
+        tr
+            td DownUrl3		
+            td
+                textarea(id='DownUrl3' name='DownUrl3' cols='64' rows='4')
+        tr
+            td BackDownUrl		
+            td
+                textarea(id='BackDownUrl' name='BackDownUrl' cols='64' rows='4')
+        tr
+            td FileMd5		
+            td
+                input(id='FileMd5' name='FileMd5' type='text' size='64' )
+        tr
+            td ShowHidden		
+            td
+                input(id='ShowHidden' name='ShowHidden' type='text' )
     span
         div(align='center')
             input(type='button' value='取消' onclick='back()')
