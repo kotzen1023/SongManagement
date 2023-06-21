@@ -123,7 +123,10 @@ router.post('/change', function(request, response, next) {
     let area = request.body.area;
     let genre = request.body.genre;
     let mood = request.body.mood;
-    let last_name_strokes = request.body.last_name_strokes;
+    var last_name_strokes = request.body.last_name_strokes;
+    if (last_name_strokes == "") {
+        last_name_strokes = "0"
+    }
     let singer_zhuyin_first_char = request.body.singer_zhuyin_first_char;
     let singer_pinyin_first_char = request.body.singer_pinyin_first_char;
     let title_zhuyin_first_char = request.body.title_zhuyin_first_char;
@@ -132,13 +135,22 @@ router.post('/change', function(request, response, next) {
     let featuring = request.body.featuring;
     let antiphonal = request.body.antiphonal;
     let vendor = request.body.vendor;
-    let request_count = request.body.request_count;
+    var request_count = request.body.request_count;
+    if (request_count == "") {
+        request_count = "0"
+    }
     let is_new = request.body.is_new;
     let vocal = request.body.vocal;
     let add_date = request.body.add_date;
     let activity_tag1 = request.body.activity_tag1;
-    let volume = request.body.volume;
-    let description = request.body.description;
+    var volume = request.body.volume;
+    if (volume == "") {
+        volume = "10000"
+    }
+    var description = request.body.description;
+    if (description == "") {
+        description = "1"
+    }
     let file_cd = request.body.file_cd;
     let sort = request.body.sort;
     let rlsound = request.body.rlsound;
@@ -153,18 +165,34 @@ router.post('/change', function(request, response, next) {
     let ok = request.body.ok;
     let machine = request.body.machine;
     let video_length = request.body.video_length;
-    let tv = request.body.tv;
+    var tv = request.body.tv;
+    var tv = request.body.tv;
+    if (tv == "") {
+        tv = "0"
+    }
     let activity_tag2 = request.body.activity_tag2;
     let activity_tag3 = request.body.activity_tag3;
     let version = request.body.version;
     let version_name = request.body.version_name;
-    let SingerId = request.body.SingerId;
-    let SongLanguageId = request.body.SongLanguageId;
+    var SingerId = request.body.SingerId;
+    if (SingerId == "") {
+        SingerId = "0"
+    }
+    var SongLanguageId = request.body.SongLanguageId;
+    if (SongLanguageId == "") {
+        SongLanguageId = "1"
+    }
     let SongTypeId = request.body.SongTypeId;
     let Track = request.body.Track;
     let AllSpell = request.body.AllSpell;
-    let Hits = request.body.Hits;
-    let ServerState = request.body.ServerState;
+    var Hits = request.body.Hits;
+    if (Hits == "") {
+        Hits = "0"
+    }
+    var ServerState = request.body.ServerState;
+    if (ServerState == "") {
+        ServerState = "1"
+    }
     let Image = request.body.Image;
     let SavePath = request.body.SavePath;
     let DownPath = request.body.DownPath;
@@ -173,9 +201,37 @@ router.post('/change', function(request, response, next) {
     let DownUrl3 = request.body.DownUrl3;
     let BackDownUrl = request.body.BackDownUrl;
     let FileMd5 = request.body.FileMd5;
-    let ShowHidden = request.body.ShowHidden;
+    var ShowHidden = request.body.ShowHidden;
+    if (ShowHidden == "") {
+        ShowHidden = "1"
+    }
 
-    var UpdateTime = Date().toLocaleString();
+    //var UpdateTime = Date().toLocaleString();
+    const dateObj = new Date();
+
+    let year = dateObj.getFullYear();
+
+    let month = dateObj.getMonth();
+    month = ('0' + (month + 1)).slice(-2);
+    // To make sure the month always has 2-character-format. For example, 1 => 01, 2 => 02
+
+    let date = dateObj.getDate();
+    date = ('0' + date).slice(-2);
+    // To make sure the date always has 2-character-format
+
+    let hour = dateObj.getHours();
+    hour = ('0' + hour).slice(-2);
+    // To make sure the hour always has 2-character-format
+
+    let minute = dateObj.getMinutes();
+    minute = ('0' + minute).slice(-2);
+    // To make sure the minute always has 2-character-format
+
+    let second = dateObj.getSeconds();
+    second = ('0' + second).slice(-2);
+    // To make sure the second always has 2-character-format
+
+    let UpdateTime = `${year}-${month}-${date} ${hour}:${minute}:${second}`;
 
     console.log("id = "+id);
     console.log("video_file = "+video_file);
